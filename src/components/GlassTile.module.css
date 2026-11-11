@@ -25,11 +25,12 @@
   box-shadow: 0 30px 80px -40px rgba(10, 11, 15, 0.55);
 }
 
-/* glass fill and the two room lights, drifting slowly */
+/* glass fill and the two room lights, drifting slowly.
+   Overhangs the tile so the drift never uncovers an edge; the tile clips it. */
 .tile::before {
   content: "";
   position: absolute;
-  inset: 0;
+  inset: -8%;
   z-index: -1;
   background:
     radial-gradient(70% 90% at 6% 4%, rgba(56, 189, 248, 0.26), transparent 70%),
