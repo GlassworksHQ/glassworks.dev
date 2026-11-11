@@ -13,6 +13,14 @@ pnpm build      # every route is static
 pnpm lint
 ```
 
+Opening `pnpm dev` from another machine (a tailnet name, a LAN IP)? Next.js blocks its dev scripts
+for unknown hosts, so the page renders but nothing interactive works. List the host in a git-ignored
+`.env.local` and restart the dev server:
+
+```sh
+DEV_ORIGINS=my-mac.tailnet.example,192.168.1.20
+```
+
 Next.js 16 (App Router) with plain CSS: design tokens in `src/app/globals.css`, CSS modules per
 page and component. There's no UI library on purpose; see "Design system" below.
 

@@ -30,7 +30,9 @@ export function GlassTile({
   return (
     <div className={styles.stack}>
       <div className={styles.tile}>
-        <span key={run} className={styles.sweep} aria-hidden="true" />
+        {/* keyed so Replay remounts both and restarts their animations */}
+        <span key={`glow-${run}`} className={styles.glow} aria-hidden="true" />
+        <span key={`sweep-${run}`} className={styles.sweep} aria-hidden="true" />
         <div className={styles.top}>
           <span className={styles.label}>{label}</span>
           <span className={styles.label + " " + styles.status}>
