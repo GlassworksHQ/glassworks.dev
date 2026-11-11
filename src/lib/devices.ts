@@ -165,7 +165,7 @@ export type Device = {
   project?: { name: string; href: string };
   specs: { label: string; value: string }[];
   panes: Record<PaneId, { support: Support; note?: string }>;
-  install: { how: string; href?: string; cta?: string };
+  install: { how: string; href?: string };
   ratings: Ratings;
   ratingsNote?: string;
   unverified?: boolean;
@@ -215,9 +215,8 @@ export const devices: Device[] = [
       base: { support: "works" },
     },
     install: {
-      how: "From the browser over USB. The installer roots the panel, backs it up and flashes it.",
+      how: "In the browser, over USB. It backs the panel up first, then roots and flashes it.",
       href: "https://s1.edm.sh",
-      cta: "Install S1 Unleashed",
     },
     ratings: {
       difficulty: {

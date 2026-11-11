@@ -11,6 +11,8 @@ import {
   SupportTag,
   paneIcon,
 } from "@/components/DeviceBits";
+import { KilnGlyph } from "@/components/Glyphs";
+import { Mark } from "@/components/Mark";
 import { deviceBySlug, devices, ratingKeys } from "@/lib/devices";
 import { panes } from "@/lib/site";
 import s from "./device.module.css";
@@ -86,6 +88,25 @@ async function Device({ params }: { params: Params }) {
         <DeviceScreen shape={d.shape} size="hero" />
       </header>
 
+      <section
+        className={`glass ${s.kiln} ${d.install.href ? "" : s.kilnOff}`}
+        aria-labelledby="install"
+      >
+        <Mark variant="ember" className={s.kilnMark} title="Kiln" />
+        <div className={s.kilnText}>
+          <h2 id="install" className={s.kilnTitle}>
+            {d.install.href ? "Install with Kiln" : "Not in Kiln yet"}
+          </h2>
+          <p>{d.install.how}</p>
+        </div>
+        {d.install.href && (
+          <a href={d.install.href} className={s.kilnBtn}>
+            <KilnGlyph className={s.kilnBtnIcon} />
+            Open Kiln
+          </a>
+        )}
+      </section>
+
       {d.unverified && (
         <p className={s.caveat}>
           These details come from public writeups. Nobody has checked them on
@@ -159,20 +180,6 @@ async function Device({ params }: { params: Params }) {
             Expected, from the plan. Nothing has been run on this device yet.
           </p>
         )}
-      </section>
-
-      <section className={s.section} aria-labelledby="install">
-        <h2 id="install" className={s.h2}>
-          Install
-        </h2>
-        <div className={`glass ${s.install}`}>
-          <p>{d.install.how}</p>
-          {d.install.href && (
-            <a href={d.install.href} className={s.cta}>
-              {d.install.cta}
-            </a>
-          )}
-        </div>
       </section>
     </article>
   );
