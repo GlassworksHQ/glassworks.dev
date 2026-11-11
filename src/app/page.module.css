@@ -107,14 +107,6 @@
   gap: 14px;
 }
 
-.example {
-  font-size: 15px;
-  color: var(--muted);
-  padding-left: 16px;
-  border-left: 2px solid transparent;
-  border-image: var(--lit-gradient) 1;
-}
-
 /* panes */
 .panes {
   list-style: none;

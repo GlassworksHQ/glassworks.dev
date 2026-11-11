@@ -6,7 +6,7 @@ import styles from "./Stack.module.css";
 /*
  * An exploded isometric view of a Glassworks panel, layer by layer.
  * Every plate uses the same 3 x 2 grid, so a column reads as one feature through
- * the stack: the EFR32 chip, the frame's radio backend, the core's ESPHome device,
+ * the stack: the radio chip, the frame's radio backend, the core's ESPHome device,
  * a pane socket and the radio pane all sit in the same place.
  * Plates never move; light does (dashes flowing up the columns and out to HA).
  */
@@ -38,11 +38,18 @@ const LAYERS: Layer[] = [
     z: 280,
     thick: 5,
     label: "PANES",
-    cells: ["Assist", "Timers", "Radio", "Sensors", "Wall base", "Sendspin"],
+    cells: ["Assist", "Timers", "Radio", "Sensors", "Device pane", "Sendspin"],
     lit: [0, 2, 3, 5],
     dashed: [4],
     desc: "Plugins. Each one says what it needs, and the frame lists the ones it ships. Turn them on and off from the panel.",
-    items: ["Assist", "Timers", "Zigbee / Thread radio", "Android sensors", "Wall base (S1 only)", "Sendspin"],
+    items: [
+      "Assist",
+      "Timers",
+      "Zigbee / Thread radio",
+      "Android sensors",
+      "Sendspin",
+      "A frame's own panes, like the S1 wall base",
+    ],
   },
   {
     id: "api",
@@ -54,7 +61,13 @@ const LAYERS: Layer[] = [
     cells: [null, null, null, null, null, null],
     sockets: true,
     desc: "The small, stable contract between the core and every pane. A pane's requires meets the frame's provides here, and panes that can't run stay listed with the reason.",
-    items: ["entities()", "settings()", "setupSteps()", "overlays()", "requires ↔ provides"],
+    items: [
+      "entities()",
+      "settings()",
+      "setupSteps()",
+      "overlays()",
+      "requires ↔ provides",
+    ],
   },
   {
     id: "core",
@@ -78,32 +91,52 @@ const LAYERS: Layer[] = [
   {
     id: "frame",
     name: "Frame",
-    code: "frames/aqara-s1",
+    code: "frames/<device>",
     z: 70,
     thick: 5,
-    label: "FRAME · AQARA-S1",
-    cells: ["Board id", "Installer", "Radio backend", "Presence", "Time zone", "Cloud switch"],
-    desc: "One device definition. Everything specific to the hardware lives here, so the core never has to know which panel it's on.",
+    label: "FRAME · ONE PER DEVICE",
+    cells: [
+      "Board id",
+      "Installer",
+      "Radio backend",
+      "Presence",
+      "Device I/O",
+      "Screen off",
+    ],
+    desc: "One device definition, like aqara-s1 or nspanel-pro. Everything specific to the hardware lives here, so the core never has to know which panel it's on.",
     items: [
       "Board id for mDNS",
-      "Root-helper installer",
-      "Radio backend: SPI, cpcd, RCP firmware",
-      "Presence range for the VI5300",
-      "Time-zone keeper",
-      "Aqara cloud switch",
+      "How updates install: root helper or PackageInstaller",
+      "Radio backend: how the radio is wired",
+      "Presence and light sources",
+      "Device extras, like a wall base or relays",
+      "How to turn the screen off",
     ],
   },
   {
     id: "hardware",
     name: "Hardware",
-    code: "Aqara S1 Plus",
+    code: "Any Android panel",
     z: 0,
     thick: 6,
-    label: "HARDWARE · AQARA S1 PLUS",
-    cells: ["Microphone", "A133 SoC", "EFR32MG21", "VI5300 ToF", "Base UART", "Speaker"],
+    label: "HARDWARE · ANY ANDROID PANEL",
+    cells: [
+      "Microphone",
+      "SoC",
+      "Radio chip",
+      "Presence",
+      "Device I/O",
+      "Speaker",
+    ],
     chips: true,
-    desc: "The panel itself. Kiln gets Glassworks onto it from a browser, over USB.",
-    items: ["Allwinner A133", "EFR32MG21 Zigbee / Thread radio", "VI5300 time-of-flight sensor", "Microphone and speaker", "Wall base on a UART"],
+    desc: "The panel itself: an Aqara S1 Plus, an NSPanel Pro, a tablet. The frame says what it has, and Kiln installs Glassworks onto it from a browser, over USB.",
+    items: [
+      "An Android SoC",
+      "A Zigbee / Thread radio, if it has one",
+      "Presence and light sensors",
+      "Microphone and speaker",
+      "Extras like relays or a wall base",
+    ],
   },
 ];
 
@@ -118,17 +151,26 @@ const CH = 40;
 /* isometric projection */
 const C = 0.8660254;
 const S = 0.5;
-const iso = (x: number, y: number, z: number) => [C * (x - y), S * (x + y) - z] as const;
+const iso = (x: number, y: number, z: number) =>
+  [C * (x - y), S * (x + y) - z] as const;
 const plane = (z: number) => `matrix(${C} ${S} ${-C} ${S} 0 ${-z})`;
 
 /* light columns: [plate x, plate y] at a cell's centre */
 const COLUMNS: [number, number][] = [
   [COL_X[0] + CW / 2, ROW_Y[0] + CH / 2], // mic → assist
   [COL_X[2] + CW / 2, ROW_Y[0] + CH / 2], // radio
-  [COL_X[0] + CW / 2, ROW_Y[1] + CH / 2], // ToF → screen → sensors
+  [COL_X[0] + CW / 2, ROW_Y[1] + CH / 2], // presence sensor → screen → sensors
 ];
 
-function Plate({ layer, dim, onEnter }: { layer: Layer; dim: boolean; onEnter: () => void }) {
+function Plate({
+  layer,
+  dim,
+  onEnter,
+}: {
+  layer: Layer;
+  dim: boolean;
+  onEnter: () => void;
+}) {
   const { z, thick } = layer;
   return (
     <g
@@ -157,9 +199,22 @@ function Plate({ layer, dim, onEnter }: { layer: Layer; dim: boolean; onEnter: (
                   : styles.cell;
           return (
             <g key={i}>
-              <rect x={x} y={y} width={CW} height={CH} rx="5" className={cls} fill={lit ? "url(#gw-lit)" : undefined} />
+              <rect
+                x={x}
+                y={y}
+                width={CW}
+                height={CH}
+                rx="5"
+                className={cls}
+                fill={lit ? "url(#gw-lit)" : undefined}
+              />
               {cell && (
-                <text x={x + CW / 2} y={y + CH / 2 + 2.4} textAnchor="middle" className={lit ? styles.cellTextLit : styles.cellText}>
+                <text
+                  x={x + CW / 2}
+                  y={y + CH / 2 + 2.4}
+                  textAnchor="middle"
+                  className={lit ? styles.cellTextLit : styles.cellText}
+                >
                   {cell}
                 </text>
               )}
@@ -174,13 +229,32 @@ function Plate({ layer, dim, onEnter }: { layer: Layer; dim: boolean; onEnter: (
   );
 }
 
-function Beam({ x, y, z0, z1, delay }: { x: number; y: number; z0: number; z1: number; delay: number }) {
+function Beam({
+  x,
+  y,
+  z0,
+  z1,
+  delay,
+}: {
+  x: number;
+  y: number;
+  z0: number;
+  z1: number;
+  delay: number;
+}) {
   const [ax, ay] = iso(x, y, z0);
   const [bx, by] = iso(x, y, z1);
   return (
     <g>
       <line x1={ax} y1={ay} x2={bx} y2={by} className={styles.beamRail} />
-      <line x1={ax} y1={ay} x2={bx} y2={by} className={styles.beam} style={{ animationDelay: `${delay}s` }} />
+      <line
+        x1={ax}
+        y1={ay}
+        x2={bx}
+        y2={by}
+        className={styles.beam}
+        style={{ animationDelay: `${delay}s` }}
+      />
     </g>
   );
 }
@@ -204,8 +278,20 @@ function External({
 }) {
   return (
     <g className={styles.ext}>
-      <rect x={x} y={y} width={w} height={h} rx="10" className={styles.extBox} />
-      <circle cx={x + 14} cy={y + 17} r="3" className={tone === "ember" ? styles.dotEmber : styles.dotSky} />
+      <rect
+        x={x}
+        y={y}
+        width={w}
+        height={h}
+        rx="10"
+        className={styles.extBox}
+      />
+      <circle
+        cx={x + 14}
+        cy={y + 17}
+        r="3"
+        className={tone === "ember" ? styles.dotEmber : styles.dotSky}
+      />
       <text x={x + 24} y={y + 20} className={styles.extTitle}>
         {title}
       </text>
@@ -216,11 +302,23 @@ function External({
   );
 }
 
-function Wire({ d, tone = "sky", delay = 0 }: { d: string; tone?: "sky" | "ember"; delay?: number }) {
+function Wire({
+  d,
+  tone = "sky",
+  delay = 0,
+}: {
+  d: string;
+  tone?: "sky" | "ember";
+  delay?: number;
+}) {
   return (
     <g>
       <path d={d} className={styles.wireRail} />
-      <path d={d} className={tone === "ember" ? styles.wireEmber : styles.wire} style={{ animationDelay: `${delay}s` }} />
+      <path
+        d={d}
+        className={tone === "ember" ? styles.wireEmber : styles.wire}
+        style={{ animationDelay: `${delay}s` }}
+      />
     </g>
   );
 }
@@ -241,71 +339,159 @@ export function Stack() {
   return (
     <div className={styles.wrap}>
       <div className={styles.figure} onMouseLeave={() => setHover(null)}>
-        <svg viewBox="-178 -305 610 480" role="img" aria-labelledby="stack-title stack-desc" className={styles.svg}>
+        <svg
+          viewBox="-178 -305 610 480"
+          role="img"
+          aria-labelledby="stack-title stack-desc"
+          className={styles.svg}
+        >
           <title id="stack-title">How a Glassworks panel is built</title>
           <desc id="stack-desc">
-            Five layers, bottom to top: the hardware, the frame, the Glassworks core, the pane API and the panes. The core talks to Home
-            Assistant; the radio pane serves ZHA, Zigbee2MQTT and OTBR; Sendspin plays from Music Assistant. Kiln installs it all over USB.
+            Five layers, bottom to top: the hardware, the frame, the Glassworks
+            core, the pane API and the panes. The core talks to Home Assistant;
+            the radio pane serves ZHA, Zigbee2MQTT and OTBR; Sendspin plays from
+            Music Assistant. Kiln installs it all over USB.
           </desc>
 
           {ordered.map((layer, i) => {
             const next = ordered[i + 1];
             return (
               <g key={layer.id}>
-                <Plate layer={layer} dim={active !== null && active !== layer.id} onEnter={() => setHover(layer.id)} />
+                <Plate
+                  layer={layer}
+                  dim={active !== null && active !== layer.id}
+                  onEnter={() => setHover(layer.id)}
+                />
                 {next &&
                   COLUMNS.map(([x, y], c) => (
-                    <Beam key={c} x={x} y={y} z0={layer.z} z1={next.z - next.thick} delay={i * 0.35 + c * 0.6} />
+                    <Beam
+                      key={c}
+                      x={x}
+                      y={y}
+                      z0={layer.z}
+                      z1={next.z - next.thick}
+                      delay={i * 0.35 + c * 0.6}
+                    />
                   ))}
               </g>
             );
           })}
 
           {/* out to the rest of the house */}
-          <Wire d={`M${radioX} ${radioY} C 222 ${radioY}, 214 -262, 252 -262`} delay={0.2} />
-          <Wire d={`M${sendX} ${sendY} C 222 ${sendY}, 214 -186, 252 -186`} delay={0.9} />
-          <Wire d={`M${coreRx} ${coreRy} C 222 ${coreRy}, 214 -66, 252 -66`} delay={0.5} />
-          <External x={252} y={-290} w={172} h={50} title="ZHA · Z2M · OTBR" sub="Radio over TCP, firewalled" />
-          <External x={252} y={-214} w={172} h={50} title="Music Assistant" sub="Synced audio over Sendspin" />
-          <External x={252} y={-98} w={172} h={64} title="Home Assistant" sub="ESPHome device · dashboard · updates" />
+          <Wire
+            d={`M${radioX} ${radioY} C 222 ${radioY}, 214 -262, 252 -262`}
+            delay={0.2}
+          />
+          <Wire
+            d={`M${sendX} ${sendY} C 222 ${sendY}, 214 -186, 252 -186`}
+            delay={0.9}
+          />
+          <Wire
+            d={`M${coreRx} ${coreRy} C 222 ${coreRy}, 214 -66, 252 -66`}
+            delay={0.5}
+          />
+          <External
+            x={252}
+            y={-290}
+            w={172}
+            h={50}
+            title="ZHA · Z2M · OTBR"
+            sub="Radio over TCP, firewalled"
+          />
+          <External
+            x={252}
+            y={-214}
+            w={172}
+            h={50}
+            title="Music Assistant"
+            sub="Synced audio over Sendspin"
+          />
+          <External
+            x={252}
+            y={-98}
+            w={172}
+            h={64}
+            title="Home Assistant"
+            sub="ESPHome device · dashboard · updates"
+          />
 
           {/* Kiln, feeding the hardware from below */}
           <Wire d={`M${hwLx} 114 L ${hwLx} ${hwLy + 2}`} tone="ember" />
-          <External x={-176} y={114} w={150} h={50} title="Kiln" sub="USB · root · flash · provision" tone="ember" />
+          <External
+            x={-176}
+            y={114}
+            w={150}
+            h={50}
+            title="Kiln"
+            sub="USB · root · flash · provision"
+            tone="ember"
+          />
         </svg>
       </div>
 
-      <ol className={styles.legend} aria-label="Layers, top to bottom">
-        {LAYERS.map((l) => {
-          const open = active === l.id;
-          return (
-            <li key={l.id} className={`${styles.item} ${open ? styles.open : ""} ${active && !open ? styles.itemDim : ""}`}>
-              <button
-                type="button"
-                className={styles.itemBtn}
-                aria-expanded={open}
-                onMouseEnter={() => setHover(l.id)}
-                onMouseLeave={() => setHover(null)}
-                onFocus={() => setHover(l.id)}
-                onBlur={() => setHover(null)}
-                onClick={() => setPinned((p) => (p === l.id ? null : l.id))}
+      <div className={styles.side}>
+        <ol className={styles.legend} aria-label="Layers, top to bottom">
+          {LAYERS.map((l) => {
+            const open = active === l.id;
+            return (
+              <li
+                key={l.id}
+                className={`${styles.item} ${open ? styles.open : ""} ${active && !open ? styles.itemDim : ""}`}
               >
-                <span className={styles.itemName}>{l.name}</span>
-                <code className={styles.itemCode}>{l.code}</code>
-              </button>
-              <p className={styles.itemDesc}>{l.desc}</p>
-              {open && (
-                <ul className={styles.chips}>
-                  {l.items.map((it) => (
-                    <li key={it}>{it}</li>
-                  ))}
-                </ul>
-              )}
-              {open && l.note && <p className={styles.itemNote}>{l.note}</p>}
-            </li>
-          );
-        })}
-      </ol>
+                <button
+                  type="button"
+                  className={styles.itemBtn}
+                  aria-expanded={open}
+                  onMouseEnter={() => setHover(l.id)}
+                  onMouseLeave={() => setHover(null)}
+                  onFocus={() => setHover(l.id)}
+                  onBlur={() => setHover(null)}
+                  onClick={() => setPinned((p) => (p === l.id ? null : l.id))}
+                >
+                  <span className={styles.itemName}>{l.name}</span>
+                  <code className={styles.itemCode}>{l.code}</code>
+                </button>
+                <p className={styles.itemDesc}>{l.desc}</p>
+              </li>
+            );
+          })}
+        </ol>
+
+        {/* Every version of this card sits in the same grid cell, so the card is
+          always as tall as the longest one and hovering never moves the page. */}
+        <div className={styles.detail} aria-live="polite">
+          <div
+            className={`${styles.panel} ${active === null ? styles.shown : ""}`}
+            aria-hidden={active !== null}
+          >
+            <span className="label">For example</span>
+            <p className={styles.panelLead}>
+              S1 Unleashed is a Glassworks frame for the Aqara S1 Plus. It ships
+              the radio and wall-base panes, and Kiln installs it.
+            </p>
+            <p className={styles.panelHint}>
+              A frame for another panel swaps the bottom two layers and keeps
+              everything above them. Hover or tap a layer to see what&rsquo;s in
+              it.
+            </p>
+          </div>
+          {LAYERS.map((l) => (
+            <div
+              key={l.id}
+              className={`${styles.panel} ${active === l.id ? styles.shown : ""}`}
+              aria-hidden={active !== l.id}
+            >
+              <span className="label">{l.name}</span>
+              <ul className={styles.chips}>
+                {l.items.map((it) => (
+                  <li key={it}>{it}</li>
+                ))}
+              </ul>
+              {l.note && <p className={styles.itemNote}>{l.note}</p>}
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }

@@ -32,11 +32,15 @@ export default function Home() {
       <section className={styles.hero}>
         <div className={styles.heroCopy}>
           <span className="label">Open source · Apache-2.0</span>
-          <h1 className={styles.h1}>The open core for Home Assistant wall panels.</h1>
+          <h1 className={styles.h1}>
+            The open core for Home Assistant wall panels.
+          </h1>
           <p className={styles.lede}>
-            Glassworks is what a wall panel needs to become a good Home Assistant dashboard: the dashboard shell, a
-            native ESPHome device, setup and updates. Voice, music and the Zigbee/Thread radio plug in as panes. You can
-            port it to your hardware, fork it and ship panels with it.
+            Glassworks is what a wall panel needs to become a good Home
+            Assistant dashboard: the dashboard shell, a native ESPHome device,
+            setup and updates. Voice, music and the Zigbee/Thread radio plug in
+            as panes. You can port it to your hardware, fork it and ship panels
+            with it.
           </p>
           <div className={styles.ctas}>
             <a className={styles.primary} href={links.org}>
@@ -47,8 +51,9 @@ export default function Home() {
             </a>
           </div>
           <p className={styles.note}>
-            Glassworks is being split out of S1 Unleashed now, so there&rsquo;s nothing to install from here yet. If you
-            have an Aqara S1 Plus, <a href={links.s1Install}>S1 Unleashed installs today</a>.
+            Glassworks is being split out of S1 Unleashed now, so there&rsquo;s
+            nothing to install from here yet. If you have an Aqara S1 Plus,{" "}
+            <a href={links.s1Install}>S1 Unleashed installs today</a>.
           </p>
         </div>
         <div className={styles.heroTile}>
@@ -69,13 +74,11 @@ export default function Home() {
             A frame holds panes. Kiln installs it.
           </h2>
           <p className={styles.sectionLede}>
-            Each layer only knows the one below it. Hover or tap a layer to see what&rsquo;s in it.
+            Each layer only knows the one below it, so a new panel only needs a
+            new frame.
           </p>
         </div>
         <Stack />
-        <p className={styles.example}>
-          S1 Unleashed is a Glassworks frame with the radio and wall-base panes, installed with Kiln.
-        </p>
       </section>
 
       <section className={styles.section} aria-labelledby="panes">
@@ -116,11 +119,16 @@ export default function Home() {
         <ul className={styles.frames}>
           {frames.map((f) => (
             <li key={f.name} className={`glass ${styles.frame}`}>
-              <span className={`${styles.thumb} ${f.ratio === "square" ? styles.square : ""}`} aria-hidden="true" />
+              <span
+                className={`${styles.thumb} ${f.ratio === "square" ? styles.square : ""}`}
+                aria-hidden="true"
+              />
               <div className={styles.frameText}>
                 <div className={styles.frameTop}>
                   <h3 className={styles.frameName}>{f.name}</h3>
-                  <span className={`${styles.pill} ${styles[f.status]}`}>{statusText[f.status]}</span>
+                  <span className={`${styles.pill} ${styles[f.status]}`}>
+                    {statusText[f.status]}
+                  </span>
                 </div>
                 <p className={styles.project}>{f.project}</p>
                 <p>{f.detail}</p>
@@ -130,30 +138,42 @@ export default function Home() {
         </ul>
       </section>
 
-      <section className={`${styles.section} ${styles.why}`} aria-labelledby="why">
+      <section
+        className={`${styles.section} ${styles.why}`}
+        aria-labelledby="why"
+      >
         <div className={styles.head}>
           <span className="label">Why it&rsquo;s open</span>
           <h2 id="why" className={styles.h2}>
             A base other projects can build on.
           </h2>
           <p className={styles.whyLede}>
-            The most complete panel apps today are closed or licensed for non-commercial use only. That means no ports
-            to new hardware, no forks if the maintainer stops, and no panels for sale. Glassworks is Apache-2.0 so all
-            three are allowed.
+            The most complete panel apps today are closed or licensed for
+            non-commercial use only. That means no ports to new hardware, no
+            forks if the maintainer stops, and no panels for sale. Glassworks is
+            Apache-2.0 so all three are allowed.
           </p>
         </div>
         <div className={styles.trio}>
           <div className={styles.point}>
             <h3>Port it</h3>
-            <p>Write a frame for your device. The core doesn&rsquo;t know or care which panel it runs on.</p>
+            <p>
+              Write a frame for your device. The core doesn&rsquo;t know or care
+              which panel it runs on.
+            </p>
           </div>
           <div className={styles.point}>
             <h3>Fork it</h3>
-            <p>If the project goes quiet, anyone can carry it on. The license makes sure of that.</p>
+            <p>
+              If the project goes quiet, anyone can carry it on. The license
+              makes sure of that.
+            </p>
           </div>
           <div className={styles.point}>
             <h3>Ship it</h3>
-            <p>Integrators and panel makers can sell devices that run Glassworks.</p>
+            <p>
+              Integrators and panel makers can sell devices that run Glassworks.
+            </p>
           </div>
         </div>
       </section>

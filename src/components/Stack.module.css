@@ -249,9 +249,47 @@
   color: var(--muted);
 }
 
+.side {
+  display: grid;
+  gap: 14px;
+  min-width: 0;
+}
+
+.detail {
+  display: grid;
+  padding: 16px 18px;
+  border-radius: var(--r-pane);
+  border: 1px solid var(--edge);
+  background: var(--glass);
+}
+
+.panel {
+  grid-area: 1 / 1;
+  display: grid;
+  gap: 10px;
+  align-content: start;
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.shown {
+  visibility: visible;
+  opacity: 1;
+}
+
+.panelLead {
+  font-size: 15px;
+}
+
+.panelHint {
+  font-size: 13.5px;
+  color: var(--muted);
+}
+
 .chips {
   list-style: none;
-  margin: 10px 0 0;
+  margin: 0;
   padding: 0;
   display: flex;
   flex-wrap: wrap;
@@ -267,7 +305,6 @@
 }
 
 .itemNote {
-  margin-top: 10px;
   font-size: 12.5px;
   color: var(--faint);
 }
