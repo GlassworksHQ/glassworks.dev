@@ -23,45 +23,8 @@
   perspective: calc(var(--u) * 170);
 }
 
-/*
- * Per form factor:
- *   --wp   width, % of the stage
- *   --ar   aspect ratio
- *   --rad  corner radius as horizontal% / vertical%, so corners come out round
- *   --bez  bezel, % of the device width (padding % is relative to width)
- *   --du   depth, in --u
- *   --sr   screen corner radius, in --u
- */
-
-/* Aqara S1 Plus, to scale: 172 x 86 mm front, ~12 mm slab (the 42 mm quoted
-   depth includes the 30 mm in-wall box, not drawn). Near-square corners, a
-   thin bezel on black glass, white body. */
-.s1 {
-  --wp: 74%;
-  --ar: 2 / 1;
-  --rad: 1.45% / 2.9%;
-  --bez: 2%;
-  --du: 5.2;
-  --sr: 0.6;
-}
-
-.square {
-  --wp: 42%;
-  --ar: 1 / 1;
-  --rad: 8.6%;
-  --bez: 8%;
-  --du: 4.6;
-  --sr: 1.6;
-}
-
-.tablet {
-  --wp: 66%;
-  --ar: 1.6 / 1;
-  --rad: 4.5% / 7.2%;
-  --bez: 4.5%;
-  --du: 1.8;
-  --sr: 1.3;
-}
+/* Per-shape sizes (--wp, --ar, --rad, --bez, --du, --sr) are set inline from
+   SPECS in deviceGeometry.ts, the same numbers that draw the sides. */
 
 .shadow,
 .device {
@@ -112,8 +75,16 @@
   overflow: hidden;
   border-radius: calc(var(--u) * var(--sr));
   background:
-    radial-gradient(60% 90% at 8% 0%, rgba(56, 189, 248, 0.22), transparent 70%),
-    radial-gradient(55% 90% at 96% 100%, rgba(167, 139, 250, 0.2), transparent 70%),
+    radial-gradient(
+      60% 90% at 8% 0%,
+      rgba(56, 189, 248, 0.22),
+      transparent 70%
+    ),
+    radial-gradient(
+      55% 90% at 96% 100%,
+      rgba(167, 139, 250, 0.2),
+      transparent 70%
+    ),
     #0a0b0f;
 }
 
@@ -189,7 +160,11 @@
 }
 
 .tileLit {
-  background: linear-gradient(135deg, rgba(56, 189, 248, 0.38), rgba(167, 139, 250, 0.38));
+  background: linear-gradient(
+    135deg,
+    rgba(56, 189, 248, 0.38),
+    rgba(167, 139, 250, 0.38)
+  );
   border-color: transparent;
 }
 
@@ -208,36 +183,36 @@
 }
 
 /* square panel: clock on top, two tiles below */
-.square .dash {
+.model[data-shape="square"] .dash {
   grid-template-columns: 1fr;
   grid-template-rows: 1fr auto;
   gap: 5cqw;
   padding: 7cqw;
 }
 
-.square .time {
+.model[data-shape="square"] .time {
   font-size: 24cqw;
 }
 
-.square .date {
+.model[data-shape="square"] .date {
   font-size: 4.4cqw;
 }
 
-.square .tiles {
+.model[data-shape="square"] .tiles {
   gap: 3.5cqw;
 }
 
-.square .tile {
+.model[data-shape="square"] .tile {
   padding: 4cqw;
   border-radius: 4cqw;
   gap: 1.4cqw;
 }
 
-.square .tileName {
+.model[data-shape="square"] .tileName {
   font-size: 4cqw;
 }
 
-.square .tileValue {
+.model[data-shape="square"] .tileValue {
   font-size: 5.4cqw;
 }
 

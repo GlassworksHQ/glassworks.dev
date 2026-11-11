@@ -12,32 +12,82 @@
  * measuring. The CSS uses the same numbers via --u = 1% of the stage width.
  */
 
+/** Add a form factor here and in SPECS below. */
 export type ModelShape = "s1" | "square" | "tablet";
 
 export const VIEW = { rx: 9, ry: -22, perspective: 170 } as const;
 
+/*
+ * One entry per form factor. Everything about a shape lives here: the computed
+ * sides use it directly, and cssVars() turns it into the CSS the front glass
+ * uses, so the two can't disagree. A new form factor is one new entry.
+ * Units are stage units: the stage is 100 wide and 50 tall.
+ */
 type Spec = {
-  w: number; // width, stage units
-  ar: number; // width / height
-  d: number; // depth
+  w: number; // width
+  ar: number; // aspect ratio, width / height
+  d: number; // depth (thickness)
   r: number; // corner radius
+  bez: number; // bezel around the screen
+  sr: number; // screen corner radius
   dark: string; // edge colour facing away from the light
   light: string; // edge colour facing the light
 };
 
 export const SPECS: Record<ModelShape, Spec> = {
-  // Aqara S1 Plus: 172 x 86 x ~12 mm, near-square corners, white body
-  s1: { w: 74, ar: 2, d: 5.2, r: 1.07, dark: "#8f949d", light: "#f4f5f7" },
-  square: { w: 42, ar: 1, d: 4.6, r: 3.6, dark: "#0c0d10", light: "#3b3f49" },
+  // Aqara S1 Plus: 172 x 86 x ~12 mm, near-square corners, thin bezel, white body
+  s1: {
+    w: 74,
+    ar: 2,
+    d: 5.2,
+    r: 1.07,
+    bez: 1.48,
+    sr: 0.6,
+    dark: "#8f949d",
+    light: "#f4f5f7",
+  },
+  square: {
+    w: 42,
+    ar: 1,
+    d: 4.6,
+    r: 3.6,
+    bez: 3.36,
+    sr: 1.6,
+    dark: "#0c0d10",
+    light: "#3b3f49",
+  },
   tablet: {
     w: 66,
     ar: 1.6,
     d: 1.8,
     r: 2.97,
+    bez: 2.97,
+    sr: 1.3,
     dark: "#0c0d10",
     light: "#3b3f49",
   },
 };
+
+/*
+ * The CSS custom properties for the front glass, from the same spec.
+ * Percentages, because they behave the same in every engine:
+ *   --wp  width, % of the stage     --rad corner radius, horizontal% / vertical%
+ *   --ar  aspect ratio              --bez bezel, % of the device width (padding)
+ *   --du  depth, in --u             --sr  screen corner radius, in --u
+ */
+export function cssVars(shape: ModelShape): Record<string, string> {
+  const { w, ar, d, r, bez, sr } = SPECS[shape];
+  const h = w / ar;
+  const pct = (n: number) => `${+n.toFixed(3)}%`;
+  return {
+    "--wp": pct(w),
+    "--ar": `${ar} / 1`,
+    "--rad": `${pct((r / w) * 100)} / ${pct((r / h) * 100)}`,
+    "--bez": pct((bez / w) * 100),
+    "--du": String(d),
+    "--sr": String(sr),
+  };
+}
 
 type V3 = [number, number, number];
 

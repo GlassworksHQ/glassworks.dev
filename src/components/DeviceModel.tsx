@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import {
   centering,
+  cssVars,
   sideFaces,
   type Face,
   type ModelShape,
@@ -88,8 +89,9 @@ export function DeviceModel({
       onPointerLeave={interactive ? onLeave : undefined}
     >
       <div
-        className={`${styles.model} ${styles[shape]}`}
-        style={{ transform: CENTRE[shape] }}
+        className={styles.model}
+        data-shape={shape}
+        style={{ transform: CENTRE[shape], ...cssVars(shape) }}
       >
         <div className={styles.shadow} aria-hidden="true" />
         <svg
