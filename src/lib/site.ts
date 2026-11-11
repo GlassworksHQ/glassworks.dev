@@ -4,38 +4,6 @@ export const links = {
   s1Install: "https://s1.edm.sh",
 } as const;
 
-export type Status = "works" | "planned";
-
-export const frames: {
-  name: string;
-  project: string;
-  detail: string;
-  status: Status;
-  ratio: "wide" | "square";
-}[] = [
-  {
-    name: "Aqara S1 Plus",
-    project: "S1 Unleashed",
-    detail: "The reference frame, with radio and wall base.",
-    status: "works",
-    ratio: "wide",
-  },
-  {
-    name: "Sonoff NSPanel Pro",
-    project: "and its T6E rebadges",
-    detail: "Same radio chip. Root over ADB, no boot patch.",
-    status: "planned",
-    ratio: "square",
-  },
-  {
-    name: "Generic Android",
-    project: "tablets, old phones",
-    detail: "Core, Assist, Sendspin and sensors. No root.",
-    status: "planned",
-    ratio: "wide",
-  },
-];
-
 export type PaneId = "assist" | "timers" | "sendspin" | "radio" | "sensors" | "base";
 
 export const panes: { id: PaneId; name: string; does: string; requires: string }[] = [

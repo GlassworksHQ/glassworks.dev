@@ -12,10 +12,11 @@ export function SiteHeader() {
         <span className={styles.word}>Glassworks</span>
       </Link>
       <nav className={styles.nav} aria-label="Main">
+        <Link href="/frames">Devices</Link>
         <Link href="/brand">Brand</Link>
-        <a href={links.org} className={styles.gh}>
+        <a href={links.org} className={styles.gh} aria-label="GitHub">
           <GitHubGlyph className={styles.ghIcon} />
-          <span>GitHub</span>
+          <span className={styles.ghText}>GitHub</span>
         </a>
       </nav>
     </header>

@@ -105,41 +105,48 @@
   fill: none;
 }
 
+/* Each line's dash pattern repeats every --period units, and one loop moves it
+   exactly one period, so the loop seam is invisible. A loop that moved a
+   different distance than the pattern made the dashes snap back every cycle. */
 .beam,
 .wire,
 .wireEmber {
   fill: none;
   stroke-width: 1.6;
   stroke-linecap: round;
-  stroke-dasharray: 6 60;
-  animation: flow 2.4s linear infinite;
-}
-
-.beam {
-  stroke: var(--sky);
-  filter: drop-shadow(0 0 3px var(--sky));
+  stroke-dasharray: var(--dash) calc(var(--period) - var(--dash));
+  animation: flow var(--speed) linear infinite;
 }
 
 /* every line is drawn from its source, so a falling offset carries the light
    toward its destination: up the stack, and out to the house */
+.beam {
+  --dash: 6px;
+  --period: 66px;
+  --speed: 2.4s;
+  stroke: var(--sky);
+  filter: drop-shadow(0 0 3px var(--sky));
+}
 
 .wire {
+  --dash: 8px;
+  --period: 78px;
+  --speed: 2.8s;
   stroke: var(--violet);
   filter: drop-shadow(0 0 3px var(--violet));
-  stroke-dasharray: 8 70;
-  animation-duration: 2.8s;
 }
 
 .wireEmber {
+  --dash: 6px;
+  --period: 46px;
+  --speed: 1.8s;
   stroke: var(--ember-b);
   filter: drop-shadow(0 0 3px var(--ember-a));
-  stroke-dasharray: 6 40;
-  animation-duration: 1.8s;
 }
 
 @keyframes flow {
   from {
-    stroke-dashoffset: 66;
+    stroke-dashoffset: var(--period);
   }
   to {
     stroke-dashoffset: 0;

@@ -1,0 +1,227 @@
+.page {
+  display: grid;
+  gap: 48px;
+  padding-block: 24px 40px;
+}
+
+.crumbs {
+  display: flex;
+  gap: 10px;
+  font-size: 13.5px;
+  color: var(--faint);
+}
+
+.crumbs a {
+  color: var(--muted);
+  text-decoration: none;
+}
+
+.crumbs a:hover {
+  color: var(--fg);
+}
+
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 48px;
+  align-items: center;
+}
+
+.heroText {
+  display: grid;
+  gap: 14px;
+  justify-items: start;
+}
+
+.h1 {
+  font-size: clamp(34px, 5vw, 54px);
+  line-height: 1.04;
+  letter-spacing: -0.03em;
+}
+
+.aka {
+  color: var(--faint);
+  margin-top: -6px;
+}
+
+.lede {
+  font-size: 17px;
+  color: var(--muted);
+  max-width: 48ch;
+}
+
+.project {
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.project a {
+  color: var(--ink-sky);
+}
+
+.caveat {
+  font-size: 14px;
+  color: var(--muted);
+  padding: 12px 16px;
+  border-radius: var(--r-pane);
+  border: 1px dashed color-mix(in srgb, var(--fg) 24%, transparent);
+}
+
+.cols {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 32px;
+  align-items: start;
+}
+
+.section {
+  display: grid;
+  gap: 16px;
+  min-width: 0;
+}
+
+.h2 {
+  font-size: 24px;
+  line-height: 1.15;
+}
+
+.specs {
+  margin: 0;
+  padding: 4px 20px;
+  border-radius: var(--r-pane);
+}
+
+.spec {
+  display: grid;
+  grid-template-columns: 110px minmax(0, 1fr);
+  gap: 16px;
+  padding: 12px 0;
+  border-top: 1px solid var(--edge);
+  font-size: 14.5px;
+}
+
+.spec:first-child {
+  border-top: 0;
+}
+
+.spec dt {
+  color: var(--faint);
+}
+
+.spec dd {
+  margin: 0;
+}
+
+.panes {
+  list-style: none;
+  margin: 0;
+  padding: 4px 20px;
+  border-radius: var(--r-pane);
+}
+
+.pane {
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1fr) auto;
+  gap: 14px;
+  align-items: center;
+  padding: 11px 0;
+  border-top: 1px solid var(--edge);
+}
+
+.pane:first-child {
+  border-top: 0;
+}
+
+.paneIc {
+  width: 32px;
+  height: 32px;
+  border-radius: 9px;
+  border: 1px solid var(--edge);
+  background: var(--bg-2);
+  display: grid;
+  place-items: center;
+  color: var(--muted);
+}
+
+.paneIc svg {
+  width: 17px;
+  height: 17px;
+}
+
+.paneText {
+  display: grid;
+  gap: 1px;
+}
+
+.paneName {
+  font-size: 14.5px;
+  font-weight: 500;
+}
+
+.paneNote {
+  font-size: 12.5px;
+  color: var(--faint);
+}
+
+.install {
+  padding: 20px 22px;
+  border-radius: var(--r-pane);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.install p {
+  color: var(--muted);
+  max-width: 60ch;
+}
+
+.cta {
+  font-size: 14.5px;
+  font-weight: 500;
+  text-decoration: none;
+  padding: 12px 20px;
+  border-radius: 999px;
+  background: var(--fg);
+  color: var(--bg);
+  white-space: nowrap;
+}
+
+.cta:hover {
+  opacity: 0.88;
+}
+
+/* placeholder while the slug resolves */
+.ghostLine {
+  display: block;
+  height: 14px;
+  width: 90px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--fg) 8%, transparent);
+}
+
+.ghostTitle {
+  height: 44px;
+  width: min(100%, 360px);
+  border-radius: 10px;
+}
+
+.ghostScreen {
+  aspect-ratio: 2 / 1;
+  max-width: 100%;
+  border-radius: clamp(14px, 3vw, 26px);
+  background: color-mix(in srgb, var(--fg) 6%, transparent);
+}
+
+@media (max-width: 860px) {
+  .hero,
+  .cols {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .hero {
+    gap: 28px;
+  }
+}

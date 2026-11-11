@@ -1,0 +1,126 @@
+/* status pill: device-level status */
+.pill {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 4px 9px;
+  border-radius: 999px;
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+  white-space: nowrap;
+}
+
+.pill::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.works {
+  color: var(--ok-ink);
+  background: color-mix(in srgb, var(--green) 16%, transparent);
+}
+
+.planned {
+  color: var(--muted);
+  background: color-mix(in srgb, var(--muted) 12%, transparent);
+}
+
+/* pane support on a device */
+.support {
+  font-size: 13px;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.support::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex: none;
+}
+
+.s_works {
+  color: var(--fg);
+}
+
+.s_works::before {
+  background: var(--green);
+}
+
+.s_planned,
+.s_depends {
+  color: var(--muted);
+}
+
+.s_planned::before,
+.s_depends::before {
+  border: 1.5px solid currentColor;
+}
+
+.s_unknown,
+.s_no {
+  color: var(--faint);
+}
+
+.s_unknown::before {
+  border: 1.5px dashed currentColor;
+}
+
+.s_no::before {
+  width: 8px;
+  height: 1.5px;
+  border-radius: 0;
+  background: currentColor;
+}
+
+/* device screen */
+.slot {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 2 / 1;
+  width: 100%;
+  max-width: 100%;
+}
+
+.screen {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 12px;
+  background:
+    radial-gradient(80% 90% at 10% 0%, rgba(56, 189, 248, 0.35), transparent 70%),
+    radial-gradient(70% 90% at 95% 100%, rgba(167, 139, 250, 0.3), transparent 70%),
+    var(--night);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+
+.square {
+  width: auto;
+  aspect-ratio: 1;
+}
+
+.mark {
+  width: 22%;
+  color: var(--s-fg);
+  opacity: 0.85;
+}
+
+.square .mark {
+  width: 44%;
+}
+
+.hero .screen {
+  border-radius: clamp(14px, 3vw, 26px);
+  box-shadow: 0 30px 80px -40px rgba(10, 11, 15, 0.55);
+}

@@ -51,6 +51,16 @@
   border: 1px solid var(--edge);
 }
 
+@media (max-width: 440px) {
+  .ghText {
+    display: none;
+  }
+
+  .nav {
+    gap: 2px;
+  }
+}
+
 .ghIcon {
   width: 16px;
   height: 16px;

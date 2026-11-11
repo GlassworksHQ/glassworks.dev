@@ -12,6 +12,7 @@ export function SiteFooter() {
           <span className={styles.wordSm}>Glassworks</span>
         </Link>
         <nav className={styles.footNav} aria-label="Footer">
+          <Link href="/frames">Devices</Link>
           <Link href="/brand">Brand</Link>
           <Link href="/trademarks">Trademarks</Link>
           <a href={links.org}>GitHub</a>
@@ -19,7 +20,8 @@ export function SiteFooter() {
         </nav>
       </div>
       <p className={styles.legal}>
-        Home Assistant is a trademark of the Open Home Foundation. Glassworks isn&rsquo;t affiliated with it.
+        Home Assistant is a trademark of the Open Home Foundation. Glassworks
+        isn&rsquo;t affiliated with it.
       </p>
     </footer>
   );

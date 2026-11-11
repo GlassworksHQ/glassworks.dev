@@ -1,29 +1,10 @@
 import { GlassTile } from "@/components/GlassTile";
 import { Stack } from "@/components/Stack";
-import {
-  BaseGlyph,
-  MicGlyph,
-  MusicGlyph,
-  RadioGlyph,
-  SensorGlyph,
-  TimerGlyph,
-} from "@/components/Glyphs";
-import { frames, links, panes, type PaneId, type Status } from "@/lib/site";
+import Link from "next/link";
+import { DeviceScreen, StatusPill, paneIcon } from "@/components/DeviceBits";
+import { devices } from "@/lib/devices";
+import { links, panes } from "@/lib/site";
 import styles from "./page.module.css";
-
-const paneIcon: Record<PaneId, typeof MicGlyph> = {
-  assist: MicGlyph,
-  timers: TimerGlyph,
-  sendspin: MusicGlyph,
-  radio: RadioGlyph,
-  sensors: SensorGlyph,
-  base: BaseGlyph,
-};
-
-const statusText: Record<Status, string> = {
-  works: "Works today",
-  planned: "Planned",
-};
 
 export default function Home() {
   return (
@@ -102,26 +83,30 @@ export default function Home() {
       </section>
 
       <section className={styles.section} aria-labelledby="frames">
-        <h2 id="frames" className={styles.h2}>
-          Frames
-        </h2>
+        <div className={styles.headRow}>
+          <h2 id="frames" className={styles.h2}>
+            Devices
+          </h2>
+          <Link href="/frames" className={styles.more}>
+            All devices
+          </Link>
+        </div>
         <ul className={styles.frames}>
-          {frames.map((f) => (
-            <li key={f.name} className={`glass ${styles.frame}`}>
-              <span
-                className={`${styles.thumb} ${f.ratio === "square" ? styles.square : ""}`}
-                aria-hidden="true"
-              />
-              <div className={styles.frameText}>
-                <div className={styles.frameTop}>
-                  <h3 className={styles.frameName}>{f.name}</h3>
-                  <span className={`${styles.pill} ${styles[f.status]}`}>
-                    {statusText[f.status]}
-                  </span>
+          {devices.map((d) => (
+            <li key={d.slug}>
+              <Link
+                href={`/frames/${d.slug}`}
+                className={`glass ${styles.frame}`}
+              >
+                <DeviceScreen shape={d.shape} />
+                <div className={styles.frameText}>
+                  <div className={styles.frameTop}>
+                    <h3 className={styles.frameName}>{d.name}</h3>
+                    <StatusPill status={d.status} />
+                  </div>
+                  <p>{d.summary}</p>
                 </div>
-                <p className={styles.project}>{f.project}</p>
-                <p>{f.detail}</p>
-              </div>
+              </Link>
             </li>
           ))}
         </ul>
