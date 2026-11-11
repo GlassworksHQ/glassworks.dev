@@ -55,7 +55,7 @@ export function GlassTile({
       </div>
       {replay && (
         <button type="button" className={styles.replay} onClick={() => setRun((n) => n + 1)}>
-          Replay the light sweep
+          Replay
         </button>
       )}
     </div>

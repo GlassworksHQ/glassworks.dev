@@ -41,14 +41,14 @@ const LAYERS: Layer[] = [
     cells: ["Assist", "Timers", "Radio", "Sensors", "Device pane", "Sendspin"],
     lit: [0, 2, 3, 5],
     dashed: [4],
-    desc: "Plugins. Each one says what it needs, and the frame lists the ones it ships. Turn them on and off from the panel.",
+    desc: "Plugins. Each declares what hardware it needs.",
     items: [
       "Assist",
       "Timers",
       "Zigbee / Thread radio",
       "Android sensors",
       "Sendspin",
-      "A frame's own panes, like the S1 wall base",
+      "Frame-specific panes, like the S1 wall base",
     ],
   },
   {
@@ -60,7 +60,7 @@ const LAYERS: Layer[] = [
     label: "PANE API",
     cells: [null, null, null, null, null, null],
     sockets: true,
-    desc: "The small, stable contract between the core and every pane. A pane's requires meets the frame's provides here, and panes that can't run stay listed with the reason.",
+    desc: "The stable contract between core and panes.",
     items: [
       "entities()",
       "settings()",
@@ -77,7 +77,7 @@ const LAYERS: Layer[] = [
     thick: 5,
     label: "GLASSWORKS CORE",
     cells: ["Shell", "Setup", "Device", "Screen", "Settings", "Update"],
-    desc: "What every panel needs, with no device in it.",
+    desc: "What every panel needs. No device code.",
     items: [
       "GeckoView dashboard shell",
       "Setup flow",
@@ -86,7 +86,7 @@ const LAYERS: Layer[] = [
       "Settings menu",
       "Updates through HA",
     ],
-    note: "Built on plain libraries anyone can use: esphome-api, improv, ha-auth, sendspin-protocol.",
+    note: "Built on standalone libraries: esphome-api, improv, ha-auth, sendspin-protocol.",
   },
   {
     id: "frame",
@@ -103,14 +103,14 @@ const LAYERS: Layer[] = [
       "Device I/O",
       "Screen off",
     ],
-    desc: "One device definition, like aqara-s1 or nspanel-pro. Everything specific to the hardware lives here, so the core never has to know which panel it's on.",
+    desc: "One per device. Everything hardware-specific lives here.",
     items: [
-      "Board id for mDNS",
-      "How updates install: root helper or PackageInstaller",
-      "Radio backend: how the radio is wired",
+      "Board id",
+      "Update installer",
+      "Radio backend",
       "Presence and light sources",
-      "Device extras, like a wall base or relays",
-      "How to turn the screen off",
+      "Device extras, like relays",
+      "Screen-off method",
     ],
   },
   {
@@ -129,13 +129,13 @@ const LAYERS: Layer[] = [
       "Speaker",
     ],
     chips: true,
-    desc: "The panel itself: an Aqara S1 Plus, an NSPanel Pro, a tablet. The frame says what it has, and Kiln installs Glassworks onto it from a browser, over USB.",
+    desc: "Any Android panel. Kiln installs over USB, from the browser.",
     items: [
       "An Android SoC",
-      "A Zigbee / Thread radio, if it has one",
+      "Zigbee / Thread radio (optional)",
       "Presence and light sensors",
       "Microphone and speaker",
-      "Extras like relays or a wall base",
+      "Relays, wall base and other extras",
     ],
   },
 ];
@@ -464,16 +464,12 @@ export function Stack() {
             className={`${styles.panel} ${active === null ? styles.shown : ""}`}
             aria-hidden={active !== null}
           >
-            <span className="label">For example</span>
+            <span className="label">Example</span>
             <p className={styles.panelLead}>
-              S1 Unleashed is a Glassworks frame for the Aqara S1 Plus. It ships
-              the radio and wall-base panes, and Kiln installs it.
+              S1 Unleashed is the Aqara S1 Plus frame, with the radio and
+              wall-base panes.
             </p>
-            <p className={styles.panelHint}>
-              A frame for another panel swaps the bottom two layers and keeps
-              everything above them. Hover or tap a layer to see what&rsquo;s in
-              it.
-            </p>
+            <p className={styles.panelHint}>Hover a layer for details.</p>
           </div>
           {LAYERS.map((l) => (
             <div

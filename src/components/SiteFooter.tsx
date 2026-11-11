@@ -18,8 +18,7 @@ export function SiteFooter() {
         </nav>
       </div>
       <p className={styles.legal}>
-        Home Assistant is a trademark of the Open Home Foundation. Glassworks is an independent project and
-        isn&rsquo;t affiliated with or endorsed by it.
+        Home Assistant is a trademark of the Open Home Foundation. Glassworks isn&rsquo;t affiliated with it.
       </p>
     </footer>
   );

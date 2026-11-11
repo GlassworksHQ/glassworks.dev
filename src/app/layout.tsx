@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://glassworks.dev"),
   title: { default: "Glassworks", template: "%s · Glassworks" },
   description:
-    "The open-source core for Home Assistant wall panels. A dashboard shell, ESPHome device, setup and updates, plus panes for voice, music and Zigbee/Thread.",
+    "Open-source core for Home Assistant wall panels: dashboard, ESPHome device, setup and updates, with plugins for voice, music and Zigbee/Thread.",
   openGraph: { siteName: "Glassworks", type: "website" },
 };
 

@@ -36,11 +36,8 @@ export default function Home() {
             The open core for Home Assistant wall panels.
           </h1>
           <p className={styles.lede}>
-            Glassworks is what a wall panel needs to become a good Home
-            Assistant dashboard: the dashboard shell, a native ESPHome device,
-            setup and updates. Voice, music and the Zigbee/Thread radio plug in
-            as panes. You can port it to your hardware, fork it and ship panels
-            with it.
+            Dashboard, ESPHome device, setup and updates for any wall panel.
+            Voice, music and Zigbee/Thread plug in as panes.
           </p>
           <div className={styles.ctas}>
             <a className={styles.primary} href={links.org}>
@@ -51,9 +48,8 @@ export default function Home() {
             </a>
           </div>
           <p className={styles.note}>
-            Glassworks is being split out of S1 Unleashed now, so there&rsquo;s
-            nothing to install from here yet. If you have an Aqara S1 Plus,{" "}
-            <a href={links.s1Install}>S1 Unleashed installs today</a>.
+            Not released yet. It&rsquo;s being split out of S1 Unleashed, which{" "}
+            <a href={links.s1Install}>installs on the Aqara S1 Plus today</a>.
           </p>
         </div>
         <div className={styles.heroTile}>
@@ -69,25 +65,21 @@ export default function Home() {
 
       <section className={styles.section} aria-labelledby="fits">
         <div className={styles.head}>
-          <span className="label">How it&rsquo;s built</span>
           <h2 id="fits" className={styles.h2}>
-            A frame holds panes. Kiln installs it.
+            How it&rsquo;s built
           </h2>
           <p className={styles.sectionLede}>
-            Each layer only knows the one below it, so a new panel only needs a
-            new frame.
+            A frame holds panes, and Kiln installs it. Supporting a new panel
+            means writing a new frame.
           </p>
         </div>
         <Stack />
       </section>
 
       <section className={styles.section} aria-labelledby="panes">
-        <div className={styles.head}>
-          <span className="label">Panes</span>
-          <h2 id="panes" className={styles.h2}>
-            Pick what your panel does.
-          </h2>
-        </div>
+        <h2 id="panes" className={styles.h2}>
+          Panes
+        </h2>
         <ul className={styles.panes}>
           {panes.map((p) => {
             const Icon = paneIcon[p.id];
@@ -110,12 +102,9 @@ export default function Home() {
       </section>
 
       <section className={styles.section} aria-labelledby="frames">
-        <div className={styles.head}>
-          <span className="label">Frames</span>
-          <h2 id="frames" className={styles.h2}>
-            Starting with one panel, built for more.
-          </h2>
-        </div>
+        <h2 id="frames" className={styles.h2}>
+          Frames
+        </h2>
         <ul className={styles.frames}>
           {frames.map((f) => (
             <li key={f.name} className={`glass ${styles.frame}`}>
@@ -143,37 +132,25 @@ export default function Home() {
         aria-labelledby="why"
       >
         <div className={styles.head}>
-          <span className="label">Why it&rsquo;s open</span>
           <h2 id="why" className={styles.h2}>
-            A base other projects can build on.
+            Why Apache-2.0
           </h2>
           <p className={styles.whyLede}>
-            The most complete panel apps today are closed or licensed for
-            non-commercial use only. That means no ports to new hardware, no
-            forks if the maintainer stops, and no panels for sale. Glassworks is
-            Apache-2.0 so all three are allowed.
+            Most full-featured panel apps are closed or non-commercial.
           </p>
         </div>
         <div className={styles.trio}>
           <div className={styles.point}>
             <h3>Port it</h3>
-            <p>
-              Write a frame for your device. The core doesn&rsquo;t know or care
-              which panel it runs on.
-            </p>
+            <p>Write a frame for your device.</p>
           </div>
           <div className={styles.point}>
             <h3>Fork it</h3>
-            <p>
-              If the project goes quiet, anyone can carry it on. The license
-              makes sure of that.
-            </p>
+            <p>Anyone can carry it on.</p>
           </div>
           <div className={styles.point}>
             <h3>Ship it</h3>
-            <p>
-              Integrators and panel makers can sell devices that run Glassworks.
-            </p>
+            <p>Sell panels that run it.</p>
           </div>
         </div>
       </section>

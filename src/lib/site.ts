@@ -16,21 +16,21 @@ export const frames: {
   {
     name: "Aqara S1 Plus",
     project: "S1 Unleashed",
-    detail: "The reference frame. Root over FEL, Zigbee and Thread radio, wall base.",
+    detail: "The reference frame, with radio and wall base.",
     status: "works",
     ratio: "wide",
   },
   {
     name: "Sonoff NSPanel Pro",
     project: "and its T6E rebadges",
-    detail: "Same EFR32MG21 radio on a UART. ADB root, no boot patching.",
+    detail: "Same radio chip. Root over ADB, no boot patch.",
     status: "planned",
     ratio: "square",
   },
   {
     name: "Generic Android",
     project: "tablets, old phones",
-    detail: "Core, Assist, Sendspin and the Android sensors. No root needed.",
+    detail: "Core, Assist, Sendspin and sensors. No root.",
     status: "experimental",
     ratio: "wide",
   },
@@ -39,15 +39,15 @@ export const frames: {
 export type PaneId = "assist" | "timers" | "sendspin" | "radio" | "sensors" | "base";
 
 export const panes: { id: PaneId; name: string; does: string; requires: string }[] = [
-  { id: "assist", name: "Assist", does: "Wake word, the Assist pipeline and a voice overlay.", requires: "A microphone" },
-  { id: "timers", name: "Timers", does: "Voice timers on the dashboard.", requires: "Assist" },
-  { id: "sendspin", name: "Sendspin", does: "A synced Music Assistant player.", requires: "Nothing" },
+  { id: "assist", name: "Assist", does: "Wake word and voice overlay.", requires: "Microphone" },
+  { id: "timers", name: "Timers", does: "Voice timers on screen.", requires: "Assist" },
+  { id: "sendspin", name: "Sendspin", does: "Synced Music Assistant player.", requires: "Any panel" },
   {
     id: "radio",
     name: "Zigbee / Thread radio",
-    does: "Coordinator, router or Thread border router for ZHA, Z2M and OTBR.",
-    requires: "A Silicon Labs radio",
+    does: "Zigbee coordinator or router, Thread border router.",
+    requires: "Silicon Labs radio",
   },
-  { id: "sensors", name: "Android sensors", does: "Presence and ambient light as HA sensors.", requires: "Proximity or light sensor" },
-  { id: "base", name: "Wall base", does: "Controls the S1's wired wall base over UART.", requires: "The S1 wall base" },
+  { id: "sensors", name: "Android sensors", does: "Presence and light as HA sensors.", requires: "Proximity or light sensor" },
+  { id: "base", name: "Wall base", does: "The S1's wired wall base.", requires: "S1 wall base" },
 ];

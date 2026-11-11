@@ -8,7 +8,7 @@ import s from "./brand.module.css";
 
 export const metadata: Metadata = {
   title: "Brand",
-  description: "The Glassworks mark, colour, type, glass surface and motion, with SVGs to download.",
+  description: "The Glassworks mark, colour, type and motion, with SVGs.",
 };
 
 const swatches: { group: string; items: { name: string; value: string; fill: string }[] }[] = [
@@ -88,10 +88,9 @@ export default function BrandPage() {
       <header className={s.hero}>
         <div className={s.heroCopy}>
           <span className="label">Brand</span>
-          <h1 className={s.h1}>A frame, holding panes, with one of them lit.</h1>
+          <h1 className={s.h1}>A frame of panes, one of them lit.</h1>
           <p className={s.heroLede}>
-            The Glassworks identity grows out of S1 Unleashed&rsquo;s Glass Tile boot screen: night glass, thin Inter,
-            and sky to violet light. The mark is the project&rsquo;s own vocabulary, drawn literally.
+            Taken from S1 Unleashed&rsquo;s boot screen: dark glass, thin Inter, sky-to-violet light.
           </p>
         </div>
         <GlassTile label="Open core for wall panels" status="Apache-2.0" footLeft="Frames · Panes · Kiln" footRight="glassworks.dev" replay />
@@ -100,8 +99,8 @@ export default function BrandPage() {
       <Section
         id="mark"
         label="The mark"
-        title="Drawn on the panel's own proportions."
-        lede="The outer frame is 2:1, the shape of the S1's screen and of the Glass Tile card. Inside sit three panes. The big one carries the light; the two small ones are clear glass, waiting for whatever a frame plugs in. Every gap is the same 6 units, so the mullions read as one material."
+        title="2:1, like the panel."
+        lede="Three panes in a frame. Only the big one is lit. Every gap is 6 units."
       >
         <div className={`glass ${s.construct}`}>
           <svg viewBox="0 0 170 90" role="img" aria-label="Construction: a 2:1 frame with radius 14 and stroke 4, three panes separated by 6-unit gaps">
@@ -145,21 +144,21 @@ export default function BrandPage() {
               <span className={s.sw} style={{ border: "2px solid var(--fg)" }} />
               Frame
             </h3>
-            <p>The device. One per build. It sets the shape everything else lives in.</p>
+            <p>The device.</p>
           </div>
           <div>
             <h3 className={s.chip}>
               <span className={s.sw} style={{ background: "var(--lit-gradient)" }} />
               Lit pane
             </h3>
-            <p>The dashboard you live with. It&rsquo;s the only colour in the mark, the same light as the boot sweep.</p>
+            <p>The dashboard. The only colour in the mark.</p>
           </div>
           <div>
             <h3 className={s.chip}>
               <span className={s.sw} style={{ background: "color-mix(in srgb, var(--fg) 26%, transparent)" }} />
               Clear panes
             </h3>
-            <p>Assist, Sendspin, the radio, whatever the frame picks. Same type, different requirements.</p>
+            <p>Plugins.</p>
           </div>
         </div>
         <div className={`glass ${s.sizes}`}>
@@ -179,8 +178,7 @@ export default function BrandPage() {
           </figure>
         </div>
         <p className={s.note}>
-          Below 40 px wide, switch to the small cut. It has a heavier frame, and the two clear panes merge into one so they
-          don&rsquo;t blur into a grey smear.
+          Under 40 px wide, use the small cut: heavier frame, clear panes merged.
         </p>
         <div className={s.grounds}>
           <div className={`${s.ground} ${s.gNight}`}>
@@ -201,11 +199,10 @@ export default function BrandPage() {
       <Section
         id="lockups"
         label="Lockups"
-        title="One mark, one spelling, four uses."
+        title="One spelling: Glassworks."
         lede={
           <>
-            The wordmark is Inter Light at −2.5% tracking, in sentence case: <b>Glassworks</b>, never GlassWorks or
-            GLASSWORKS. The mark sits at 1.6 × the cap height, a mullion&rsquo;s width from the word.
+            Inter Light, −2.5% tracking, sentence case. Mark at 1.6 × cap height.
           </>
         }
       >
@@ -229,7 +226,7 @@ export default function BrandPage() {
                 <Mark />
               </div>
               <p className={s.note} style={{ maxWidth: "22ch" }}>
-                Always on night glass, whatever the theme. The icon is a little screen.
+                Always on dark, in either theme.
               </p>
             </div>
           </div>
@@ -242,8 +239,7 @@ export default function BrandPage() {
               </span>
             </div>
             <p className={s.note}>
-              The lit pane turns to ember. Kiln is where glass is fired, so it&rsquo;s the one place heat enters the
-              palette. Nothing else gets its own colour.
+              The lit pane turns ember. Only Kiln uses it.
             </p>
           </div>
           <div className={`glass ${s.lockup}`}>
@@ -255,8 +251,7 @@ export default function BrandPage() {
               </span>
             </div>
             <p className={s.note}>
-              For S1 Unleashed and every future frame&rsquo;s README and site. Frames keep their own names and marks; the
-              badge links them back to the core.
+              For frame projects&rsquo; READMEs and sites.
             </p>
           </div>
         </div>
@@ -265,8 +260,8 @@ export default function BrandPage() {
       <Section
         id="colour"
         label="Colour"
-        title="Neutral glass, and light that means something."
-        lede="Night and its greys carry over unchanged from the S1 onboarding screen, so a Glassworks panel, its installer and its docs feel like one object. Colour is kept for light (things that are on) and heat (Kiln). Status colours only ever mean status."
+        title="Colour means something."
+        lede="Greys from the S1 onboarding screen. Sky and violet mean on. Ember means Kiln. Status colours mean status."
       >
         <div className={s.palette}>
           {swatches.map((g) => (
@@ -291,8 +286,8 @@ export default function BrandPage() {
       <Section
         id="type"
         label="Type"
-        title="Inter, thin where it's big."
-        lede="The S1 dashboard sets its clock in Inter ExtraLight, and the boot tile does the same with “S1”. Glassworks keeps that: the larger the text, the thinner the weight. JetBrains Mono is for entity IDs, capabilities and commands, the things people copy."
+        title="Inter, thinner as it grows."
+        lede="JetBrains Mono for anything people copy: entity IDs, capabilities, commands."
       >
         <div className={`glass ${s.specimen}`}>
           <div className={s.spec}>
@@ -320,8 +315,7 @@ export default function BrandPage() {
               Body<span>Inter 400 · 15/24</span>
             </div>
             <p className={s.sBody}>
-              A pane says what it needs, and the frame says what it has. Panes a frame can&rsquo;t run stay listed, greyed
-              out, with the reason.
+              A pane says what it needs. The frame says what it has.
             </p>
           </div>
           <div className={s.spec}>
@@ -338,8 +332,8 @@ export default function BrandPage() {
       <Section
         id="glass"
         label="Glass"
-        title="One surface, used everywhere."
-        lede="Every card, on the panel, in Kiln and on the docs, is the same glass: a faint fill, a hairline edge, a soft blur, and room light behind it from the top-left (sky) and bottom-right (violet). Cards don't get drop shadows. Depth comes from the light."
+        title="One surface."
+        lede="Faint fill, hairline edge, blur. Light from top-left (sky) and bottom-right (violet). No drop shadows."
       >
         <pre className={s.recipe}>
           <code>{`.glass {
@@ -374,7 +368,7 @@ export default function BrandPage() {
               </div>
             </div>
             <span className={s.kbtn}>Connect over USB</span>
-            <p className={s.note}>The ember button is Kiln&rsquo;s one primary action per step.</p>
+            <p className={s.note}>One ember button per Kiln step.</p>
           </div>
           <div className={`glass ${s.panel}`}>
             <div className={s.panelHead}>
@@ -409,26 +403,26 @@ export default function BrandPage() {
                 <Switch label="Wall base, unavailable" disabled />
               </div>
             </div>
-            <p className={s.note}>Switches that are on use the lit gradient. Unavailable panes stay listed and say why.</p>
+            <p className={s.note}>On is lit. Unavailable panes say why.</p>
           </div>
         </div>
         <div className={s.rules}>
           <div className={s.rule}>
             <span className={s.ruleK}>radius</span>
-            <p>22 for tiles, 12 inside them. On the panel, set the tile radius to 5.6% of its width, as the boot card does.</p>
+            <p>22 for tiles, 12 inside. On the panel, 5.6% of tile width.</p>
           </div>
           <div className={s.rule}>
             <span className={s.ruleK}>anatomy</span>
-            <p>Small caps label top-left, status top-right with a dot, big content bottom-left. That&rsquo;s the Glass Tile, and it carries across.</p>
+            <p>Label top-left, status top-right, big content bottom-left.</p>
           </div>
           <div className={s.rule}>
             <span className={s.ruleK}>daylight</span>
-            <p>The site, docs and Kiln follow the viewer&rsquo;s theme. Daylight is frosted white glass on cool grey. The panel itself stays on night.</p>
+            <p>Web follows the viewer&rsquo;s theme. The panel stays dark.</p>
           </div>
         </div>
       </Section>
 
-      <Section id="vocabulary" label="Vocabulary" title="Glyphs for Frame, Pane and Kiln." lede="Built from the mark's geometry, at 1.6 px stroke on a 24 grid, for the docs, the settings menu and Kiln's steps.">
+      <Section id="vocabulary" label="Vocabulary" title="Frame, Pane, Kiln." lede="1.6 px stroke on a 24 px grid.">
         <div className={s.vocab}>
           <div className={`glass ${s.term}`}>
             <FrameGlyph />
@@ -458,28 +452,28 @@ export default function BrandPage() {
         id="motion"
         label="Motion"
         title="Light moves; glass doesn't."
-        lede="Cards never bounce, scale or slide in. What moves is the light across them, the same diagonal sweep the S1 boot animation plays. The button under the tile at the top replays it."
+        lede="No bouncing, scaling or sliding. All of it stops under reduced motion."
       >
         <div className={s.vocab}>
           <div className={`glass ${s.mo}`}>
             <span className={s.ruleK}>sweep · 1.5 s · once</span>
             <h3>Waking</h3>
-            <p>Boot, sign-in done, install finished. A diagonal sheen crosses the glass from the left.</p>
+            <p>A diagonal sheen on boot, sign-in and install.</p>
           </div>
           <div className={`glass ${s.mo}`}>
             <span className={s.ruleK}>drift · 6 s · loop</span>
             <h3>Alive</h3>
-            <p>Room glows drift a few percent on a slow loop. If you notice it within five seconds, it&rsquo;s too fast.</p>
+            <p>Background glows drift, slowly enough to miss.</p>
           </div>
           <div className={`glass ${s.mo}`}>
             <span className={s.ruleK}>breathe · 2 s · loop</span>
             <h3>Status</h3>
-            <p>Only the status dot pulses: amber while working, green when ready. All of it stops under reduced motion.</p>
+            <p>Only the status dot pulses.</p>
           </div>
         </div>
       </Section>
 
-      <Section id="dont" label="Don't" title="Four ways to break it.">
+      <Section id="dont" label="Don't" title="Four rules.">
         <div className={s.donts}>
           <div className={s.dont}>
             <div className={`${s.ground} ${s.gNight}`}>
@@ -491,21 +485,21 @@ export default function BrandPage() {
               </svg>
             </div>
             <span className={s.x}>Flatten the light</span>
-            <p>The lit pane is always the sky to violet gradient, or ember for Kiln.</p>
+            <p>Keep the gradient.</p>
           </div>
           <div className={s.dont}>
             <div className={`${s.ground} ${s.gNight}`}>
               <Mark className={s.rotated} />
             </div>
             <span className={s.x}>Turn it portrait</span>
-            <p>The frame is 2:1 landscape, like the panel. It doesn&rsquo;t rotate.</p>
+            <p>It&rsquo;s always landscape.</p>
           </div>
           <div className={s.dont}>
             <div className={`${s.ground} ${s.gGrad}`}>
               <Mark />
             </div>
             <span className={s.x}>Light on light</span>
-            <p>On a coloured background, use the one-colour version.</p>
+            <p>Use one colour on coloured backgrounds.</p>
           </div>
           <div className={s.dont}>
             <div className={`${s.ground} ${s.gNight}`}>
@@ -516,12 +510,12 @@ export default function BrandPage() {
               </span>
             </div>
             <span className={s.x}>Borrow trademarks</span>
-            <p>&ldquo;Home Assistant&rdquo; and &ldquo;Assist&rdquo; go in taglines, never in names or lockups.</p>
+            <p>Taglines only, never names.</p>
           </div>
         </div>
       </Section>
 
-      <Section id="downloads" label="Downloads" title="SVGs." lede="The marks and icons as SVG. The wordmark isn't a file yet: set Glassworks in Inter Light at −2.5% tracking.">
+      <Section id="downloads" label="Downloads" title="SVGs." lede="No wordmark file yet. Set it in Inter Light.">
         <ul className={s.downloads}>
           {downloads.map((d) => (
             <li key={d.file}>
