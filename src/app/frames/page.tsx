@@ -1,17 +1,18 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import {
-  ChangeTags,
   DeviceScreen,
+  RatingTags,
+  RatingValue,
   StatusPill,
   SupportTag,
   paneIcon,
 } from "@/components/DeviceBits";
 import {
-  changeLabels,
-  isUnchanged,
   devices,
-  type ChangeKey,
+  difficultyHelp,
+  ratingFields,
+  ratingKeys,
 } from "@/lib/devices";
 import { links, panes } from "@/lib/site";
 import s from "./frames.module.css";
@@ -45,7 +46,10 @@ export default function DevicesPage() {
                 </div>
                 {d.aka && <p className={s.aka}>{d.aka}</p>}
                 <p>{d.summary}</p>
-                <ChangeTags tags={d.tags} expected={d.status !== "works"} />
+                <RatingTags
+                  ratings={d.ratings}
+                  expected={d.status !== "works"}
+                />
               </div>
             </Link>
           </li>
@@ -86,15 +90,12 @@ export default function DevicesPage() {
               </tr>
             </thead>
             <tbody>
-              {(Object.keys(changeLabels) as ChangeKey[]).map((k) => (
+              {ratingKeys.map((k) => (
                 <tr key={k}>
-                  <th scope="row">{changeLabels[k]}</th>
+                  <th scope="row">{ratingFields[k].label}</th>
                   {devices.map((d) => (
-                    <td
-                      key={d.slug}
-                      className={isUnchanged(d.changes[k]) ? s.calm : undefined}
-                    >
-                      {d.changes[k]}
+                    <td key={d.slug}>
+                      <RatingValue field={k} rating={d.ratings[k]} />
                     </td>
                   ))}
                 </tr>
@@ -102,6 +103,14 @@ export default function DevicesPage() {
             </tbody>
           </table>
         </div>
+        <dl className={s.legend}>
+          {difficultyHelp.map((h) => (
+            <div key={h.name}>
+              <dt>{h.name}</dt>
+              <dd>{h.means}</dd>
+            </div>
+          ))}
+        </dl>
         <p className={s.note}>
           Planned devices show what the install is expected to do. Nothing has
           been run on them yet.

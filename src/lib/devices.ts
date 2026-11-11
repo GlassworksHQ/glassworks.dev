@@ -9,35 +9,140 @@ import type { PaneId } from "./site";
 export type DeviceStatus = "works" | "planned";
 export type Support = "works" | "planned" | "depends" | "unknown" | "no";
 
-/** What installing does to the device, the same fields for every device. */
-export type ChangeKey =
-  | "root"
-  | "boot"
-  | "verifiedBoot"
-  | "bootLogo"
-  | "system"
-  | "vendorApps"
-  | "data"
-  | "backup"
-  | "undo"
-  | "handsOn";
+/*
+ * What installing does to a device, rated on fixed scales so devices compare at a
+ * glance. Every device has every field; "unknown" shows as "Not checked".
+ */
+export const ratingFields = {
+  difficulty: {
+    label: "Difficulty",
+    options: {
+      preinstalled: "Pre-installed",
+      easy: "Easy",
+      medium: "Medium",
+      hard: "Hard",
+    },
+  },
+  reversible: {
+    label: "Reversible",
+    options: { yes: "Yes", partly: "Partly", no: "No" },
+  },
+  modifiesAndroid: {
+    label: "Modifies Android",
+    options: { yes: "Yes", no: "No" },
+  },
+  root: {
+    label: "Root",
+    options: {
+      required: "Required",
+      already: "Already there",
+      none: "Not needed",
+    },
+  },
+  opensDevice: { label: "Opens the device", options: { yes: "Yes", no: "No" } },
+  vendorApps: {
+    label: "Vendor apps",
+    options: {
+      kept: "Kept",
+      disabled: "Disabled",
+      partly: "Partly stopped",
+      removed: "Removed",
+    },
+  },
+  wipes: { label: "Wipes the device", options: { yes: "Yes", no: "No" } },
+  backup: {
+    label: "Backup",
+    options: {
+      automatic: "Automatic",
+      manual: "Manual",
+      none: "Not needed",
+      planned: "Planned",
+    },
+  },
+  updates: {
+    label: "Updates",
+    options: {
+      ha: "Through Home Assistant",
+      manual: "Manual",
+      planned: "Planned",
+    },
+  },
+} as const;
 
-export const changeLabels: Record<ChangeKey, string> = {
-  root: "Root",
-  boot: "Boot image",
-  verifiedBoot: "Verified boot",
-  bootLogo: "Boot logo",
-  system: "System partition",
-  vendorApps: "Vendor apps",
-  data: "Your data",
-  backup: "Backup",
-  undo: "Undo",
-  handsOn: "Hands-on",
+export type RatingKey = keyof typeof ratingFields;
+export const ratingKeys = Object.keys(ratingFields) as RatingKey[];
+
+export type Rating<K extends RatingKey> = {
+  value: keyof (typeof ratingFields)[K]["options"] | "unknown";
+  detail?: string;
 };
+export type Ratings = { [K in RatingKey]: Rating<K> };
 
-/** Values meaning the install leaves this alone; shown quieter than real changes. */
-export const isUnchanged = (value: string) =>
-  /^(Untouched|No|None|Kept)$/.test(value);
+export const difficultyHelp: { name: string; means: string }[] = [
+  { name: "Pre-installed", means: "The device ships with Glassworks." },
+  {
+    name: "Easy",
+    means: "Install from the browser or as an app. The device stays closed.",
+  },
+  {
+    name: "Medium",
+    means: "You open the device, for a screw or a hidden button. No soldering.",
+  },
+  { name: "Hard", means: "Soldering, test pads or a UART adapter." },
+];
+
+/** Only answers worth a warning get colour: a harder install, or one you can't fully undo. */
+export type Severity = "caution" | "warn" | undefined;
+
+export function severity(key: RatingKey, value: string): Severity {
+  if (key === "difficulty")
+    return value === "hard"
+      ? "warn"
+      : value === "medium"
+        ? "caution"
+        : undefined;
+  if (key === "reversible")
+    return value === "no" ? "warn" : value === "partly" ? "caution" : undefined;
+  if (key === "wipes") return value === "yes" ? "warn" : undefined;
+  return undefined;
+}
+
+export function ratingText(key: RatingKey, value: string) {
+  if (value === "unknown") return "Not checked";
+  return (ratingFields[key].options as Record<string, string>)[value];
+}
+
+/** The three answers people ask first, phrased to stand alone on a card. */
+export function cardTags(r: Ratings) {
+  const tags: { text: string; severity: Severity }[] = [];
+  const d = r.difficulty.value;
+  if (d !== "unknown")
+    tags.push({
+      text:
+        d === "preinstalled"
+          ? "Pre-installed"
+          : `${ratingText("difficulty", d)} install`,
+      severity: severity("difficulty", d),
+    });
+  const rev = r.reversible.value;
+  if (rev !== "unknown")
+    tags.push({
+      text:
+        rev === "yes"
+          ? "Reversible"
+          : rev === "partly"
+            ? "Partly reversible"
+            : "Not reversible",
+      severity: severity("reversible", rev),
+    });
+  const m = r.modifiesAndroid.value;
+  if (m !== "unknown")
+    tags.push({
+      text: m === "yes" ? "Modifies Android" : "Android untouched",
+      severity: undefined,
+    });
+  return tags;
+}
 
 export type Device = {
   slug: string;
@@ -50,10 +155,8 @@ export type Device = {
   specs: { label: string; value: string }[];
   panes: Record<PaneId, { support: Support; note?: string }>;
   install: { how: string; href?: string; cta?: string };
-  /** Short summary of the install's footprint, shown on cards. */
-  tags: string[];
-  changes: Record<ChangeKey, string>;
-  changesNote?: string;
+  ratings: Ratings;
+  ratingsNote?: string;
   unverified?: boolean;
 };
 
@@ -105,20 +208,27 @@ export const devices: Device[] = [
       href: "https://s1.edm.sh",
       cta: "Install S1 Unleashed",
     },
-    tags: ["Roots", "Patches boot", "Backup and undo"],
-    changes: {
-      root: "Yes: Magisk and a root helper",
-      boot: "Patched",
-      verifiedBoot: "Turned off (vbmeta)",
-      bootLogo: "Replaced; the command line can skip it",
-      system: "Untouched",
-      vendorApps: "Aqara's disabled, not removed",
-      data: "Kept",
-      backup: "Automatic, before anything is written",
-      undo: "Restores the original software",
-      handsOn: "Back cover off, for the FEL button",
+    ratings: {
+      difficulty: {
+        value: "medium",
+        detail: "Browser install, but the back cover comes off",
+      },
+      reversible: {
+        value: "yes",
+        detail: "Restores the original software from the backup",
+      },
+      modifiesAndroid: {
+        value: "yes",
+        detail: "Boot image patched, verified boot off",
+      },
+      root: { value: "required", detail: "Magisk and a root helper" },
+      opensDevice: { value: "yes", detail: "To reach the FEL button" },
+      vendorApps: { value: "disabled", detail: "Aqara's apps stay installed" },
+      wipes: { value: "no" },
+      backup: { value: "automatic", detail: "Before anything is written" },
+      updates: { value: "ha" },
     },
-    changesNote:
+    ratingsNote:
       "Without root, the app can install over adb on its own, but you lose the radio modes.",
   },
   {
@@ -151,18 +261,19 @@ export const devices: Device[] = [
     install: {
       how: "Not installable yet. Needs an arm64 build and a Kiln recipe.",
     },
-    tags: ["Root already there", "Boot untouched"],
-    changes: {
-      root: "Already there: adb root",
-      boot: "Untouched",
-      verifiedBoot: "Not checked",
-      bootLogo: "Untouched",
-      system: "Untouched",
-      vendorApps: "Vendor Zigbee host stopped",
-      data: "Not checked",
-      backup: "Planned",
-      undo: "Planned",
-      handsOn: "Not checked",
+    ratings: {
+      difficulty: { value: "easy", detail: "adb root, no boot patching" },
+      reversible: { value: "yes" },
+      modifiesAndroid: { value: "no" },
+      root: { value: "already", detail: "adb root on the userdebug build" },
+      opensDevice: { value: "unknown" },
+      vendorApps: {
+        value: "partly",
+        detail: "The vendor Zigbee host is stopped",
+      },
+      wipes: { value: "unknown" },
+      backup: { value: "planned" },
+      updates: { value: "planned" },
     },
     unverified: true,
   },
@@ -193,18 +304,16 @@ export const devices: Device[] = [
     install: {
       how: "Not installable yet. Will install as a normal app.",
     },
-    tags: ["No root", "Normal app"],
-    changes: {
-      root: "No",
-      boot: "Untouched",
-      verifiedBoot: "Untouched",
-      bootLogo: "Untouched",
-      system: "Untouched",
-      vendorApps: "Untouched",
-      data: "Kept",
-      backup: "Not needed",
-      undo: "Uninstall the app",
-      handsOn: "None",
+    ratings: {
+      difficulty: { value: "easy", detail: "Install an app" },
+      reversible: { value: "yes", detail: "Uninstall the app" },
+      modifiesAndroid: { value: "no" },
+      root: { value: "none" },
+      opensDevice: { value: "no" },
+      vendorApps: { value: "kept" },
+      wipes: { value: "no" },
+      backup: { value: "none" },
+      updates: { value: "planned" },
     },
   },
 ];

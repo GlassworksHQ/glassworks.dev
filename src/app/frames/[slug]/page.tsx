@@ -5,16 +5,11 @@ import { Suspense } from "react";
 import {
   DeviceScreen,
   StatusPill,
+  RatingValue,
   SupportTag,
   paneIcon,
 } from "@/components/DeviceBits";
-import {
-  changeLabels,
-  isUnchanged,
-  deviceBySlug,
-  devices,
-  type ChangeKey,
-} from "@/lib/devices";
+import { deviceBySlug, devices, ratingFields, ratingKeys } from "@/lib/devices";
 import { panes } from "@/lib/site";
 import s from "./device.module.css";
 
@@ -143,16 +138,16 @@ async function Device({ params }: { params: Params }) {
             : "What installing will change"}
         </h2>
         <dl className={`glass ${s.specs} ${s.changeList}`}>
-          {(Object.keys(changeLabels) as ChangeKey[]).map((k) => (
+          {ratingKeys.map((k) => (
             <div key={k} className={s.spec}>
-              <dt>{changeLabels[k]}</dt>
-              <dd className={isUnchanged(d.changes[k]) ? s.calm : undefined}>
-                {d.changes[k]}
+              <dt>{ratingFields[k].label}</dt>
+              <dd>
+                <RatingValue field={k} rating={d.ratings[k]} />
               </dd>
             </div>
           ))}
         </dl>
-        {d.changesNote && <p className={s.note}>{d.changesNote}</p>}
+        {d.ratingsNote && <p className={s.note}>{d.ratingsNote}</p>}
         {d.status !== "works" && (
           <p className={s.note}>
             Expected, from the plan. Nothing has been run on this device yet.

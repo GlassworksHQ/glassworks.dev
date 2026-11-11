@@ -2,7 +2,7 @@ import { GlassTile } from "@/components/GlassTile";
 import { Stack } from "@/components/Stack";
 import Link from "next/link";
 import {
-  ChangeTags,
+  RatingTags,
   DeviceScreen,
   StatusPill,
   paneIcon,
@@ -110,7 +110,10 @@ export default function Home() {
                     <StatusPill status={d.status} />
                   </div>
                   <p>{d.summary}</p>
-                  <ChangeTags tags={d.tags} expected={d.status !== "works"} />
+                  <RatingTags
+                    ratings={d.ratings}
+                    expected={d.status !== "works"}
+                  />
                 </div>
               </Link>
             </li>

@@ -193,24 +193,21 @@
   opacity: 0.88;
 }
 
-/* what installing changes: two columns of label/value rows on wide screens */
+/* what installing changes: nine fields, so three columns of three on wide screens */
 .changeList {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  column-gap: 40px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  column-gap: 32px;
 }
 
-.changeList .spec:nth-child(2) {
+.changeList .spec {
+  grid-template-columns: minmax(0, 1fr);
+  align-content: start;
+  gap: 2px;
+}
+
+.changeList .spec:nth-child(-n + 3) {
   border-top: 0;
-}
-
-.calm {
-  color: var(--faint);
-}
-
-.note {
-  font-size: 13.5px;
-  color: var(--faint);
 }
 
 @media (max-width: 760px) {
@@ -218,9 +215,18 @@
     grid-template-columns: minmax(0, 1fr);
   }
 
-  .changeList .spec:nth-child(2) {
+  .changeList .spec:nth-child(-n + 3) {
     border-top: 1px solid var(--edge);
   }
+
+  .changeList .spec:first-child {
+    border-top: 0;
+  }
+}
+
+.note {
+  font-size: 13.5px;
+  color: var(--faint);
 }
 
 /* placeholder while the slug resolves */

@@ -163,11 +163,37 @@
 }
 
 .changes td {
-  color: var(--fg);
+  vertical-align: top;
 }
 
-.changes td.calm {
+.legend {
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.legend div {
+  display: grid;
+  gap: 2px;
+  align-content: start;
+}
+
+.legend dt {
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.legend dd {
+  margin: 0;
+  font-size: 12.5px;
   color: var(--faint);
+}
+
+@media (max-width: 760px) {
+  .legend {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 .expected {
