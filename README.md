@@ -38,9 +38,17 @@ src/components/
   Mark.tsx             the mark: variant lit | ember | mono, cut full | small
   Glyphs.tsx           Frame, Pane, Kiln and pane icons on a 24 grid
   GlassTile.tsx        the 2:1 night tile with the light sweep
-src/lib/site.ts        links, frames and panes shown on the landing page
+  DeviceModel.tsx      3D device mockup: CSS front glass + computed SVG sides
+  deviceGeometry.ts    form factors (SPECS), projection, side faces, centring
+src/lib/site.ts        links and panes
+src/lib/devices.ts     the device catalog: specs, pane support, install ratings
 public/brand/          downloadable SVGs
 ```
+
+## Adding a device
+
+See [docs/adding-a-device.md](docs/adding-a-device.md): one entry in `src/lib/devices.ts`, and one in
+`SPECS` (`src/components/deviceGeometry.ts`) for a new form factor.
 
 ## Design system
 
