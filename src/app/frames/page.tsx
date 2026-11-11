@@ -2,18 +2,14 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import {
   DeviceScreen,
+  RatingLabel,
   RatingTags,
   RatingValue,
   StatusPill,
   SupportTag,
   paneIcon,
 } from "@/components/DeviceBits";
-import {
-  devices,
-  difficultyHelp,
-  ratingFields,
-  ratingKeys,
-} from "@/lib/devices";
+import { devices, difficultyHelp, ratingKeys } from "@/lib/devices";
 import { links, panes } from "@/lib/site";
 import s from "./frames.module.css";
 
@@ -92,7 +88,9 @@ export default function DevicesPage() {
             <tbody>
               {ratingKeys.map((k) => (
                 <tr key={k}>
-                  <th scope="row">{ratingFields[k].label}</th>
+                  <th scope="row">
+                    <RatingLabel field={k} />
+                  </th>
                   {devices.map((d) => (
                     <td key={d.slug}>
                       <RatingValue field={k} rating={d.ratings[k]} />

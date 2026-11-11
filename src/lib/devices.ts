@@ -114,10 +114,17 @@ export function ratingText(key: RatingKey, value: string) {
 
 /** The three answers people ask first, phrased to stand alone on a card. */
 export function cardTags(r: Ratings) {
-  const tags: { text: string; severity: Severity }[] = [];
+  const tags: {
+    key: RatingKey;
+    value: string;
+    text: string;
+    severity: Severity;
+  }[] = [];
   const d = r.difficulty.value;
   if (d !== "unknown")
     tags.push({
+      key: "difficulty",
+      value: d,
       text:
         d === "preinstalled"
           ? "Pre-installed"
@@ -127,6 +134,8 @@ export function cardTags(r: Ratings) {
   const rev = r.reversible.value;
   if (rev !== "unknown")
     tags.push({
+      key: "reversible",
+      value: rev,
       text:
         rev === "yes"
           ? "Reversible"
@@ -138,6 +147,8 @@ export function cardTags(r: Ratings) {
   const m = r.modifiesAndroid.value;
   if (m !== "unknown")
     tags.push({
+      key: "modifiesAndroid",
+      value: m,
       text: m === "yes" ? "Modifies Android" : "Android untouched",
       severity: undefined,
     });

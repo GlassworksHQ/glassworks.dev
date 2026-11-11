@@ -175,8 +175,9 @@
   font-weight: 500;
 }
 
-.ratingValue.caution::before,
-.ratingValue.warn::before {
+/* the difficulty meter replaces the status dot; other warnings keep a dot */
+.ratingValue.caution:not(.withMeter)::before,
+.ratingValue.warn:not(.withMeter)::before {
   content: "";
   display: inline-block;
   width: 7px;
@@ -185,6 +186,43 @@
   margin-right: 7px;
   vertical-align: 0.1em;
   background: currentColor;
+}
+
+.withMeter {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.meter {
+  width: 16px;
+  height: 16px;
+  flex: none;
+}
+
+.label {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.labelIcon {
+  width: 17px;
+  height: 17px;
+  flex: none;
+  color: var(--faint);
+}
+
+.tags li {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.tagIcon {
+  width: 13px;
+  height: 13px;
+  flex: none;
 }
 
 .unknownValue {

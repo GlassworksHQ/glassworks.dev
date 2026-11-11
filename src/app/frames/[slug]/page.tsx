@@ -5,11 +5,13 @@ import { Suspense } from "react";
 import {
   DeviceScreen,
   StatusPill,
+  RatingLabel,
   RatingValue,
+  SpecLabel,
   SupportTag,
   paneIcon,
 } from "@/components/DeviceBits";
-import { deviceBySlug, devices, ratingFields, ratingKeys } from "@/lib/devices";
+import { deviceBySlug, devices, ratingKeys } from "@/lib/devices";
 import { panes } from "@/lib/site";
 import s from "./device.module.css";
 
@@ -99,7 +101,9 @@ async function Device({ params }: { params: Params }) {
           <dl className={`glass ${s.specs}`}>
             {d.specs.map((sp) => (
               <div key={sp.label} className={s.spec}>
-                <dt>{sp.label}</dt>
+                <dt>
+                  <SpecLabel label={sp.label} />
+                </dt>
                 <dd>{sp.value}</dd>
               </div>
             ))}
@@ -140,7 +144,9 @@ async function Device({ params }: { params: Params }) {
         <dl className={`glass ${s.specs} ${s.changeList}`}>
           {ratingKeys.map((k) => (
             <div key={k} className={s.spec}>
-              <dt>{ratingFields[k].label}</dt>
+              <dt>
+                <RatingLabel field={k} />
+              </dt>
               <dd>
                 <RatingValue field={k} rating={d.ratings[k]} />
               </dd>
