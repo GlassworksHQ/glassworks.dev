@@ -1,21 +1,27 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { sideFaces, type Face, type ModelShape } from "./deviceGeometry";
 import styles from "./DeviceModel.module.css";
 
 /*
- * A 3D mockup of a panel, in CSS 3D. The slab is a stack of thin rounded
- * layers, so its edges have real thickness from any angle. The screen is real
- * DOM (an example Glassworks dashboard), so text stays sharp.
+ * A 3D mockup of a panel. The front glass is one CSS-3D plane (real DOM, so the
+ * example dashboard stays sharp). The slab's sides are real geometry from
+ * deviceGeometry.ts: the outline extruded by its thickness, projected with the
+ * same transform, drawn as shaded SVG polygons behind the glass. One plane plus
+ * flat SVG renders the same in Gecko, WebKit and Blink; stacked layers didn't.
  *
- * Brand rule: light moves, glass doesn't. The device tilts only a few degrees
- * towards the pointer, and the reflection follows it. Reduced motion turns both off.
+ * Brand rule: light moves, glass doesn't. The pointer moves the reflection only.
  * Shapes follow each device's form factor; no vendor branding.
  */
 
-export type ModelShape = "s1" | "square" | "tablet";
+export type { ModelShape };
 
-const LAYERS = 22;
+const FACES: Record<ModelShape, Face[]> = {
+  s1: sideFaces("s1"),
+  square: sideFaces("square"),
+  tablet: sideFaces("tablet"),
+};
 
 export function DeviceModel({
   shape,
@@ -46,11 +52,8 @@ export function DeviceModel({
       return;
     const r = el.getBoundingClientRect();
     const x = (e.clientX - r.left) / r.width - 0.5; // -0.5 … 0.5
-    const y = (e.clientY - r.top) / r.height - 0.5;
     cancelAnimationFrame(frame.current);
     frame.current = requestAnimationFrame(() => {
-      el.style.setProperty("--ry", `${-22 + x * 10}deg`);
-      el.style.setProperty("--rx", `${9 - y * 7}deg`);
       el.style.setProperty("--sheen", `${50 + x * 70}%`);
     });
   }
@@ -59,8 +62,6 @@ export function DeviceModel({
     const el = stage.current;
     if (!el) return;
     cancelAnimationFrame(frame.current);
-    el.style.removeProperty("--ry");
-    el.style.removeProperty("--rx");
     el.style.removeProperty("--sheen");
   }
 
@@ -75,14 +76,24 @@ export function DeviceModel({
     >
       <div className={`${styles.model} ${styles[shape]}`}>
         <div className={styles.shadow} aria-hidden="true" />
-        <div className={styles.device} aria-hidden="true">
-          {Array.from({ length: LAYERS }, (_, i) => (
-            <div
-              key={i}
-              className={styles.layer}
-              style={{ ["--t" as string]: i / (LAYERS - 1) }}
+        <svg
+          className={styles.sides}
+          viewBox="0 0 100 50"
+          preserveAspectRatio="none"
+          aria-hidden="true"
+        >
+          {FACES[shape].map((f, k) => (
+            <polygon
+              key={k}
+              points={f.points}
+              fill={f.fill}
+              stroke={f.fill}
+              strokeWidth="0.12"
+              strokeLinejoin="round"
             />
           ))}
+        </svg>
+        <div className={styles.device} aria-hidden="true">
           <div className={styles.front}>
             <div className={styles.screen}>
               <Dashboard shape={shape} />
