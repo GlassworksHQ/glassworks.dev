@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { KilnGlyph } from "./Glyphs";
 import styles from "./Stack.module.css";
 
 /*
@@ -286,13 +287,22 @@ function External({
         rx="10"
         className={styles.extBox}
       />
-      <circle
-        cx={x + 14}
-        cy={y + 17}
-        r="3"
-        className={tone === "ember" ? styles.dotEmber : styles.dotSky}
-      />
-      <text x={x + 24} y={y + 20} className={styles.extTitle}>
+      {tone === "ember" ? (
+        <KilnGlyph
+          x={x + 9}
+          y={y + 8}
+          width={15}
+          height={15}
+          className={styles.extIcon}
+        />
+      ) : (
+        <circle cx={x + 14} cy={y + 17} r="3" className={styles.dotSky} />
+      )}
+      <text
+        x={x + (tone === "ember" ? 29 : 24)}
+        y={y + 20}
+        className={styles.extTitle}
+      >
         {title}
       </text>
       <text x={x + 14} y={y + 35} className={styles.extSub}>

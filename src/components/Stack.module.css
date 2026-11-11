@@ -164,17 +164,16 @@
   fill: var(--muted);
 }
 
-.dotSky,
-.dotEmber {
+.dotSky {
   animation: breathe 2s ease-in-out infinite;
+}
+
+.extIcon {
+  color: var(--fg);
 }
 
 .dotSky {
   fill: var(--green);
-}
-
-.dotEmber {
-  fill: var(--ember-b);
 }
 
 @keyframes breathe {
