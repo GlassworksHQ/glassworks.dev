@@ -291,7 +291,10 @@ export const devices: Device[] = [
       how: "It installs by flashing system and userdata over fastboot from a computer.",
     },
     ratings: {
-      difficulty: { value: "unknown" },
+      difficulty: {
+        value: "medium",
+        detail: "Open it up and press a button to enter fastboot",
+      },
       reversible: {
         value: "no",
         detail: "lululemon's software is erased for good",
@@ -301,7 +304,7 @@ export const devices: Device[] = [
         detail: "System and userdata are replaced",
       },
       root: { value: "unknown" },
-      opensDevice: { value: "unknown" },
+      opensDevice: { value: "yes", detail: "To reach the fastboot button" },
       vendorApps: {
         value: "removed",
         detail: "With the rest of the stock software",
