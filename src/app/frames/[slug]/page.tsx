@@ -93,6 +93,8 @@ async function Device({ params }: { params: Params }) {
         />
       </header>
 
+      {d.notice && <p className={s.notice}>{d.notice}</p>}
+
       <section
         className={`glass ${s.kiln} ${d.install.href ? "" : s.kilnOff}`}
         aria-labelledby="install"
@@ -180,7 +182,7 @@ async function Device({ params }: { params: Params }) {
           ))}
         </dl>
         {d.ratingsNote && <p className={s.note}>{d.ratingsNote}</p>}
-        {d.status !== "works" && (
+        {d.unverified && (
           <p className={s.note}>
             Expected, from the plan. Nothing has been run on this device yet.
           </p>

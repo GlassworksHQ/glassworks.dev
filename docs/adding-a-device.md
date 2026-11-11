@@ -14,7 +14,7 @@ Copy an existing device and change every field. Fields, in order:
 
 | Field | What to put |
 |---|---|
-| `slug` | URL name, lowercase with hyphens, e.g. `smart-mirror` |
+| `slug` | URL name, lowercase with hyphens, e.g. `lululemon-mirror` |
 | `name` | The product's name, e.g. `Aqara S1 Plus` |
 | `aka` | Optional. Rebadges or other names it's sold under |
 | `status` | `works` only when it installs and runs today; otherwise `planned` |
@@ -27,6 +27,7 @@ Copy an existing device and change every field. Fields, in order:
 | `ratings` | The nine install ratings, see below |
 | `ratingsNote` | Optional. One sentence of extra context |
 | `unverified` | `true` if any of this comes from writeups rather than a real device |
+| `notice` | Optional. Something a buyer must know, shown in a box under the header, e.g. which version of the device works |
 
 ### Install ratings
 
@@ -42,7 +43,7 @@ short `detail` where it helps.
 | Opens the device | `yes` · `no` |
 | Vendor apps | `kept` · `disabled` · `partly` · `removed` |
 | Wipes the device | `yes` · `no` |
-| Backup | `automatic` · `manual` · `none` · `planned` |
+| Backup | `automatic` · `manual` · `none` (not needed) · `unavailable` (not possible) · `planned` |
 | Updates | `ha` · `manual` · `planned` |
 
 Difficulty means:

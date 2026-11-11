@@ -67,19 +67,20 @@ export const MODELS: Record<ModelShape, ModelDef> = {
     finish: "glass",
     mount: "wall",
   },
-  // a smart mirror on a floor stand. Illustrative sizes; not a specific product.
+  // lululemon Studio Mirror, original 40-inch version: 52.6 x 21.1 x 1.7 in
+  // (1336 x 536 x 43 mm) per reviews, on its floor stand. No branding drawn.
   mirror: {
-    body: { w: 560, h: 1700, d: 30, r: 3 },
+    body: { w: 536, h: 1336, d: 43, r: 3 },
     bezel: 14,
     screenRadius: 2,
     sides: DARK_SIDES,
     finish: "mirror",
     mount: "floor",
     parts: (() => {
-      const x = 560 / 2 - 24; // legs just inside the edges
-      const top = 1700 / 2 - 160; // they start behind the body
-      const floor = 1700 / 2 + 70; // the body stands 70 mm off the floor
-      const z = -30 / 2 - 7; // just behind the back
+      const x = 536 / 2 - 24; // legs just inside the edges
+      const top = 1336 / 2 - 140; // they start behind the body
+      const floor = 1336 / 2 + 70; // the body stands 70 mm off the floor
+      const z = -43 / 2 - 7; // just behind the back
       const c = "#4b4f58"; // mid-grey metal: reads on both light and dark pages
       const tube = (from: V3, to: V3) => ({
         kind: "tube" as const,

@@ -57,6 +57,7 @@ export const ratingFields = {
       automatic: "Automatic",
       manual: "Manual",
       none: "Not needed",
+      unavailable: "Not possible",
       planned: "Planned",
     },
   },
@@ -105,6 +106,7 @@ export function severity(key: RatingKey, value: string): Severity {
   if (key === "reversible")
     return value === "no" ? "warn" : value === "partly" ? "caution" : undefined;
   if (key === "wipes") return value === "yes" ? "warn" : undefined;
+  if (key === "backup") return value === "unavailable" ? "warn" : undefined;
   return undefined;
 }
 
@@ -171,6 +173,8 @@ export type Device = {
   ratings: Ratings;
   ratingsNote?: string;
   unverified?: boolean;
+  /** Something a buyer must know, shown in a box under the header (e.g. which version works). */
+  notice?: string;
 };
 
 export const supportText: Record<Support, string> = {
@@ -245,43 +249,69 @@ export const devices: Device[] = [
       "Without root, the app can install over adb on its own, but you lose the radio modes.",
   },
   {
-    slug: "smart-mirror",
-    name: "Smart mirror",
-    aka: "Android fitness and smart mirrors on a floor stand",
+    slug: "lululemon-mirror",
+    name: "lululemon Studio Mirror",
+    aka: "Originally sold as Mirror, by Mirror.co",
     status: "planned",
     shape: "mirror",
     summary:
-      "A portrait screen behind a two-way mirror. The dashboard shows through a full-length mirror.",
+      "A full-length mirror with a 40-inch portrait screen behind it. The original version takes a new Android image over fastboot.",
+    notice:
+      "Only the original version works: a Qualcomm board, stock software 1.x and a screen of about 40 inches. The later version (software 5.x, about 43 inches, a blue button on the top edge) has a locked NXP board.",
     specs: [
-      { label: "Screen", value: "Portrait, behind a two-way mirror" },
-      { label: "Android", value: "Not checked" },
-      { label: "Presence", value: "Not checked" },
-      { label: "Audio", value: "Not checked" },
-      { label: "Root", value: "Not checked" },
+      {
+        label: "Size",
+        value: "About 1336 × 536 × 43 mm (40-inch version, from reviews)",
+      },
+      { label: "SoC", value: "Qualcomm MSM8916" },
+      { label: "Android", value: "6.0.1 (stock software 1.x)" },
+      {
+        label: "Screen",
+        value: "40-inch 1080p, portrait, behind a two-way mirror",
+      },
+      { label: "Presence", value: "5 MP front camera" },
+      { label: "Audio", value: "Microphone and stereo speakers" },
+      { label: "Extras", value: "Floor stand or wall mount" },
     ],
     panes: {
-      assist: { support: "unknown", note: "Needs a microphone." },
-      timers: { support: "unknown", note: "Needs Assist." },
-      sendspin: { support: "unknown", note: "Needs a speaker." },
-      radio: { support: "unknown", note: "Needs a supported radio." },
-      sensors: { support: "unknown" },
+      assist: { support: "planned", note: "It has a microphone." },
+      timers: { support: "planned", note: "Needs Assist." },
+      sendspin: { support: "planned", note: "It has stereo speakers." },
+      radio: { support: "no", note: "No Zigbee or Thread radio." },
+      sensors: {
+        support: "unknown",
+        note: "Presence would come from the camera.",
+      },
       base: { support: "no", note: "S1 only." },
     },
     install: {
-      how: "Not installable yet. Which mirrors, and how they install, isn't settled.",
+      how: "It installs by flashing system and userdata over fastboot from a computer.",
     },
     ratings: {
       difficulty: { value: "unknown" },
-      reversible: { value: "unknown" },
-      modifiesAndroid: { value: "unknown" },
+      reversible: {
+        value: "no",
+        detail: "lululemon's software is erased for good",
+      },
+      modifiesAndroid: {
+        value: "yes",
+        detail: "System and userdata are replaced",
+      },
       root: { value: "unknown" },
       opensDevice: { value: "unknown" },
-      vendorApps: { value: "unknown" },
-      wipes: { value: "unknown" },
-      backup: { value: "planned" },
+      vendorApps: {
+        value: "removed",
+        detail: "With the rest of the stock software",
+      },
+      wipes: { value: "yes" },
+      backup: {
+        value: "unavailable",
+        detail: "There's no way to save the stock image first",
+      },
       updates: { value: "planned" },
     },
-    unverified: true,
+    ratingsNote:
+      "Check before flashing: fastboot must report MSM8916 and the expected partition sizes. If anything differs, stop.",
   },
   {
     slug: "generic-android",
@@ -308,7 +338,7 @@ export const devices: Device[] = [
       base: { support: "no", note: "S1 only." },
     },
     install: {
-      how: "Not installable yet. Will install as a normal app.",
+      how: "It will install as a normal app.",
     },
     ratings: {
       difficulty: { value: "easy", detail: "Install an app" },

@@ -520,7 +520,7 @@ export default function BrandPage() {
               <div className={`${s.frameCard} ${s.frameOff}`}>
                 <span className={`${s.thumb} ${s.thumbSq}`} />
                 <span>
-                  <span className={s.fcName}>Smart mirror</span>
+                  <span className={s.fcName}>lululemon Studio Mirror</span>
                   <span className={s.fcSub}>Floor stand, portrait</span>
                 </span>
                 <span className={`${s.pill} ${s.plan}`}>Planned</span>

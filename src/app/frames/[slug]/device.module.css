@@ -67,6 +67,16 @@
   border: 1px dashed color-mix(in srgb, var(--fg) 24%, transparent);
 }
 
+/* a must-know for buyers, e.g. which version of a device works */
+.notice {
+  font-size: 14.5px;
+  color: var(--fg);
+  padding: 14px 18px;
+  border-radius: var(--r-pane);
+  border: 1px solid color-mix(in srgb, var(--amber) 45%, var(--edge));
+  background: color-mix(in srgb, var(--amber) 8%, transparent);
+}
+
 .cols {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
