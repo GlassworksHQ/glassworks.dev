@@ -208,3 +208,12 @@ export const DifficultyGlyph = ({
     ))}
   </svg>
 );
+
+/** The Difficulty field's label: a gauge, so it never reads as a rating itself. */
+export const GaugeGlyph = (props: GlyphProps) => (
+  <svg {...base} {...props}>
+    <path d="M3.5 17a8.5 8.5 0 1 1 17 0" />
+    <path d="M12 17 15.5 10.5" />
+    <circle cx="12" cy="17" r="1.2" fill="currentColor" stroke="none" />
+  </svg>
+);

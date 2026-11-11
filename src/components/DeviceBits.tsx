@@ -18,6 +18,7 @@ import {
   EditGlyph,
   EraserGlyph,
   FrameGlyph,
+  GaugeGlyph,
   KeyGlyph,
   MicGlyph,
   MusicGlyph,
@@ -87,11 +88,11 @@ function RatingIcon({
 export function RatingLabel({ field }: { field: RatingKey }) {
   return (
     <span className={styles.label}>
-      <RatingIcon
-        field={field}
-        value={field === "difficulty" ? "medium" : undefined}
-        className={styles.labelIcon}
-      />
+      {field === "difficulty" ? (
+        <GaugeGlyph className={styles.labelIcon} />
+      ) : (
+        <RatingIcon field={field} className={styles.labelIcon} />
+      )}
       {ratingFields[field].label}
     </span>
   );
