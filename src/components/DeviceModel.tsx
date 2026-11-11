@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import styles from "./DeviceModel.module.css";
 
 /*
@@ -28,6 +28,17 @@ export function DeviceModel({
 }) {
   const stage = useRef<HTMLDivElement>(null);
   const frame = useRef(0);
+
+  // --u = 1% of the stage width, for the depth and perspective lengths
+  useEffect(() => {
+    const el = stage.current;
+    if (!el) return;
+    const set = () => el.style.setProperty("--u", `${el.clientWidth / 100}px`);
+    set();
+    const ro = new ResizeObserver(set);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
 
   function onMove(e: React.PointerEvent<HTMLDivElement>) {
     const el = stage.current;
@@ -62,9 +73,6 @@ export function DeviceModel({
       onPointerMove={interactive ? onMove : undefined}
       onPointerLeave={interactive ? onLeave : undefined}
     >
-      {/* Sizes are declared on .model, inside the .stage container, so every
-          browser resolves their cqw against the stage. Declared on the stage
-          itself, WebKit resolved them against the window. */}
       <div className={`${styles.model} ${styles[shape]}`}>
         <div className={styles.shadow} aria-hidden="true" />
         <div className={styles.device} aria-hidden="true">

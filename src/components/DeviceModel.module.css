@@ -1,6 +1,11 @@
-/* All sizes are in cqw of the stage, so the model scales with its slot. */
+/*
+ * The slab's shape uses only percentages and aspect-ratio, which every engine
+ * handles the same way. (Container units here rendered at window size in Gecko.)
+ * Depth and perspective need lengths, so they use --u: 1% of the stage width in
+ * px, measured by DeviceModel.tsx. The 5px fallback is right for a ~500px slot.
+ */
 .stage {
-  container-type: inline-size;
+  --u: 5px;
   width: 100%;
   max-width: 100%;
   aspect-ratio: 2 / 1;
@@ -10,58 +15,69 @@
   --ry: -22deg;
 }
 
-/* inside the container, so its cqw (and the size variables) mean the stage */
 .model {
   display: grid;
   place-items: center;
   width: 100%;
   height: 100%;
-  perspective: 170cqw;
+  perspective: calc(var(--u) * 170);
 }
 
-/* per form factor: width, height, depth, corner radius, bezel */
+/*
+ * Per form factor:
+ *   --wp   width, % of the stage
+ *   --ar   aspect ratio
+ *   --rad  corner radius as horizontal% / vertical%, so corners come out round
+ *   --bez  bezel, % of the device width (padding % is relative to width)
+ *   --du   depth, in --u
+ *   --sr   screen corner radius, in --u
+ */
+
 /* Aqara S1 Plus, to scale: 172 x 86 mm front, ~12 mm slab (the 42 mm quoted
    depth includes the 30 mm in-wall box, not drawn). Near-square corners, a
    thin bezel on black glass, white body. */
 .s1 {
-  --w: 74cqw;
-  --h: calc(var(--w) / 2);
-  --d: calc(var(--w) * 12 / 172);
-  --r: calc(var(--w) * 2.5 / 172);
-  --bez: calc(var(--w) * 3.5 / 172);
+  --wp: 74%;
+  --ar: 2 / 1;
+  --rad: 1.45% / 2.9%;
+  --bez: 2%;
+  --du: 5.2;
+  --sr: 0.6;
   --edge-front: #f3f4f6;
   --edge-back: #c4c8cf;
 }
 
 .square {
-  --w: 42cqw;
-  --h: var(--w);
-  --d: 4.6cqw;
-  --r: 3.6cqw;
-  --bez: 3.4cqw;
+  --wp: 42%;
+  --ar: 1 / 1;
+  --rad: 8.6%;
+  --bez: 8%;
+  --du: 4.6;
+  --sr: 1.6;
 }
 
 .tablet {
-  --w: 66cqw;
-  --h: calc(var(--w) / 1.6);
-  --d: 1.8cqw;
-  --r: 3cqw;
-  --bez: 3cqw;
+  --wp: 66%;
+  --ar: 1.6 / 1;
+  --rad: 4.5% / 7.2%;
+  --bez: 4.5%;
+  --du: 1.8;
+  --sr: 1.3;
 }
 
 .shadow,
 .device {
   grid-area: 1 / 1;
-  width: var(--w);
-  height: var(--h);
+  width: var(--wp);
+  aspect-ratio: var(--ar);
 }
 
 /* the panel's shadow on the wall behind it */
 .shadow {
-  border-radius: var(--r);
+  border-radius: var(--rad);
   background: rgba(0, 0, 0, 0.38);
-  filter: blur(3.5cqw);
-  transform: translate(4cqw, 3.5cqw) scale(0.94);
+  filter: blur(calc(var(--u) * 3.5));
+  transform: translate(5%, 9%) scale(0.94);
 }
 
 .device {
@@ -79,8 +95,8 @@
 .layer {
   position: absolute;
   inset: 0;
-  border-radius: var(--r);
-  transform: translateZ(calc(var(--d) * (var(--t) - 0.5)));
+  border-radius: var(--rad);
+  transform: translateZ(calc(var(--u) * var(--du) * (var(--t) - 0.5)));
   background: color-mix(
     in srgb,
     var(--edge-front, #2c2f38) calc(var(--t) * 100%),
@@ -91,8 +107,8 @@
 .front {
   position: absolute;
   inset: 0;
-  border-radius: var(--r);
-  transform: translateZ(calc(var(--d) * 0.5 + 0.3px));
+  border-radius: var(--rad);
+  transform: translateZ(calc(var(--u) * var(--du) * 0.5 + 0.3px));
   background: #07080b;
   padding: var(--bez);
   box-shadow:
@@ -105,7 +121,7 @@
   width: 100%;
   height: 100%;
   overflow: hidden;
-  border-radius: calc(var(--r) * 0.4);
+  border-radius: calc(var(--u) * var(--sr));
   background:
     radial-gradient(60% 90% at 8% 0%, rgba(56, 189, 248, 0.22), transparent 70%),
     radial-gradient(55% 90% at 96% 100%, rgba(167, 139, 250, 0.2), transparent 70%),
@@ -116,7 +132,7 @@
 .glare {
   position: absolute;
   inset: 0;
-  border-radius: var(--r);
+  border-radius: var(--rad);
   pointer-events: none;
   background: linear-gradient(
     115deg,
