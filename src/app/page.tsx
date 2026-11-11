@@ -37,7 +37,8 @@ export default function Home() {
           </h1>
           <p className={styles.lede}>
             Dashboard, ESPHome device, setup and updates for any wall panel.
-            Voice, music and Zigbee/Thread plug in as panes.
+            Everything else is a pane: voice, music, Zigbee/Thread, or one you
+            write.
           </p>
           <div className={styles.ctas}>
             <a className={styles.primary} href={links.org}>
