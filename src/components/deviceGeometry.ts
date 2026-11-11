@@ -144,3 +144,27 @@ export function sideFaces(shape: ModelShape): Face[] {
   }
   return faces;
 }
+
+/*
+ * How far to shift the drawing so what you see is centred in the stage.
+ * Turned towards the viewer, the slab's near side swings forward and its edge
+ * shows on one side only, so its visual centre is off the stage centre.
+ * Returned as percentages of the stage, for a 2D translate on the model.
+ */
+export function centering(shape: ModelShape) {
+  const spec = SPECS[shape];
+  const pts = outline(spec);
+  const xs: number[] = [];
+  const ys: number[] = [];
+  for (const z of [spec.d / 2, -spec.d / 2]) {
+    for (const p of pts) {
+      const [x, y] = project(rotate([p.x, p.y, z]));
+      xs.push(x);
+      ys.push(y);
+    }
+  }
+  const cx = (Math.min(...xs) + Math.max(...xs)) / 2;
+  const cy = (Math.min(...ys) + Math.max(...ys)) / 2;
+  // stage is 100 x 50 units: x as % of width, y as % of height
+  return { x: 50 - cx, y: ((25 - cy) / 50) * 100 };
+}

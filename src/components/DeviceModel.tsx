@@ -1,7 +1,12 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { sideFaces, type Face, type ModelShape } from "./deviceGeometry";
+import {
+  centering,
+  sideFaces,
+  type Face,
+  type ModelShape,
+} from "./deviceGeometry";
 import styles from "./DeviceModel.module.css";
 
 /*
@@ -16,6 +21,14 @@ import styles from "./DeviceModel.module.css";
  */
 
 export type { ModelShape };
+
+/* shift each drawing so its visible bounding box is centred in the stage */
+const CENTRE: Record<ModelShape, string> = Object.fromEntries(
+  (["s1", "square", "tablet"] as const).map((m) => {
+    const c = centering(m);
+    return [m, `translate(${c.x.toFixed(2)}%, ${c.y.toFixed(2)}%)`];
+  }),
+) as Record<ModelShape, string>;
 
 const FACES: Record<ModelShape, Face[]> = {
   s1: sideFaces("s1"),
@@ -74,7 +87,10 @@ export function DeviceModel({
       onPointerMove={interactive ? onMove : undefined}
       onPointerLeave={interactive ? onLeave : undefined}
     >
-      <div className={`${styles.model} ${styles[shape]}`}>
+      <div
+        className={`${styles.model} ${styles[shape]}`}
+        style={{ transform: CENTRE[shape] }}
+      >
         <div className={styles.shadow} aria-hidden="true" />
         <svg
           className={styles.sides}
