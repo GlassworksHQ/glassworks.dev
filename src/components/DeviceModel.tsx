@@ -56,26 +56,31 @@ export function DeviceModel({
   return (
     <div
       ref={stage}
-      className={`${styles.stage} ${styles[shape]} ${interactive ? styles.live : ""}`}
+      className={`${styles.stage} ${interactive ? styles.live : ""}`}
       role="img"
       aria-label={label}
       onPointerMove={interactive ? onMove : undefined}
       onPointerLeave={interactive ? onLeave : undefined}
     >
-      <div className={styles.shadow} aria-hidden="true" />
-      <div className={styles.device} aria-hidden="true">
-        {Array.from({ length: LAYERS }, (_, i) => (
-          <div
-            key={i}
-            className={styles.layer}
-            style={{ ["--t" as string]: i / (LAYERS - 1) }}
-          />
-        ))}
-        <div className={styles.front}>
-          <div className={styles.screen}>
-            <Dashboard shape={shape} />
+      {/* Sizes are declared on .model, inside the .stage container, so every
+          browser resolves their cqw against the stage. Declared on the stage
+          itself, WebKit resolved them against the window. */}
+      <div className={`${styles.model} ${styles[shape]}`}>
+        <div className={styles.shadow} aria-hidden="true" />
+        <div className={styles.device} aria-hidden="true">
+          {Array.from({ length: LAYERS }, (_, i) => (
+            <div
+              key={i}
+              className={styles.layer}
+              style={{ ["--t" as string]: i / (LAYERS - 1) }}
+            />
+          ))}
+          <div className={styles.front}>
+            <div className={styles.screen}>
+              <Dashboard shape={shape} />
+            </div>
+            <div className={styles.glare} />
           </div>
-          <div className={styles.glare} />
         </div>
       </div>
     </div>

@@ -5,20 +5,32 @@
   max-width: 100%;
   aspect-ratio: 2 / 1;
   display: grid;
-  place-items: center;
-  perspective: 170cqw;
   /* resting angle; pointer moves nudge these a few degrees */
   --rx: 9deg;
   --ry: -22deg;
 }
 
+/* inside the container, so its cqw (and the size variables) mean the stage */
+.model {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  perspective: 170cqw;
+}
+
 /* per form factor: width, height, depth, corner radius, bezel */
+/* Aqara S1 Plus, to scale: 172 x 86 mm front, ~12 mm slab (the 42 mm quoted
+   depth includes the 30 mm in-wall box, not drawn). Near-square corners, a
+   thin bezel on black glass, white body. */
 .s1 {
   --w: 74cqw;
-  --h: calc(var(--w) / 2.15);
-  --d: 4.2cqw;
-  --r: 3cqw;
-  --bez: 1.5cqw;
+  --h: calc(var(--w) / 2);
+  --d: calc(var(--w) * 12 / 172);
+  --r: calc(var(--w) * 2.5 / 172);
+  --bez: calc(var(--w) * 3.5 / 172);
+  --edge-front: #f3f4f6;
+  --edge-back: #c4c8cf;
 }
 
 .square {
@@ -69,7 +81,11 @@
   inset: 0;
   border-radius: var(--r);
   transform: translateZ(calc(var(--d) * (var(--t) - 0.5)));
-  background: color-mix(in srgb, #2c2f38 calc(var(--t) * 100%), #121318);
+  background: color-mix(
+    in srgb,
+    var(--edge-front, #2c2f38) calc(var(--t) * 100%),
+    var(--edge-back, #121318)
+  );
 }
 
 .front {
@@ -89,7 +105,7 @@
   width: 100%;
   height: 100%;
   overflow: hidden;
-  border-radius: calc(var(--r) * 0.55);
+  border-radius: calc(var(--r) * 0.4);
   background:
     radial-gradient(60% 90% at 8% 0%, rgba(56, 189, 248, 0.22), transparent 70%),
     radial-gradient(55% 90% at 96% 100%, rgba(167, 139, 250, 0.2), transparent 70%),

@@ -195,6 +195,7 @@ export const devices: Device[] = [
     },
     specs: [
       { label: "SoC", value: "Allwinner A133" },
+      { label: "Size", value: "172 × 86 mm; 42 mm deep with the in-wall box" },
       { label: "Screen", value: "1440 × 720" },
       { label: "Radio", value: "EFR32MG21 on SPI, RCP firmware" },
       { label: "Presence", value: "VI5300 time-of-flight sensor" },

@@ -24,6 +24,7 @@ import {
   MusicGlyph,
   RadioGlyph,
   RefreshGlyph,
+  RulerGlyph,
   ScrewdriverGlyph,
   SensorGlyph,
   SpeakerGlyph,
@@ -101,6 +102,7 @@ export function RatingLabel({ field }: { field: RatingKey }) {
 const specIcon: Record<string, typeof MicGlyph> = {
   SoC: ChipGlyph,
   Android: DeviceGlyph,
+  Size: RulerGlyph,
   Screen: FrameGlyph,
   Radio: RadioGlyph,
   Presence: SensorGlyph,
