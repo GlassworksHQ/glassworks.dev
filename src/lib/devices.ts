@@ -271,7 +271,10 @@ export const devices: Device[] = [
       },
       { label: "Presence", value: "5 MP front camera" },
       { label: "Audio", value: "Microphone and stereo speakers" },
-      { label: "Extras", value: "Floor stand or wall mount" },
+      {
+        label: "Mount",
+        value: "Leans on the wall on its stand, or mounts flat on the wall",
+      },
     ],
     panes: {
       assist: { support: "planned", note: "It has a microphone." },

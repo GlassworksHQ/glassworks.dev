@@ -21,7 +21,7 @@ Copy an existing device and change every field. Fields, in order:
 | `shape` | The 3D model's form factor: `s1`, `square`, `tablet` or `mirror`. See step 2 for a new one |
 | `summary` | One sentence on why this device is interesting |
 | `project` | Optional. The frame's own project and its link |
-| `specs` | Hardware rows. Labels with icons: `Size`, `SoC`, `Android`, `Screen`, `Radio`, `Presence`, `Audio`, `Extras`, `Root` |
+| `specs` | Hardware rows. Labels with icons: `Size`, `SoC`, `Android`, `Screen`, `Radio`, `Presence`, `Audio`, `Extras`, `Mount`, `Root` |
 | `panes` | For each pane: `works`, `planned`, `depends`, `unknown` or `no`, with a short `note` when it isn't `works` |
 | `install` | One sentence on how it installs, plus `href` to Kiln once it's installable |
 | `ratings` | The nine install ratings, see below |
@@ -65,7 +65,10 @@ Everything is in real millimetres; the renderer scales it to fit:
 - `bezel` and `screenRadius`
 - `sides`: the edge colour facing away from the light, and facing it
 - `finish`: `glass` or `mirror`
-- `mount`: `wall` or `floor`, which sets the viewing angle and the shadow
+- `mount`: `wall`, `floor` (free-standing) or `lean` (on the floor, leaning on the wall, with a
+  `lean` angle), which sets the pose and the shadow
+- `screen`: optional, when the screen is smaller than the face (behind a mirror, say): its size in mm
+  and its distance from the top edge
 - `parts`: anything outside the body, such as stand legs, as tubes from one point to another (mm
   from the body's centre; x right, y down, z towards you)
 

@@ -108,6 +108,7 @@ const specIcon: Record<string, typeof MicGlyph> = {
   Presence: SensorGlyph,
   Audio: SpeakerGlyph,
   Extras: BaseGlyph,
+  Mount: BaseGlyph,
   Root: KeyGlyph,
 };
 

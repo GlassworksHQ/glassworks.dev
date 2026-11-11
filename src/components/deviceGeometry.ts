@@ -31,7 +31,13 @@ export type ModelDef = {
   /** sides: colour facing away from the light, and facing it */
   sides: { dark: string; light: string };
   finish: "glass" | "mirror";
-  mount: "wall" | "floor";
+  /** wall: flat on the wall. floor: free-standing. lean: on the floor, leaning on the wall */
+  mount: "wall" | "floor" | "lean";
+  /** for lean: how far the top tilts back, degrees */
+  lean?: number;
+  /** the screen, when it's smaller than the face (e.g. behind a mirror): mm, centred
+      across, `top` from the body's top edge. Otherwise the face minus the bezel. */
+  screen?: { w: number; h: number; top: number };
   /** parts outside the body, mm from the body's centre (x right, y down, z towards you) */
   parts?: { kind: "tube"; from: V3; to: V3; diameter: number; color: string }[];
 };
@@ -68,34 +74,46 @@ export const MODELS: Record<ModelShape, ModelDef> = {
     mount: "wall",
   },
   // lululemon Studio Mirror, original 40-inch version: 52.6 x 21.1 x 1.7 in
-  // (1336 x 536 x 43 mm) per reviews, on its floor stand. No branding drawn.
+  // (1336 x 536 x 43 mm) per reviews. The whole front is mirror, with a 40"
+  // 16:9 screen (about 498 x 885 mm) behind it. It leans on the wall on a thin
+  // loop stand that continues the body's outline below it. No branding drawn.
   mirror: {
     body: { w: 536, h: 1336, d: 43, r: 3 },
-    bezel: 14,
+    bezel: 0,
     screenRadius: 2,
+    screen: { w: 498, h: 885, top: 170 },
     sides: DARK_SIDES,
     finish: "mirror",
-    mount: "floor",
+    mount: "lean",
+    lean: 7,
     parts: (() => {
-      const x = 536 / 2 - 24; // legs just inside the edges
-      const top = 1336 / 2 - 140; // they start behind the body
-      const floor = 1336 / 2 + 70; // the body stands 70 mm off the floor
-      const z = -43 / 2 - 7; // just behind the back
+      const hw = 536 / 2 - 6; // the loop's sides, just inside the body's edges
+      const top = 1336 / 2 - 30; // starts behind the body's bottom edge
+      const bottom = 1336 / 2 + 220; // ~220 mm of stand below the body
+      const r = 34; // rounded bottom corners
+      const z = -43 / 2 + 6;
       const c = "#4b4f58"; // mid-grey metal: reads on both light and dark pages
-      const tube = (from: V3, to: V3) => ({
-        kind: "tube" as const,
-        from,
-        to,
-        diameter: 12,
-        color: c,
-      });
-      return [
-        tube([-x, top, z], [-x, floor, z]),
-        tube([x, top, z], [x, floor, z]),
-        tube([-x, floor, z], [x, floor, z]),
-        tube([-x, floor, z], [-x, floor, z - 280]),
-        tube([x, floor, z], [x, floor, z - 280]),
+      const pts: V3[] = [
+        [-hw, top, z],
+        [-hw, bottom - r, z],
       ];
+      for (let i = 1; i <= 5; i++) {
+        const t = Math.PI - (Math.PI / 2) * (i / 5); // bottom-left arc
+        pts.push([-hw + r + r * Math.cos(t), bottom - r + r * Math.sin(t), z]);
+      }
+      pts.push([hw - r, bottom, z]);
+      for (let i = 1; i <= 5; i++) {
+        const t = Math.PI / 2 - (Math.PI / 2) * (i / 5); // bottom-right arc
+        pts.push([hw - r + r * Math.cos(t), bottom - r + r * Math.sin(t), z]);
+      }
+      pts.push([hw, top, z]);
+      return pts.slice(1).map((to, i) => ({
+        kind: "tube" as const,
+        from: pts[i],
+        to,
+        diameter: 9,
+        color: c,
+      }));
     })(),
   },
 };
@@ -105,13 +123,23 @@ export const MODELS: Record<ModelShape, ModelDef> = {
 const VIEWS = {
   wall: { rx: 9, ry: -22 },
   floor: { rx: 3, ry: -24 },
+  lean: { rx: 3, ry: -24 },
 } as const;
 const PERSPECTIVE = 170;
 
 const rad = (deg: number) => (deg * Math.PI) / 180;
 
-/* CSS rotateX then rotateY, as the spec applies them: p' = Rx(Ry(p)). y points down. */
-function rotate([x, y, z]: V3, view: { rx: number; ry: number }): V3 {
+/* CSS "rotateX(rx) rotateY(ry) rotateX(lean)", as the spec applies it:
+   p' = Rx(Ry(Rlean(p))). y points down; a positive lean tips the top away. */
+function rotate(
+  [x0, y0, z0]: V3,
+  view: { rx: number; ry: number },
+  lean = 0,
+): V3 {
+  const l = rad(lean);
+  const x = x0;
+  const y = Math.cos(l) * y0 - Math.sin(l) * z0;
+  const z = Math.sin(l) * y0 + Math.cos(l) * z0;
   const a = rad(view.ry);
   const x1 = Math.cos(a) * x + Math.sin(a) * z;
   const z1 = -Math.sin(a) * x + Math.cos(a) * z;
@@ -193,6 +221,7 @@ export type Geometry = {
 export function geometry(shape: ModelShape, stageAspect: number): Geometry {
   const m = MODELS[shape];
   const view = VIEWS[m.mount];
+  const lean = m.mount === "lean" ? (m.lean ?? 0) : 0;
   const stageH = 100 / stageAspect;
   const cx = 50;
   const cy = stageH / 2;
@@ -218,7 +247,7 @@ export function geometry(shape: ModelShape, stageAspect: number): Geometry {
   let box = { x0: 0, x1: 0, y0: 0, y1: 0 };
   for (let i = 0; i < 4; i++) {
     const pts = silhouette.map((p) =>
-      project(rotate([p[0] * k, p[1] * k, p[2] * k], view)),
+      project(rotate([p[0] * k, p[1] * k, p[2] * k], view, lean)),
     );
     const xs = pts.map((p) => p[0]);
     const ys = pts.map((p) => p[1]);
@@ -233,7 +262,7 @@ export function geometry(shape: ModelShape, stageAspect: number): Geometry {
   // final box at the final scale, for centring
   {
     const pts = silhouette.map((p) =>
-      project(rotate([p[0] * k, p[1] * k, p[2] * k], view)),
+      project(rotate([p[0] * k, p[1] * k, p[2] * k], view, lean)),
     );
     const xs = pts.map((p) => p[0]);
     const ys = pts.map((p) => p[1]);
@@ -244,7 +273,8 @@ export function geometry(shape: ModelShape, stageAspect: number): Geometry {
       y1: Math.max(...ys),
     };
   }
-  const P = (p: V3) => project(rotate([p[0] * k, p[1] * k, p[2] * k], view));
+  const P = (p: V3) =>
+    project(rotate([p[0] * k, p[1] * k, p[2] * k], view, lean));
 
   // side faces that face the viewer
   const camera: V3 = [0, 0, PERSPECTIVE];
@@ -253,8 +283,12 @@ export function geometry(shape: ModelShape, stageAspect: number): Geometry {
     const a = ring[i];
     const b = ring[(i + 1) % ring.length];
     if (Math.hypot(b.x - a.x, b.y - a.y) < 1e-6) continue;
-    const n = rotate([(a.nx + b.nx) / 2, (a.ny + b.ny) / 2, 0], view);
-    const mid = rotate([((a.x + b.x) / 2) * k, ((a.y + b.y) / 2) * k, 0], view);
+    const n = rotate([(a.nx + b.nx) / 2, (a.ny + b.ny) / 2, 0], view, lean);
+    const mid = rotate(
+      [((a.x + b.x) / 2) * k, ((a.y + b.y) / 2) * k, 0],
+      view,
+      lean,
+    );
     const toCam: V3 = [
       camera[0] - mid[0],
       camera[1] - mid[1],
@@ -285,7 +319,11 @@ export function geometry(shape: ModelShape, stageAspect: number): Geometry {
     .map((p) => {
       const [x1, y1] = P(p.from);
       const [x2, y2] = P(p.to);
-      const z = rotate([0, 0, ((p.from[2] + p.to[2]) / 2) * k], view)[2];
+      const z = rotate(
+        [0, ((p.from[1] + p.to[1]) / 2) * k, ((p.from[2] + p.to[2]) / 2) * k],
+        view,
+        lean,
+      )[2];
       return {
         line: {
           x1: f3(x1),
@@ -301,17 +339,24 @@ export function geometry(shape: ModelShape, stageAspect: number): Geometry {
     .sort((a, b) => a.z - b.z)
     .map((p) => p.line);
 
-  // a soft shadow on the floor under a standing device
+  // a soft shadow on the floor under a standing or leaning device. The floor is
+  // level, so it's built after the lean: find the lowest point, then lay an
+  // ellipse there and apply only the view.
   let floorShadow: string | undefined;
-  if (m.mount === "floor") {
-    const floorY = Math.max(...silhouette.map((p) => p[1]));
-    const rx = w * 0.62;
-    const rz = 260;
+  if (m.mount !== "wall") {
+    const leaned = silhouette.map((p) =>
+      rotate([p[0] * k, p[1] * k, p[2] * k], { rx: 0, ry: 0 }, lean),
+    );
+    const floorY = Math.max(...leaned.map((p) => p[1]));
+    const base = leaned.filter((p) => p[1] > floorY - 0.5);
+    const zc = base.reduce((sum, p) => sum + p[2], 0) / base.length;
+    const rx = w * 0.62 * k;
+    const rz = 220 * k;
     floorShadow = Array.from({ length: 28 }, (_, i): V3 => {
       const t = (i / 28) * Math.PI * 2;
-      return [Math.cos(t) * rx, floorY, -d / 2 - 120 + Math.sin(t) * rz];
+      return [Math.cos(t) * rx, floorY, zc - 60 * k + Math.sin(t) * rz];
     })
-      .map(P)
+      .map((p) => project(rotate(p, view)))
       .map(([x, y]) => `${f3(x)},${f3(y)}`)
       .join(" ");
   }
@@ -331,15 +376,34 @@ export function geometry(shape: ModelShape, stageAspect: number): Geometry {
       "--wp": pct(sw),
       "--ar": `${f3(ar)} / 1`,
       "--rad": `${pct(((r * k) / sw) * 100)} / ${pct(((r * k) / sh) * 100)}`,
-      "--bez": pct((m.bezel / w) * 100),
+      ...screenBox(m),
       "--du": String(f3(d * k)),
       "--sr": String(f3(m.screenRadius * k)),
       "--rx": `${view.rx}deg`,
       "--ry": `${view.ry}deg`,
+      "--lean": `${lean}deg`,
     },
     transform: `translate(${f3(dx)}%, ${f3((dy / stageH) * 100)}%)`,
     layout: ar >= 1.3 ? "landscape" : ar <= 0.8 ? "portrait" : "square",
     finish: m.finish,
     mount: m.mount,
+  };
+}
+
+/* The screen's box as % of the body: a given screen rectangle, or the face
+   minus the bezel. Percent offsets keep it engine-independent. */
+function screenBox(m: ModelDef): Record<string, string> {
+  const { w, h } = m.body;
+  const sc = m.screen ?? {
+    w: w - 2 * m.bezel,
+    h: h - 2 * m.bezel,
+    top: m.bezel,
+  };
+  const pct = (n: number) => `${f3(n)}%`;
+  return {
+    "--scr-x": pct(((w - sc.w) / 2 / w) * 100),
+    "--scr-y": pct((sc.top / h) * 100),
+    "--scr-w": pct((sc.w / w) * 100),
+    "--scr-h": pct((sc.h / h) * 100),
   };
 }
