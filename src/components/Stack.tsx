@@ -344,7 +344,9 @@ export function Stack() {
   const [coreRx, coreRy] = iso(W, 0, 140);
   const [radioX, radioY] = iso(COL_X[2] + CW, ROW_Y[0] + CH / 2, 280);
   const [sendX, sendY] = iso(COL_X[2] + CW, ROW_Y[1] + CH / 2, 280);
-  const [hwLx, hwLy] = iso(0, D, -6);
+  // Kiln plugs into the hardware plate's front-left edge. Not its corner: plates
+  // have rounded corners (rx 9), so the mathematical corner is off the plate.
+  const [hwLx, hwLy] = iso(30, D, -6);
 
   return (
     <div className={styles.wrap}>
@@ -426,7 +428,7 @@ export function Stack() {
           />
 
           {/* Kiln, feeding the hardware from below */}
-          <Wire d={`M${hwLx} 114 L ${hwLx} ${hwLy + 2}`} tone="ember" />
+          <Wire d={`M${hwLx} 114 L ${hwLx} ${hwLy - 0.5}`} tone="ember" />
           <External
             x={-176}
             y={114}
