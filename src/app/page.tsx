@@ -1,7 +1,12 @@
 import { GlassTile } from "@/components/GlassTile";
 import { Stack } from "@/components/Stack";
 import Link from "next/link";
-import { DeviceScreen, StatusPill, paneIcon } from "@/components/DeviceBits";
+import {
+  ChangeTags,
+  DeviceScreen,
+  StatusPill,
+  paneIcon,
+} from "@/components/DeviceBits";
 import { devices } from "@/lib/devices";
 import { links, panes } from "@/lib/site";
 import styles from "./page.module.css";
@@ -105,6 +110,7 @@ export default function Home() {
                     <StatusPill status={d.status} />
                   </div>
                   <p>{d.summary}</p>
+                  <ChangeTags tags={d.tags} expected={d.status !== "works"} />
                 </div>
               </Link>
             </li>

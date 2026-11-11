@@ -1,12 +1,18 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import {
+  ChangeTags,
   DeviceScreen,
   StatusPill,
   SupportTag,
   paneIcon,
 } from "@/components/DeviceBits";
-import { devices } from "@/lib/devices";
+import {
+  changeLabels,
+  isUnchanged,
+  devices,
+  type ChangeKey,
+} from "@/lib/devices";
 import { links, panes } from "@/lib/site";
 import s from "./frames.module.css";
 
@@ -39,6 +45,7 @@ export default function DevicesPage() {
                 </div>
                 {d.aka && <p className={s.aka}>{d.aka}</p>}
                 <p>{d.summary}</p>
+                <ChangeTags tags={d.tags} expected={d.status !== "works"} />
               </div>
             </Link>
           </li>
@@ -56,6 +63,50 @@ export default function DevicesPage() {
           </a>
         </li>
       </ul>
+
+      <section className={s.section} aria-labelledby="changes">
+        <h2 id="changes" className={s.h2}>
+          What installing changes
+        </h2>
+        <div className={`glass ${s.tableWrap}`}>
+          <table className={`${s.table} ${s.changes}`}>
+            <thead>
+              <tr>
+                <th scope="col">
+                  <span className="visually-hidden">Change</span>
+                </th>
+                {devices.map((d) => (
+                  <th key={d.slug} scope="col">
+                    <Link href={`/frames/${d.slug}`}>{d.name}</Link>
+                    {d.status !== "works" && (
+                      <span className={s.expected}>expected</span>
+                    )}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {(Object.keys(changeLabels) as ChangeKey[]).map((k) => (
+                <tr key={k}>
+                  <th scope="row">{changeLabels[k]}</th>
+                  {devices.map((d) => (
+                    <td
+                      key={d.slug}
+                      className={isUnchanged(d.changes[k]) ? s.calm : undefined}
+                    >
+                      {d.changes[k]}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <p className={s.note}>
+          Planned devices show what the install is expected to do. Nothing has
+          been run on them yet.
+        </p>
+      </section>
 
       <section className={s.section} aria-labelledby="matrix">
         <h2 id="matrix" className={s.h2}>

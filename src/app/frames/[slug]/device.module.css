@@ -93,7 +93,7 @@
 
 .spec {
   display: grid;
-  grid-template-columns: 110px minmax(0, 1fr);
+  grid-template-columns: 130px minmax(0, 1fr);
   gap: 16px;
   padding: 12px 0;
   border-top: 1px solid var(--edge);
@@ -191,6 +191,36 @@
 
 .cta:hover {
   opacity: 0.88;
+}
+
+/* what installing changes: two columns of label/value rows on wide screens */
+.changeList {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 40px;
+}
+
+.changeList .spec:nth-child(2) {
+  border-top: 0;
+}
+
+.calm {
+  color: var(--faint);
+}
+
+.note {
+  font-size: 13.5px;
+  color: var(--faint);
+}
+
+@media (max-width: 760px) {
+  .changeList {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .changeList .spec:nth-child(2) {
+    border-top: 1px solid var(--edge);
+  }
 }
 
 /* placeholder while the slug resolves */

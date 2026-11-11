@@ -34,6 +34,28 @@ export function StatusPill({ status }: { status: DeviceStatus }) {
   );
 }
 
+/** The install's footprint in a few words, e.g. "Roots", "Patches boot". */
+export function ChangeTags({
+  tags,
+  expected,
+}: {
+  tags: string[];
+  expected?: boolean;
+}) {
+  return (
+    <ul
+      className={styles.tags}
+      aria-label={
+        expected ? "What installing will change" : "What installing changes"
+      }
+    >
+      {tags.map((t) => (
+        <li key={t}>{t}</li>
+      ))}
+    </ul>
+  );
+}
+
 /** Pane support on a device. Only "works" gets colour; the rest are plain text. */
 export function SupportTag({ support }: { support: Support }) {
   return (

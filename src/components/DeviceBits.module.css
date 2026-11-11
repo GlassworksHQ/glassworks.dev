@@ -124,3 +124,23 @@
   border-radius: clamp(14px, 3vw, 26px);
   box-shadow: 0 30px 80px -40px rgba(10, 11, 15, 0.55);
 }
+
+/* footprint tags on device cards */
+.tags {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.tags li {
+  font-size: 12px;
+  padding: 3px 9px;
+  border-radius: 999px;
+  border: 1px solid var(--edge);
+  background: var(--bg-2);
+  color: var(--muted);
+  white-space: nowrap;
+}
