@@ -284,8 +284,7 @@
   background: color-mix(in srgb, var(--green) 16%, transparent);
 }
 
-.planned,
-.experimental {
+.planned {
   color: var(--muted);
   background: color-mix(in srgb, var(--muted) 12%, transparent);
 }

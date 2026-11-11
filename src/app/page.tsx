@@ -23,7 +23,6 @@ const paneIcon: Record<PaneId, typeof MicGlyph> = {
 const statusText: Record<Status, string> = {
   works: "Works today",
   planned: "Planned",
-  experimental: "Experimental",
 };
 
 export default function Home() {

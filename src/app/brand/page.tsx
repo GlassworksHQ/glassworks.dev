@@ -55,12 +55,15 @@ const swatches: { group: string; items: { name: string; value: string; fill: str
 ];
 
 const downloads = [
+  { file: "lockup-on-dark.svg", what: "Mark and wordmark, dark backgrounds" },
+  { file: "lockup-on-light.svg", what: "Mark and wordmark, light backgrounds" },
+  { file: "wordmark.svg", what: "Wordmark alone, follows currentColor" },
+  { file: "lockup-kiln-on-dark.svg", what: "Glassworks Kiln lockup" },
   { file: "mark-on-dark.svg", what: "Mark for dark backgrounds" },
   { file: "mark-on-light.svg", what: "Mark for light backgrounds" },
   { file: "mark-mono.svg", what: "One colour, follows currentColor" },
   { file: "kiln-on-dark.svg", what: "Kiln mark, ember pane" },
   { file: "app-icon.svg", what: "App icon, 512 × 512" },
-  { file: "favicon.svg", what: "Small cut, follows the OS theme" },
 ];
 
 function Section({ id, label, title, lede, children }: { id: string; label: string; title: string; lede?: ReactNode; children: ReactNode }) {
@@ -515,7 +518,7 @@ export default function BrandPage() {
         </div>
       </Section>
 
-      <Section id="downloads" label="Downloads" title="SVGs." lede="No wordmark file yet. Set it in Inter Light.">
+      <Section id="downloads" label="Downloads" title="SVGs." lede="Text is outlined, so no fonts are needed.">
         <ul className={s.downloads}>
           {downloads.map((d) => (
             <li key={d.file}>

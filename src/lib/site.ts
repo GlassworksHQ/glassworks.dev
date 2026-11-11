@@ -4,7 +4,7 @@ export const links = {
   s1Install: "https://s1.edm.sh",
 } as const;
 
-export type Status = "works" | "planned" | "experimental";
+export type Status = "works" | "planned";
 
 export const frames: {
   name: string;
@@ -31,7 +31,7 @@ export const frames: {
     name: "Generic Android",
     project: "tablets, old phones",
     detail: "Core, Assist, Sendspin and sensors. No root.",
-    status: "experimental",
+    status: "planned",
     ratio: "wide",
   },
 ];

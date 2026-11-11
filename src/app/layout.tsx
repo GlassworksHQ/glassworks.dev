@@ -9,7 +9,7 @@ const inter = Inter({ variable: "--font-inter", subsets: ["latin"] });
 const mono = JetBrains_Mono({ variable: "--font-mono", subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://glassworks.dev"),
+  metadataBase: new URL("https://www.glassworks.dev"),
   title: { default: "Glassworks", template: "%s · Glassworks" },
   description:
     "Open-source core for Home Assistant wall panels: dashboard, ESPHome device, setup and updates, with plugins for everything else.",
