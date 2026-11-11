@@ -1,0 +1,154 @@
+.stack {
+  /* cqi below is relative to this box, which is the tile's width */
+  container-type: inline-size;
+  display: grid;
+  gap: 14px;
+  justify-items: start;
+  min-width: 0;
+}
+
+.tile {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  width: 100%;
+  max-width: 100%;
+  aspect-ratio: 2 / 1;
+  /* 5.6% of the width, as on the boot card */
+  border-radius: clamp(14px, 5.6cqi, 30px);
+  background: var(--night);
+  color: var(--s-fg);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 6.5cqi;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  box-shadow: 0 30px 80px -40px rgba(10, 11, 15, 0.55);
+}
+
+/* glass fill and the two room lights, drifting slowly */
+.tile::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(70% 90% at 6% 4%, rgba(56, 189, 248, 0.26), transparent 70%),
+    radial-gradient(65% 90% at 94% 96%, rgba(167, 139, 250, 0.22), transparent 70%),
+    rgba(255, 255, 255, 0.03);
+  animation: drift 6s ease-in-out infinite alternate;
+}
+
+.sweep {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(105deg, transparent 40%, rgba(255, 255, 255, 0.11) 50%, transparent 60%);
+  transform: translateX(-120%);
+  animation: sweep 1.5s cubic-bezier(0.45, 0.05, 0.25, 1) 0.2s both;
+}
+
+@keyframes sweep {
+  to {
+    transform: translateX(120%);
+  }
+}
+
+@keyframes drift {
+  to {
+    transform: translate(3%, 2%);
+  }
+}
+
+.top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.label {
+  font-size: clamp(8px, 2.3cqi, 12px);
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--s-fa);
+  white-space: nowrap;
+}
+
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 1.6cqi;
+  color: var(--s-mu);
+}
+
+.dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  animation: breathe 2s ease-in-out infinite;
+}
+
+.ready {
+  background: var(--green);
+  --dot: var(--green);
+}
+
+.working {
+  background: var(--amber);
+  --dot: var(--amber);
+}
+
+@keyframes breathe {
+  0%,
+  100% {
+    box-shadow: 0 0 10px var(--dot);
+  }
+  50% {
+    box-shadow: 0 0 2px var(--dot);
+    opacity: 0.8;
+  }
+}
+
+.lockup {
+  align-self: end;
+  display: flex;
+  align-items: center;
+  gap: 4cqi;
+}
+
+.mark {
+  width: 19cqi;
+  color: var(--s-fg);
+  flex: none;
+}
+
+.word {
+  font-size: 12.5cqi;
+  font-weight: 200;
+  letter-spacing: -0.03em;
+  line-height: 1;
+}
+
+.foot {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 3cqi;
+  font-size: clamp(9px, 2.2cqi, 13px);
+  color: var(--s-mu);
+}
+
+.replay {
+  font: 500 13px/1 var(--f-sans);
+  color: var(--fg);
+  background: var(--glass);
+  border: 1px solid var(--edge);
+  border-radius: 999px;
+  padding: 10px 16px;
+  cursor: pointer;
+}
+
+.replay:hover {
+  border-color: color-mix(in srgb, var(--sky) 45%, var(--edge));
+}

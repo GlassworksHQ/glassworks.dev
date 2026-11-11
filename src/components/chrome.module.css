@@ -1,0 +1,105 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding-block: 22px;
+}
+
+.home {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  border-radius: 8px;
+}
+
+.mark {
+  width: 40px;
+  color: var(--fg);
+}
+
+.word {
+  font-size: 20px;
+  font-weight: 300;
+  letter-spacing: -0.025em;
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+}
+
+.nav a {
+  text-decoration: none;
+  color: var(--muted);
+  padding: 8px 12px;
+  border-radius: 999px;
+}
+
+.nav a:hover {
+  color: var(--fg);
+  background: var(--glass);
+}
+
+.gh {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid var(--edge);
+}
+
+.ghIcon {
+  width: 16px;
+  height: 16px;
+}
+
+.footer {
+  display: grid;
+  gap: 18px;
+  padding-block: 32px 48px;
+  margin-top: 40px;
+  border-top: 1px solid var(--edge);
+  color: var(--faint);
+  font-size: 13px;
+}
+
+.footTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.markSm {
+  width: 30px;
+  color: var(--fg);
+}
+
+.wordSm {
+  font-size: 15px;
+  font-weight: 300;
+  letter-spacing: -0.02em;
+  color: var(--fg);
+}
+
+.footNav {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.footNav a {
+  text-decoration: none;
+}
+
+.footNav a:hover {
+  color: var(--fg);
+}
+
+.legal {
+  max-width: 70ch;
+}

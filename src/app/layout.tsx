@@ -1,0 +1,38 @@
+import type { Metadata, Viewport } from "next";
+import { Inter, JetBrains_Mono } from "next/font/google";
+import { MarkDefs } from "@/components/Mark";
+import { SiteHeader } from "@/components/SiteHeader";
+import { SiteFooter } from "@/components/SiteFooter";
+import "./globals.css";
+
+const inter = Inter({ variable: "--font-inter", subsets: ["latin"] });
+const mono = JetBrains_Mono({ variable: "--font-mono", subsets: ["latin"] });
+
+export const metadata: Metadata = {
+  metadataBase: new URL("https://glassworks.dev"),
+  title: { default: "Glassworks", template: "%s · Glassworks" },
+  description:
+    "The open-source core for Home Assistant wall panels. A dashboard shell, ESPHome device, setup and updates, plus panes for voice, music and Zigbee/Thread.",
+  openGraph: { siteName: "Glassworks", type: "website" },
+};
+
+export const viewport: Viewport = {
+  viewportFit: "cover",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#eceef2" },
+    { media: "(prefers-color-scheme: dark)", color: "#0a0b0f" },
+  ],
+};
+
+export default function RootLayout({ children }: LayoutProps<"/">) {
+  return (
+    <html lang="en" className={`${inter.variable} ${mono.variable}`}>
+      <body>
+        <MarkDefs />
+        <SiteHeader />
+        <main>{children}</main>
+        <SiteFooter />
+      </body>
+    </html>
+  );
+}

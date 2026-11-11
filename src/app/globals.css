@@ -1,0 +1,176 @@
+/*
+ * Glassworks tokens. Kept in one file so it can move into a shared
+ * @glassworks/brand package when Kiln is rebuilt (see planning/site.md).
+ *
+ * Daylight is the default; night applies with the OS dark setting.
+ * "Screen" tokens never change: the panel, app icon and hero tile are always night.
+ */
+:root {
+  /* ground and ink: daylight */
+  --bg: #eceef2;
+  --bg-2: #e2e5eb;
+  --glass: rgba(255, 255, 255, 0.66);
+  --edge: rgba(16, 20, 32, 0.1);
+  --fg: #0c0e13;
+  --muted: #4f525c;
+  --faint: #7d808b;
+  --ink-sky: #0369a1;
+  --ok-ink: #047857;
+  --glow-a: 10%;
+
+  /* light and heat (theme-independent) */
+  --sky: #38bdf8;
+  --violet: #a78bfa;
+  --ember-a: #fdba74;
+  --ember-b: #f43f5e;
+  --lit-gradient: linear-gradient(135deg, var(--sky), var(--violet));
+  --ember-gradient: linear-gradient(110deg, var(--ember-a), var(--ember-b));
+
+  /* status: only ever means status */
+  --green: #34d399;
+  --amber: #fbbf24;
+  --rose: #fb7185;
+
+  /* the screen: always night */
+  --night: #0a0b0f;
+  --s-fg: #f4f4f5;
+  --s-mu: #a1a1aa;
+  --s-fa: #63636b;
+
+  /* type */
+  --f-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-mono: var(--font-mono), ui-monospace, "SF Mono", Menlo, monospace;
+
+  /* shape */
+  --r-tile: 22px;
+  --r-pane: 12px;
+  --gutter: max(16px, env(safe-area-inset-left, 0px));
+  --gutter-r: max(16px, env(safe-area-inset-right, 0px));
+  --measure: 1120px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0a0b0f;
+    --bg-2: #111319;
+    --glass: rgba(255, 255, 255, 0.045);
+    --edge: rgba(255, 255, 255, 0.08);
+    --fg: #f4f4f5;
+    --muted: #a1a1aa;
+    --faint: #6b6b74;
+    --ink-sky: #7dd3fc;
+    --ok-ink: #34d399;
+    --glow-a: 14%;
+    color-scheme: dark;
+  }
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--f-sans);
+  font-size: 15px;
+  line-height: 1.6;
+  font-feature-settings: "cv11", "ss01";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* room light: sky from the top-left, violet from the bottom-right */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: -1;
+  background:
+    radial-gradient(60vw 50vh at 0% 0%, color-mix(in srgb, var(--sky) var(--glow-a), transparent), transparent 70%),
+    radial-gradient(60vw 50vh at 100% 100%, color-mix(in srgb, var(--violet) var(--glow-a), transparent), transparent 70%);
+}
+
+h1,
+h2,
+h3 {
+  margin: 0;
+  font-weight: 300;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
+p {
+  margin: 0;
+}
+
+a {
+  color: inherit;
+}
+
+code {
+  font-family: var(--f-mono);
+  font-size: 0.86em;
+}
+
+img,
+svg {
+  max-width: 100%;
+}
+
+:focus-visible {
+  outline: 2px solid var(--sky);
+  outline-offset: 2px;
+}
+
+/* shared primitives */
+.glass {
+  background: var(--glass);
+  border: 1px solid var(--edge);
+  border-radius: var(--r-tile);
+  backdrop-filter: blur(18px) saturate(1.2);
+  -webkit-backdrop-filter: blur(18px) saturate(1.2);
+}
+
+.label {
+  font-size: 11.5px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--faint);
+}
+
+.wrap {
+  max-width: var(--measure);
+  margin-inline: auto;
+  padding-left: var(--gutter);
+  padding-right: var(--gutter-r);
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
