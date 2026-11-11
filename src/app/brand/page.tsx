@@ -96,7 +96,7 @@ export default function BrandPage() {
             Taken from S1 Unleashed&rsquo;s boot screen: dark glass, thin Inter, sky-to-violet light.
           </p>
         </div>
-        <GlassTile label="Open core for wall panels" status="Apache-2.0" footLeft="Frames · Panes · Kiln" footRight="glassworks.dev" replay />
+        <GlassTile label="Open core for wall panels" status="MPL-2.0" footLeft="Frames · Panes · Kiln" footRight="glassworks.dev" replay />
       </header>
 
       <Section

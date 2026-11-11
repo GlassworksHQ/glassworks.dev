@@ -30,7 +30,7 @@ export default function Home() {
     <div className={`wrap ${styles.page}`}>
       <section className={styles.hero}>
         <div className={styles.heroCopy}>
-          <span className="label">Open source · Apache-2.0</span>
+          <span className="label">Open source · MPL-2.0</span>
           <h1 className={styles.h1}>
             The open core for Home Assistant wall panels.
           </h1>
@@ -133,10 +133,12 @@ export default function Home() {
       >
         <div className={styles.head}>
           <h2 id="why" className={styles.h2}>
-            Why Apache-2.0
+            Why MPL-2.0
           </h2>
           <p className={styles.whyLede}>
-            Most full-featured panel apps are closed or non-commercial.
+            Most full-featured panel apps are closed or non-commercial. With
+            MPL-2.0, Glassworks stays open and your product doesn&rsquo;t have
+            to.
           </p>
         </div>
         <div className={styles.trio}>
@@ -145,12 +147,12 @@ export default function Home() {
             <p>Write a frame for your device.</p>
           </div>
           <div className={styles.point}>
-            <h3>Fork it</h3>
-            <p>Anyone can carry it on.</p>
+            <h3>Ship it</h3>
+            <p>Sell panels. Your frames and panes can stay closed.</p>
           </div>
           <div className={styles.point}>
-            <h3>Ship it</h3>
-            <p>Sell panels that run it.</p>
+            <h3>Share back</h3>
+            <p>Changes to Glassworks&rsquo; own files stay open.</p>
           </div>
         </div>
       </section>
