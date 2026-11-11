@@ -2,52 +2,56 @@
 
 import { useEffect, useRef } from "react";
 import {
-  centering,
-  cssVars,
-  sideFaces,
-  type Face,
+  MODELS,
+  geometry,
+  type Geometry,
+  type Layout,
   type ModelShape,
 } from "./deviceGeometry";
 import styles from "./DeviceModel.module.css";
 
 /*
- * A 3D mockup of a panel. The front glass is one CSS-3D plane (real DOM, so the
- * example dashboard stays sharp). The slab's sides are real geometry from
- * deviceGeometry.ts: the outline extruded by its thickness, projected with the
- * same transform, drawn as shaded SVG polygons behind the glass. One plane plus
- * flat SVG renders the same in Gecko, WebKit and Blink; stacked layers didn't.
+ * A 3D mockup of a device. The front glass is one CSS-3D plane (real DOM, so the
+ * example dashboard stays sharp). The body's sides, any parts (stand legs) and a
+ * floor shadow are real geometry from deviceGeometry.ts, projected with the same
+ * transform and drawn as SVG behind the glass. This renders the same in Gecko,
+ * WebKit and Blink.
  *
  * Brand rule: light moves, glass doesn't. The pointer moves the reflection only.
- * Shapes follow each device's form factor; no vendor branding.
+ * Shapes follow each device's real proportions; no vendor branding.
  */
 
 export type { ModelShape };
 
-/* shift each drawing so its visible bounding box is centred in the stage */
-const CENTRE: Record<ModelShape, string> = Object.fromEntries(
-  (["s1", "square", "tablet"] as const).map((m) => {
-    const c = centering(m);
-    return [m, `translate(${c.x.toFixed(2)}%, ${c.y.toFixed(2)}%)`];
-  }),
-) as Record<ModelShape, string>;
+/* card slots are 2:1 so cards line up; a portrait device's own page gets a taller slot */
+function stageAspect(shape: ModelShape, size: "card" | "hero") {
+  const { w, h } = MODELS[shape].body;
+  return size === "hero" && w / h < 0.8 ? 0.8 : 2;
+}
 
-const FACES: Record<ModelShape, Face[]> = {
-  s1: sideFaces("s1"),
-  square: sideFaces("square"),
-  tablet: sideFaces("tablet"),
-};
+const cache = new Map<string, Geometry>();
+function geo(shape: ModelShape, aspect: number) {
+  const key = `${shape}:${aspect}`;
+  if (!cache.has(key)) cache.set(key, geometry(shape, aspect));
+  return cache.get(key)!;
+}
 
 export function DeviceModel({
   shape,
   label,
   interactive = false,
+  size = "card",
 }: {
   shape: ModelShape;
   label: string;
   interactive?: boolean;
+  size?: "card" | "hero";
 }) {
   const stage = useRef<HTMLDivElement>(null);
   const frame = useRef(0);
+  const aspect = stageAspect(shape, size);
+  const g = geo(shape, aspect);
+  const blurId = `gw-floor-${shape}-${size}`;
 
   // --u = 1% of the stage width, for the depth and perspective lengths
   useEffect(() => {
@@ -65,24 +69,23 @@ export function DeviceModel({
     if (!el || window.matchMedia("(prefers-reduced-motion: reduce)").matches)
       return;
     const r = el.getBoundingClientRect();
-    const x = (e.clientX - r.left) / r.width - 0.5; // -0.5 … 0.5
+    const x = (e.clientX - r.left) / r.width - 0.5;
     cancelAnimationFrame(frame.current);
-    frame.current = requestAnimationFrame(() => {
-      el.style.setProperty("--sheen", `${50 + x * 70}%`);
-    });
+    frame.current = requestAnimationFrame(() =>
+      el.style.setProperty("--sheen", `${50 + x * 70}%`),
+    );
   }
 
   function onLeave() {
-    const el = stage.current;
-    if (!el) return;
     cancelAnimationFrame(frame.current);
-    el.style.removeProperty("--sheen");
+    stage.current?.style.removeProperty("--sheen");
   }
 
   return (
     <div
       ref={stage}
-      className={`${styles.stage} ${interactive ? styles.live : ""}`}
+      className={styles.stage}
+      style={{ aspectRatio: String(aspect) }}
       role="img"
       aria-label={label}
       onPointerMove={interactive ? onMove : undefined}
@@ -90,19 +93,55 @@ export function DeviceModel({
     >
       <div
         className={styles.model}
-        data-shape={shape}
-        style={{ transform: CENTRE[shape], ...cssVars(shape) }}
+        data-layout={g.layout}
+        data-finish={g.finish}
+        data-mount={g.mount}
+        style={{ transform: g.transform, ...g.vars }}
       >
-        <div className={styles.shadow} aria-hidden="true" />
+        {g.mount === "wall" && (
+          <div className={styles.shadow} aria-hidden="true" />
+        )}
         <svg
           className={styles.sides}
-          viewBox="0 0 100 50"
+          viewBox={`0 0 100 ${g.stageH}`}
           preserveAspectRatio="none"
           aria-hidden="true"
         >
-          {FACES[shape].map((f, k) => (
+          {g.floorShadow && (
+            <>
+              <defs>
+                <filter
+                  id={blurId}
+                  x="-50%"
+                  y="-50%"
+                  width="200%"
+                  height="200%"
+                >
+                  <feGaussianBlur stdDeviation="1.6" />
+                </filter>
+              </defs>
+              <polygon
+                points={g.floorShadow}
+                fill="rgba(0,0,0,0.5)"
+                filter={`url(#${blurId})`}
+              />
+            </>
+          )}
+          {g.parts.map((p, i) => (
+            <line
+              key={`p${i}`}
+              x1={p.x1}
+              y1={p.y1}
+              x2={p.x2}
+              y2={p.y2}
+              stroke={p.color}
+              strokeWidth={p.width}
+              strokeLinecap="round"
+            />
+          ))}
+          {g.faces.map((f, i) => (
             <polygon
-              key={k}
+              key={i}
               points={f.points}
               fill={f.fill}
               stroke={f.fill}
@@ -114,7 +153,7 @@ export function DeviceModel({
         <div className={styles.device} aria-hidden="true">
           <div className={styles.front}>
             <div className={styles.screen}>
-              <Dashboard shape={shape} />
+              <Dashboard layout={g.layout} />
             </div>
             <div className={styles.glare} />
           </div>
@@ -125,20 +164,20 @@ export function DeviceModel({
 }
 
 /* An example dashboard, in the Glass Tile anatomy. Illustrative values only. */
-function Dashboard({ shape }: { shape: ModelShape }) {
+function Dashboard({ layout }: { layout: Layout }) {
   const tiles = [
     { name: "Living room", value: "3 lights on", lit: true },
     { name: "Hallway", value: "21.5°" },
     { name: "Front door", value: "Locked" },
     { name: "Kitchen", value: "Playing" },
   ];
-  const shown = shape === "square" ? tiles.slice(0, 2) : tiles;
+  const shown = layout === "square" ? tiles.slice(0, 2) : tiles;
   return (
     <div className={styles.dash}>
       <div className={styles.clock}>
         <span className={styles.time}>21:42</span>
         <span className={styles.date}>Wednesday 11 November</span>
-        {shape !== "square" && (
+        {layout !== "square" && (
           <span className={styles.weather}>12° · Cloudy</span>
         )}
       </div>

@@ -3,8 +3,8 @@ import type { PaneId } from "./site";
 
 /*
  * The device catalog. One entry per frame, current or planned.
- * Only state what's known: S1 facts come from S1 Unleashed; NSPanel Pro facts come
- * from public writeups and are marked unverified until checked on hardware.
+ * Only state what's known: S1 facts come from S1 Unleashed. Planned devices say
+ * "Not checked" for anything nobody has confirmed on real hardware.
  */
 
 export type DeviceStatus = "works" | "planned";
@@ -245,45 +245,38 @@ export const devices: Device[] = [
       "Without root, the app can install over adb on its own, but you lose the radio modes.",
   },
   {
-    slug: "nspanel-pro",
-    name: "Sonoff NSPanel Pro",
-    aka: "Also sold as the Zemismart, Avatto and Tuya T6E",
+    slug: "smart-mirror",
+    name: "Smart mirror",
+    aka: "Android fitness and smart mirrors on a floor stand",
     status: "planned",
-    shape: "square",
+    shape: "mirror",
     summary:
-      "The likely second frame. Same radio chip as the S1, and root without boot patching.",
+      "A portrait screen behind a two-way mirror. The dashboard shows through a full-length mirror.",
     specs: [
-      { label: "Android", value: "8.1, arm64" },
-      { label: "Screen", value: "Square" },
-      { label: "Radio", value: "EFR32MG21 on a UART, EZSP firmware" },
-      { label: "Presence", value: "Proximity and light sensors" },
+      { label: "Screen", value: "Portrait, behind a two-way mirror" },
+      { label: "Android", value: "Not checked" },
+      { label: "Presence", value: "Not checked" },
       { label: "Audio", value: "Not checked" },
-      { label: "Root", value: "adb root (userdebug build)" },
+      { label: "Root", value: "Not checked" },
     ],
     panes: {
       assist: { support: "unknown", note: "Needs a microphone." },
       timers: { support: "unknown", note: "Needs Assist." },
       sendspin: { support: "unknown", note: "Needs a speaker." },
-      radio: {
-        support: "planned",
-        note: "Zigbee first. Thread needs RCP firmware, later.",
-      },
-      sensors: { support: "planned" },
+      radio: { support: "unknown", note: "Needs a supported radio." },
+      sensors: { support: "unknown" },
       base: { support: "no", note: "S1 only." },
     },
     install: {
-      how: "Not installable yet. Needs an arm64 build and a Kiln recipe.",
+      how: "Not installable yet. Which mirrors, and how they install, isn't settled.",
     },
     ratings: {
-      difficulty: { value: "easy", detail: "adb root, no boot patching" },
-      reversible: { value: "yes" },
-      modifiesAndroid: { value: "no" },
-      root: { value: "already", detail: "adb root on the userdebug build" },
+      difficulty: { value: "unknown" },
+      reversible: { value: "unknown" },
+      modifiesAndroid: { value: "unknown" },
+      root: { value: "unknown" },
       opensDevice: { value: "unknown" },
-      vendorApps: {
-        value: "partly",
-        detail: "The vendor Zigbee host is stopped",
-      },
+      vendorApps: { value: "unknown" },
       wipes: { value: "unknown" },
       backup: { value: "planned" },
       updates: { value: "planned" },

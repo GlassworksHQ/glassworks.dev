@@ -10,9 +10,6 @@
   max-width: 100%;
   aspect-ratio: 2 / 1;
   display: grid;
-  /* viewing angle; must match VIEW in deviceGeometry.ts */
-  --rx: 9deg;
-  --ry: -22deg;
 }
 
 .model {
@@ -23,8 +20,8 @@
   perspective: calc(var(--u) * 170);
 }
 
-/* Per-shape sizes (--wp, --ar, --rad, --bez, --du, --sr) are set inline from
-   SPECS in deviceGeometry.ts, the same numbers that draw the sides. */
+/* Sizes and angles (--wp, --ar, --rad, --bez, --du, --sr, --rx, --ry) are set
+   inline by geometry() in deviceGeometry.ts, the same numbers that draw the sides. */
 
 .shadow,
 .device {
@@ -183,36 +180,36 @@
 }
 
 /* square panel: clock on top, two tiles below */
-.model[data-shape="square"] .dash {
+.model[data-layout="square"] .dash {
   grid-template-columns: 1fr;
   grid-template-rows: 1fr auto;
   gap: 5cqw;
   padding: 7cqw;
 }
 
-.model[data-shape="square"] .time {
+.model[data-layout="square"] .time {
   font-size: 24cqw;
 }
 
-.model[data-shape="square"] .date {
+.model[data-layout="square"] .date {
   font-size: 4.4cqw;
 }
 
-.model[data-shape="square"] .tiles {
+.model[data-layout="square"] .tiles {
   gap: 3.5cqw;
 }
 
-.model[data-shape="square"] .tile {
+.model[data-layout="square"] .tile {
   padding: 4cqw;
   border-radius: 4cqw;
   gap: 1.4cqw;
 }
 
-.model[data-shape="square"] .tileName {
+.model[data-layout="square"] .tileName {
   font-size: 4cqw;
 }
 
-.model[data-shape="square"] .tileValue {
+.model[data-layout="square"] .tileValue {
   font-size: 5.4cqw;
 }
 
@@ -220,4 +217,74 @@
   .glare {
     transition: none;
   }
+}
+
+/* portrait screen: clock on top, tiles in a column */
+.model[data-layout="portrait"] .dash {
+  grid-template-columns: 1fr;
+  grid-template-rows: auto 1fr;
+  align-content: start;
+  gap: 8cqw;
+  padding: 12cqw 8cqw;
+}
+
+.model[data-layout="portrait"] .clock {
+  align-content: start;
+  gap: 2cqw;
+}
+
+.model[data-layout="portrait"] .time {
+  font-size: 26cqw;
+}
+
+.model[data-layout="portrait"] .date,
+.model[data-layout="portrait"] .weather {
+  font-size: 4.6cqw;
+}
+
+.model[data-layout="portrait"] .tiles {
+  grid-template-columns: 1fr;
+  align-content: start;
+  gap: 3.5cqw;
+}
+
+.model[data-layout="portrait"] .tile {
+  padding: 4.5cqw 5cqw;
+  border-radius: 4cqw;
+  gap: 1.4cqw;
+}
+
+.model[data-layout="portrait"] .tileName {
+  font-size: 4.2cqw;
+}
+
+.model[data-layout="portrait"] .tileValue {
+  font-size: 6cqw;
+}
+
+/* mirror finish: silvered dark glass, the screen showing through it, a
+   stronger reflection */
+.model[data-finish="mirror"] .front {
+  background: linear-gradient(160deg, #2c2f36, #0e0f12 45%, #1f2228);
+}
+
+.model[data-finish="mirror"] .screen {
+  opacity: 0.82;
+  background:
+    radial-gradient(70% 50% at 20% 10%, rgba(56, 189, 248, 0.12), transparent 70%),
+    radial-gradient(60% 40% at 90% 95%, rgba(167, 139, 250, 0.1), transparent 70%),
+    transparent;
+}
+
+.model[data-finish="mirror"] .glare {
+  background: linear-gradient(
+    115deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.1) 42%,
+    rgba(255, 255, 255, 0.2) 48%,
+    rgba(255, 255, 255, 0.07) 56%,
+    transparent 66%
+  );
+  background-size: 260% 100%;
+  background-position: var(--sheen, 30%) 0;
 }

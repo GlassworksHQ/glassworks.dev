@@ -89,6 +89,7 @@ async function Device({ params }: { params: Params }) {
           shape={d.shape}
           label={`${d.name} running Glassworks, an illustration`}
           interactive
+          size="hero"
         />
       </header>
 

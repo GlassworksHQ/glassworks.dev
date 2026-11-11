@@ -14,11 +14,11 @@ Copy an existing device and change every field. Fields, in order:
 
 | Field | What to put |
 |---|---|
-| `slug` | URL name, lowercase with hyphens, e.g. `nspanel-pro` |
-| `name` | The product's name, e.g. `Sonoff NSPanel Pro` |
+| `slug` | URL name, lowercase with hyphens, e.g. `smart-mirror` |
+| `name` | The product's name, e.g. `Aqara S1 Plus` |
 | `aka` | Optional. Rebadges or other names it's sold under |
 | `status` | `works` only when it installs and runs today; otherwise `planned` |
-| `shape` | The 3D model's form factor: `s1`, `square` or `tablet`. See step 2 for a new one |
+| `shape` | The 3D model's form factor: `s1`, `square`, `tablet` or `mirror`. See step 2 for a new one |
 | `summary` | One sentence on why this device is interesting |
 | `project` | Optional. The frame's own project and its link |
 | `specs` | Hardware rows. Labels with icons: `Size`, `SoC`, `Android`, `Screen`, `Radio`, `Presence`, `Audio`, `Extras`, `Root` |
@@ -54,16 +54,22 @@ Difficulty means:
 
 ## 2. A new form factor
 
-If none of `s1`, `square` or `tablet` fits, add one entry to `SPECS` in
+If none of `s1`, `square`, `tablet` or `mirror` fits, add one entry to `MODELS` in
 [`src/components/deviceGeometry.ts`](../src/components/deviceGeometry.ts) and its name to
-`ModelShape`. That's the only place: the 3D sides and the front glass both read it.
+`ModelShape`. That's the only place: the 3D sides, the front glass and the fit all read it.
 
-Sizes are in stage units (the stage is 100 wide, 50 tall). Scale from the real dimensions: pick a
-width `w` that fits (most are 40 to 75), then derive the rest in proportion. For the S1 Plus, 172 ×
-86 × 12 mm at `w: 74` gives `ar: 2` and `d: 5.2`. No vendor logos or branding on the model.
+Everything is in real millimetres; the renderer scales it to fit:
 
-A new shape with a different screen layout (like the square panel's) also needs a
-`.model[data-shape="…"]` block for the example dashboard in `DeviceModel.module.css`.
+- `body`: width, height, depth (thickness) and corner radius
+- `bezel` and `screenRadius`
+- `sides`: the edge colour facing away from the light, and facing it
+- `finish`: `glass` or `mirror`
+- `mount`: `wall` or `floor`, which sets the viewing angle and the shadow
+- `parts`: anything outside the body, such as stand legs, as tubes from one point to another (mm
+  from the body's centre; x right, y down, z towards you)
+
+The example dashboard picks a landscape, square or portrait layout from the aspect ratio. No vendor
+logos or branding on the model.
 
 ## 3. Check it
 

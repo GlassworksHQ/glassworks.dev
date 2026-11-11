@@ -520,8 +520,8 @@ export default function BrandPage() {
               <div className={`${s.frameCard} ${s.frameOff}`}>
                 <span className={`${s.thumb} ${s.thumbSq}`} />
                 <span>
-                  <span className={s.fcName}>Sonoff NSPanel Pro</span>
-                  <span className={s.fcSub}>ADB root, no boot patch</span>
+                  <span className={s.fcName}>Smart mirror</span>
+                  <span className={s.fcSub}>Floor stand, portrait</span>
                 </span>
                 <span className={`${s.pill} ${s.plan}`}>Planned</span>
               </div>
