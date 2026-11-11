@@ -1,12 +1,8 @@
 import { GlassTile } from "@/components/GlassTile";
 import { Stack } from "@/components/Stack";
 import Link from "next/link";
-import {
-  RatingTags,
-  DeviceScreen,
-  StatusPill,
-  paneIcon,
-} from "@/components/DeviceBits";
+import { DeviceModel } from "@/components/DeviceModel";
+import { RatingTags, StatusPill, paneIcon } from "@/components/DeviceBits";
 import { devices } from "@/lib/devices";
 import { links, panes } from "@/lib/site";
 import styles from "./page.module.css";
@@ -103,7 +99,10 @@ export default function Home() {
                 href={`/frames/${d.slug}`}
                 className={`glass ${styles.frame}`}
               >
-                <DeviceScreen shape={d.shape} />
+                <DeviceModel
+                  shape={d.shape}
+                  label={`${d.name} running Glassworks`}
+                />
                 <div className={styles.frameText}>
                   <div className={styles.frameTop}>
                     <h3 className={styles.frameName}>{d.name}</h3>

@@ -81,50 +81,6 @@
   background: currentColor;
 }
 
-/* device screen */
-.slot {
-  display: grid;
-  place-items: center;
-  aspect-ratio: 2 / 1;
-  width: 100%;
-  max-width: 100%;
-}
-
-.screen {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  border-radius: 12px;
-  background:
-    radial-gradient(80% 90% at 10% 0%, rgba(56, 189, 248, 0.35), transparent 70%),
-    radial-gradient(70% 90% at 95% 100%, rgba(167, 139, 250, 0.3), transparent 70%),
-    var(--night);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  display: grid;
-  place-items: center;
-  overflow: hidden;
-}
-
-.square {
-  width: auto;
-  aspect-ratio: 1;
-}
-
-.mark {
-  width: 22%;
-  color: var(--s-fg);
-  opacity: 0.85;
-}
-
-.square .mark {
-  width: 44%;
-}
-
-.hero .screen {
-  border-radius: clamp(14px, 3vw, 26px);
-  box-shadow: 0 30px 80px -40px rgba(10, 11, 15, 0.55);
-}
-
 /* footprint tags on device cards */
 .tags {
   list-style: none;

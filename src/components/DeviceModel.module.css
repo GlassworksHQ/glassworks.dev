@@ -1,0 +1,228 @@
+/* All sizes are in cqw of the stage, so the model scales with its slot. */
+.stage {
+  container-type: inline-size;
+  width: 100%;
+  max-width: 100%;
+  aspect-ratio: 2 / 1;
+  display: grid;
+  place-items: center;
+  perspective: 170cqw;
+  /* resting angle; pointer moves nudge these a few degrees */
+  --rx: 9deg;
+  --ry: -22deg;
+}
+
+/* per form factor: width, height, depth, corner radius, bezel */
+.s1 {
+  --w: 74cqw;
+  --h: calc(var(--w) / 2.15);
+  --d: 4.2cqw;
+  --r: 3cqw;
+  --bez: 1.5cqw;
+}
+
+.square {
+  --w: 42cqw;
+  --h: var(--w);
+  --d: 4.6cqw;
+  --r: 3.6cqw;
+  --bez: 3.4cqw;
+}
+
+.tablet {
+  --w: 66cqw;
+  --h: calc(var(--w) / 1.6);
+  --d: 1.8cqw;
+  --r: 3cqw;
+  --bez: 3cqw;
+}
+
+.shadow,
+.device {
+  grid-area: 1 / 1;
+  width: var(--w);
+  height: var(--h);
+}
+
+/* the panel's shadow on the wall behind it */
+.shadow {
+  border-radius: var(--r);
+  background: rgba(0, 0, 0, 0.38);
+  filter: blur(3.5cqw);
+  transform: translate(4cqw, 3.5cqw) scale(0.94);
+}
+
+.device {
+  position: relative;
+  transform-style: preserve-3d;
+  transform: rotateX(var(--rx)) rotateY(var(--ry));
+  transition: transform 0.6s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.live:hover .device {
+  transition-duration: 0.2s;
+}
+
+/* stacked rounded layers make the edge; darker at the back, lighter at the front */
+.layer {
+  position: absolute;
+  inset: 0;
+  border-radius: var(--r);
+  transform: translateZ(calc(var(--d) * (var(--t) - 0.5)));
+  background: color-mix(in srgb, #2c2f38 calc(var(--t) * 100%), #121318);
+}
+
+.front {
+  position: absolute;
+  inset: 0;
+  border-radius: var(--r);
+  transform: translateZ(calc(var(--d) * 0.5 + 0.3px));
+  background: #07080b;
+  padding: var(--bez);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.09),
+    inset 0 1px 0 rgba(255, 255, 255, 0.14);
+}
+
+.screen {
+  container-type: inline-size;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: calc(var(--r) * 0.55);
+  background:
+    radial-gradient(60% 90% at 8% 0%, rgba(56, 189, 248, 0.22), transparent 70%),
+    radial-gradient(55% 90% at 96% 100%, rgba(167, 139, 250, 0.2), transparent 70%),
+    #0a0b0f;
+}
+
+/* the reflection: a soft diagonal band that slides with the pointer */
+.glare {
+  position: absolute;
+  inset: 0;
+  border-radius: var(--r);
+  pointer-events: none;
+  background: linear-gradient(
+    115deg,
+    transparent 34%,
+    rgba(255, 255, 255, 0.07) 44%,
+    rgba(255, 255, 255, 0.13) 49%,
+    rgba(255, 255, 255, 0.05) 55%,
+    transparent 64%
+  );
+  background-size: 260% 100%;
+  background-position: var(--sheen, 30%) 0;
+  transition: background-position 0.5s ease;
+}
+
+/* ---------- example dashboard, sized in cqw of the screen ---------- */
+.dash {
+  height: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1.25fr;
+  gap: 3cqw;
+  padding: 4cqw 4.5cqw;
+  color: #f4f4f5;
+  font-family: var(--f-sans);
+  line-height: 1.2;
+}
+
+.clock {
+  display: grid;
+  align-content: end;
+  gap: 0.8cqw;
+}
+
+.time {
+  font-size: 13cqw;
+  font-weight: 200;
+  letter-spacing: -0.03em;
+  line-height: 0.9;
+  font-variant-numeric: tabular-nums;
+}
+
+.date {
+  font-size: 2.1cqw;
+  color: #a1a1aa;
+}
+
+.weather {
+  font-size: 2.1cqw;
+  color: #63636b;
+}
+
+.tiles {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.6cqw;
+  align-content: center;
+}
+
+.tile {
+  display: grid;
+  gap: 0.7cqw;
+  padding: 2cqw 2.2cqw;
+  border-radius: 2cqw;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.tileLit {
+  background: linear-gradient(135deg, rgba(56, 189, 248, 0.38), rgba(167, 139, 250, 0.38));
+  border-color: transparent;
+}
+
+.tileName {
+  font-size: 1.9cqw;
+  color: #a1a1aa;
+}
+
+.tileLit .tileName {
+  color: #e4e4e7;
+}
+
+.tileValue {
+  font-size: 2.7cqw;
+  font-weight: 500;
+}
+
+/* square panel: clock on top, two tiles below */
+.square .dash {
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr auto;
+  gap: 5cqw;
+  padding: 7cqw;
+}
+
+.square .time {
+  font-size: 24cqw;
+}
+
+.square .date {
+  font-size: 4.4cqw;
+}
+
+.square .tiles {
+  gap: 3.5cqw;
+}
+
+.square .tile {
+  padding: 4cqw;
+  border-radius: 4cqw;
+  gap: 1.4cqw;
+}
+
+.square .tileName {
+  font-size: 4cqw;
+}
+
+.square .tileValue {
+  font-size: 5.4cqw;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .device,
+  .glare {
+    transition: none;
+  }
+}

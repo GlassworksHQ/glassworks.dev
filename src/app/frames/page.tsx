@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { DeviceModel } from "@/components/DeviceModel";
 import {
-  DeviceScreen,
   RatingLabel,
   RatingTags,
   RatingValue,
@@ -34,7 +34,10 @@ export default function DevicesPage() {
         {devices.map((d) => (
           <li key={d.slug}>
             <Link href={`/frames/${d.slug}`} className={`glass ${s.card}`}>
-              <DeviceScreen shape={d.shape} />
+              <DeviceModel
+                shape={d.shape}
+                label={`${d.name} running Glassworks`}
+              />
               <div className={s.cardText}>
                 <div className={s.cardTop}>
                   <h2 className={s.name}>{d.name}</h2>

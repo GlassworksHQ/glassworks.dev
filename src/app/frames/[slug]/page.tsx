@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { DeviceModel } from "@/components/DeviceModel";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import {
-  DeviceScreen,
   StatusPill,
   RatingLabel,
   RatingValue,
@@ -85,7 +85,11 @@ async function Device({ params }: { params: Params }) {
             </p>
           )}
         </div>
-        <DeviceScreen shape={d.shape} size="hero" />
+        <DeviceModel
+          shape={d.shape}
+          label={`${d.name} running Glassworks, an illustration`}
+          interactive
+        />
       </header>
 
       <section

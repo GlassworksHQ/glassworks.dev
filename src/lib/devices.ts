@@ -1,3 +1,4 @@
+import type { ModelShape } from "@/components/DeviceModel";
 import type { PaneId } from "./site";
 
 /*
@@ -160,7 +161,8 @@ export type Device = {
   name: string;
   aka?: string;
   status: DeviceStatus;
-  shape: "wide" | "square";
+  /** Form factor for the 3D mockup. */
+  shape: ModelShape;
   summary: string;
   project?: { name: string; href: string };
   specs: { label: string; value: string }[];
@@ -184,7 +186,7 @@ export const devices: Device[] = [
     slug: "aqara-s1",
     name: "Aqara S1 Plus",
     status: "works",
-    shape: "wide",
+    shape: "s1",
     summary:
       "The reference frame. Every pane runs on it, including the Zigbee/Thread radio and the wall base.",
     project: {
@@ -292,7 +294,7 @@ export const devices: Device[] = [
     name: "Generic Android",
     aka: "Tablets, old phones, other Android panels",
     status: "planned",
-    shape: "wide",
+    shape: "tablet",
     summary: "Core plus the panes that need no special hardware. No root.",
     specs: [
       { label: "Radio", value: "None" },
