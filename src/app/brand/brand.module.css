@@ -297,6 +297,41 @@
   font-weight: 500;
 }
 
+/* badge */
+.badges {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.badgeGround {
+  border-radius: var(--r-pane);
+  border: 1px solid var(--edge);
+  display: grid;
+  place-items: center;
+  padding-block: 36px;
+}
+
+.badgeRules {
+  margin: 0;
+  padding-left: 18px;
+  display: grid;
+  gap: 6px;
+  color: var(--muted);
+  max-width: 64ch;
+}
+
+.badgeRules a,
+.lockup a {
+  color: var(--ink-sky);
+}
+
+@media (max-width: 560px) {
+  .badges {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
 /* colour */
 .palette {
   display: grid;

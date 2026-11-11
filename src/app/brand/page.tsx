@@ -3,7 +3,17 @@ import type { CSSProperties, ReactNode } from "react";
 import { GlassTile } from "@/components/GlassTile";
 import { Mark } from "@/components/Mark";
 import { Switch } from "@/components/Switch";
-import { BaseGlyph, FrameGlyph, KilnGlyph, MicGlyph, MusicGlyph, PaneGlyph, RadioGlyph } from "@/components/Glyphs";
+import { CopySnippet } from "@/components/CopySnippet";
+import Link from "next/link";
+import {
+  BaseGlyph,
+  FrameGlyph,
+  KilnGlyph,
+  MicGlyph,
+  MusicGlyph,
+  PaneGlyph,
+  RadioGlyph,
+} from "@/components/Glyphs";
 import s from "./brand.module.css";
 
 export const metadata: Metadata = {
@@ -11,13 +21,20 @@ export const metadata: Metadata = {
   description: "The Glassworks mark, colour, type and motion, with SVGs.",
 };
 
-const swatches: { group: string; items: { name: string; value: string; fill: string }[] }[] = [
+const swatches: {
+  group: string;
+  items: { name: string; value: string; fill: string }[];
+}[] = [
   {
     group: "Ground",
     items: [
       { name: "Night", value: "#0a0b0f", fill: "#0a0b0f" },
       { name: "Daylight", value: "#eceef2", fill: "#eceef2" },
-      { name: "Glass", value: "white 4.5% · edge 8%", fill: "linear-gradient(rgba(255,255,255,.045), rgba(255,255,255,.045)), #0a0b0f" },
+      {
+        name: "Glass",
+        value: "white 4.5% · edge 8%",
+        fill: "linear-gradient(rgba(255,255,255,.045), rgba(255,255,255,.045)), #0a0b0f",
+      },
     ],
   },
   {
@@ -33,7 +50,11 @@ const swatches: { group: string; items: { name: string; value: string; fill: str
     items: [
       { name: "Sky", value: "#38bdf8", fill: "#38bdf8" },
       { name: "Violet", value: "#a78bfa", fill: "#a78bfa" },
-      { name: "Lit, 135°", value: "sky → violet", fill: "linear-gradient(135deg, #38bdf8, #a78bfa)" },
+      {
+        name: "Lit, 135°",
+        value: "sky → violet",
+        fill: "linear-gradient(135deg, #38bdf8, #a78bfa)",
+      },
     ],
   },
   {
@@ -41,7 +62,11 @@ const swatches: { group: string; items: { name: string; value: string; fill: str
     items: [
       { name: "Glow", value: "#fdba74", fill: "#fdba74" },
       { name: "Ember", value: "#f43f5e", fill: "#f43f5e" },
-      { name: "Fired", value: "glow → ember", fill: "linear-gradient(135deg, #fdba74, #f43f5e)" },
+      {
+        name: "Fired",
+        value: "glow → ember",
+        fill: "linear-gradient(135deg, #fdba74, #f43f5e)",
+      },
     ],
   },
   {
@@ -54,6 +79,13 @@ const swatches: { group: string; items: { name: string; value: string; fill: str
   },
 ];
 
+const BADGE_SNIPPET = `<a href="https://www.glassworks.dev">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://www.glassworks.dev/brand/badge-on-dark.svg">
+    <img alt="Built on Glassworks" src="https://www.glassworks.dev/brand/badge-on-light.svg" height="30">
+  </picture>
+</a>`;
+
 const downloads = [
   { file: "lockup-on-dark.svg", what: "Mark and wordmark, dark backgrounds" },
   { file: "lockup-on-light.svg", what: "Mark and wordmark, light backgrounds" },
@@ -64,9 +96,24 @@ const downloads = [
   { file: "mark-mono.svg", what: "One colour, follows currentColor" },
   { file: "kiln-on-dark.svg", what: "Kiln mark, ember pane" },
   { file: "app-icon.svg", what: "App icon, 512 × 512" },
+  { file: "badge-on-dark.svg", what: "Built on Glassworks, dark" },
+  { file: "badge-on-light.svg", what: "Built on Glassworks, light" },
+  { file: "favicon.svg", what: "Small cut, follows the OS theme" },
 ];
 
-function Section({ id, label, title, lede, children }: { id: string; label: string; title: string; lede?: ReactNode; children: ReactNode }) {
+function Section({
+  id,
+  label,
+  title,
+  lede,
+  children,
+}: {
+  id: string;
+  label: string;
+  title: string;
+  lede?: ReactNode;
+  children: ReactNode;
+}) {
   return (
     <section className={s.section} aria-labelledby={id}>
       <div className={s.rail}>
@@ -93,10 +140,17 @@ export default function BrandPage() {
           <span className="label">Brand</span>
           <h1 className={s.h1}>A frame of panes, one of them lit.</h1>
           <p className={s.heroLede}>
-            Taken from S1 Unleashed&rsquo;s boot screen: dark glass, thin Inter, sky-to-violet light.
+            Taken from S1 Unleashed&rsquo;s boot screen: dark glass, thin Inter,
+            sky-to-violet light.
           </p>
         </div>
-        <GlassTile label="Open core for wall panels" status="MPL-2.0" footLeft="Frames · Panes · Kiln" footRight="glassworks.dev" replay />
+        <GlassTile
+          label="Open core for wall panels"
+          status="MPL-2.0"
+          footLeft="Frames · Panes · Kiln"
+          footRight="glassworks.dev"
+          replay
+        />
       </header>
 
       <Section
@@ -106,12 +160,48 @@ export default function BrandPage() {
         lede="Three panes in a frame. Only the big one is lit. Every gap is 6 units."
       >
         <div className={`glass ${s.construct}`}>
-          <svg viewBox="0 0 170 90" role="img" aria-label="Construction: a 2:1 frame with radius 14 and stroke 4, three panes separated by 6-unit gaps">
+          <svg
+            viewBox="0 0 170 90"
+            role="img"
+            aria-label="Construction: a 2:1 frame with radius 14 and stroke 4, three panes separated by 6-unit gaps"
+          >
             <g transform="translate(25 15)" style={{ color: "var(--fg)" }}>
-              <rect x="2" y="2" width="116" height="56" rx="14" fill="none" stroke="currentColor" strokeWidth="4" />
-              <rect x="10" y="10" width="54" height="40" rx="6" fill="url(#gw-lit)" />
-              <rect x="70" y="10" width="40" height="17" rx="6" fill="currentColor" fillOpacity={0.26} />
-              <rect x="70" y="33" width="40" height="17" rx="6" fill="currentColor" fillOpacity={0.26} />
+              <rect
+                x="2"
+                y="2"
+                width="116"
+                height="56"
+                rx="14"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="4"
+              />
+              <rect
+                x="10"
+                y="10"
+                width="54"
+                height="40"
+                rx="6"
+                fill="url(#gw-lit)"
+              />
+              <rect
+                x="70"
+                y="10"
+                width="40"
+                height="17"
+                rx="6"
+                fill="currentColor"
+                fillOpacity={0.26}
+              />
+              <rect
+                x="70"
+                y="33"
+                width="40"
+                height="17"
+                rx="6"
+                fill="currentColor"
+                fillOpacity={0.26}
+              />
             </g>
             <path className={s.dim} d="M25 9 H145 M25 7 V11 M145 7 V11" />
             <text className={s.dimt} x="85" y="6.5" textAnchor="middle">
@@ -144,21 +234,32 @@ export default function BrandPage() {
         <div className={s.meaning}>
           <div>
             <h3 className={s.chip}>
-              <span className={s.sw} style={{ border: "2px solid var(--fg)" }} />
+              <span
+                className={s.sw}
+                style={{ border: "2px solid var(--fg)" }}
+              />
               Frame
             </h3>
             <p>The device.</p>
           </div>
           <div>
             <h3 className={s.chip}>
-              <span className={s.sw} style={{ background: "var(--lit-gradient)" }} />
+              <span
+                className={s.sw}
+                style={{ background: "var(--lit-gradient)" }}
+              />
               Lit pane
             </h3>
             <p>The dashboard. The only colour in the mark.</p>
           </div>
           <div>
             <h3 className={s.chip}>
-              <span className={s.sw} style={{ background: "color-mix(in srgb, var(--fg) 26%, transparent)" }} />
+              <span
+                className={s.sw}
+                style={{
+                  background: "color-mix(in srgb, var(--fg) 26%, transparent)",
+                }}
+              />
               Clear panes
             </h3>
             <p>Plugins.</p>
@@ -181,7 +282,8 @@ export default function BrandPage() {
           </figure>
         </div>
         <p className={s.note}>
-          Under 40 px wide, use the small cut: heavier frame, clear panes merged.
+          Under 40 px wide, use the small cut: heavier frame, clear panes
+          merged.
         </p>
         <div className={s.grounds}>
           <div className={`${s.ground} ${s.gNight}`}>
@@ -205,7 +307,8 @@ export default function BrandPage() {
         title="One spelling: Glassworks."
         lede={
           <>
-            Inter Light, −2.5% tracking, sentence case. Mark at 1.6 × cap height.
+            Inter Light, −2.5% tracking, sentence case. Mark at 1.6 × cap
+            height.
           </>
         }
       >
@@ -254,10 +357,59 @@ export default function BrandPage() {
               </span>
             </div>
             <p className={s.note}>
-              For frame projects&rsquo; READMEs and sites.
+              For frame projects&rsquo; READMEs and sites.{" "}
+              <a href="#badge">Rules</a>.
             </p>
           </div>
         </div>
+      </Section>
+
+      <Section
+        id="badge"
+        label="Badge"
+        title="Built on Glassworks."
+        lede="For any product, frame or app that ships the Glassworks core. It's required for a listing on this site and in Kiln."
+      >
+        <div className={s.badges}>
+          <div className={`${s.badgeGround} ${s.gNight}`}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/brand/badge-on-dark.svg"
+              alt="Built on Glassworks badge, dark"
+              width={166}
+              height={30}
+            />
+          </div>
+          <div className={`${s.badgeGround} ${s.gDay}`}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/brand/badge-on-light.svg"
+              alt="Built on Glassworks badge, light"
+              width={166}
+              height={30}
+            />
+          </div>
+        </div>
+        <ul className={s.badgeRules}>
+          <li>
+            Use it as supplied. Don&rsquo;t change the words, colours or
+            proportions.
+          </li>
+          <li>Link it to glassworks.dev where you can.</li>
+          <li>
+            Put it in your README, on your site, and on your product&rsquo;s
+            About screen.
+          </li>
+          <li>
+            Keep the core&rsquo;s &ldquo;Built on Glassworks&rdquo; line in
+            About. The rest of the name rules are on{" "}
+            <Link href="/trademarks">Trademarks</Link>.
+          </li>
+        </ul>
+        <CopySnippet
+          label="README, follows GitHub's theme"
+          code={BADGE_SNIPPET}
+        />
       </Section>
 
       <Section
@@ -273,7 +425,10 @@ export default function BrandPage() {
               <div className={s.swatches}>
                 {g.items.map((c) => (
                   <div key={c.name} className={s.swatch}>
-                    <div className={s.swatchFill} style={{ background: c.fill } as CSSProperties} />
+                    <div
+                      className={s.swatchFill}
+                      style={{ background: c.fill } as CSSProperties}
+                    />
                     <div className={s.swatchText}>
                       {c.name}
                       <span>{c.value}</span>
@@ -326,7 +481,8 @@ export default function BrandPage() {
               Code<span>JetBrains Mono 400</span>
             </div>
             <div className={s.sMono}>
-              requires = setOf(SILABS_RADIO) · <span>switch.s1_radio_permit_join</span>
+              requires = setOf(SILABS_RADIO) ·{" "}
+              <span>switch.s1_radio_permit_join</span>
             </div>
           </div>
         </div>
@@ -380,9 +536,24 @@ export default function BrandPage() {
             </div>
             <div>
               {[
-                { Icon: MicGlyph, n: "Assist", d: "Wake word and voice overlay", on: true },
-                { Icon: MusicGlyph, n: "Sendspin", d: "Music Assistant player", on: true },
-                { Icon: RadioGlyph, n: "Zigbee / Thread radio", d: "Coordinator, router or border router", on: false },
+                {
+                  Icon: MicGlyph,
+                  n: "Assist",
+                  d: "Wake word and voice overlay",
+                  on: true,
+                },
+                {
+                  Icon: MusicGlyph,
+                  n: "Sendspin",
+                  d: "Music Assistant player",
+                  on: true,
+                },
+                {
+                  Icon: RadioGlyph,
+                  n: "Zigbee / Thread radio",
+                  d: "Coordinator, router or border router",
+                  on: false,
+                },
               ].map(({ Icon, n, d, on }) => (
                 <div key={n} className={s.paneRow}>
                   <span className={s.paneIc}>
@@ -401,7 +572,9 @@ export default function BrandPage() {
                 </span>
                 <span>
                   <span className={s.pn}>Wall base</span>
-                  <span className={s.pd}>Needs the S1 wall base. This panel isn&rsquo;t on one.</span>
+                  <span className={s.pd}>
+                    Needs the S1 wall base. This panel isn&rsquo;t on one.
+                  </span>
                 </span>
                 <Switch label="Wall base, unavailable" disabled />
               </div>
@@ -425,27 +598,35 @@ export default function BrandPage() {
         </div>
       </Section>
 
-      <Section id="vocabulary" label="Vocabulary" title="Frame, Pane, Kiln." lede="1.6 px stroke on a 24 px grid.">
+      <Section
+        id="vocabulary"
+        label="Vocabulary"
+        title="Frame, Pane, Kiln."
+        lede="1.6 px stroke on a 24 px grid."
+      >
         <div className={s.vocab}>
           <div className={`glass ${s.term}`}>
             <FrameGlyph />
             <span className={s.termW}>Frame</span>
             <p>
-              One device definition: hardware, capabilities and the panes it ships. <code>frames/aqara-s1/</code>
+              One device definition: hardware, capabilities and the panes it
+              ships. <code>frames/aqara-s1/</code>
             </p>
           </div>
           <div className={`glass ${s.term}`}>
             <PaneGlyph />
             <span className={s.termW}>Pane</span>
             <p>
-              A plugin. Hardware and feature panes are one type and differ only in <code>requires</code>.
+              A plugin. Hardware and feature panes are one type and differ only
+              in <code>requires</code>.
             </p>
           </div>
           <div className={`glass ${s.term}`}>
             <KilnGlyph />
             <span className={s.termW}>Kiln</span>
             <p>
-              The installer that fires a stock device into a panel. <code>kiln.glassworks.dev</code>
+              The installer that fires a stock device into a panel.{" "}
+              <code>kiln.glassworks.dev</code>
             </p>
           </div>
         </div>
@@ -481,10 +662,42 @@ export default function BrandPage() {
           <div className={s.dont}>
             <div className={`${s.ground} ${s.gNight}`}>
               <svg viewBox="0 0 120 60" aria-hidden="true">
-                <rect x="2" y="2" width="116" height="56" rx="14" fill="none" stroke="currentColor" strokeWidth="4" />
-                <rect x="10" y="10" width="54" height="40" rx="6" fill="#38bdf8" />
-                <rect x="70" y="10" width="40" height="17" rx="6" fill="currentColor" fillOpacity={0.26} />
-                <rect x="70" y="33" width="40" height="17" rx="6" fill="currentColor" fillOpacity={0.26} />
+                <rect
+                  x="2"
+                  y="2"
+                  width="116"
+                  height="56"
+                  rx="14"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                />
+                <rect
+                  x="10"
+                  y="10"
+                  width="54"
+                  height="40"
+                  rx="6"
+                  fill="#38bdf8"
+                />
+                <rect
+                  x="70"
+                  y="10"
+                  width="40"
+                  height="17"
+                  rx="6"
+                  fill="currentColor"
+                  fillOpacity={0.26}
+                />
+                <rect
+                  x="70"
+                  y="33"
+                  width="40"
+                  height="17"
+                  rx="6"
+                  fill="currentColor"
+                  fillOpacity={0.26}
+                />
               </svg>
             </div>
             <span className={s.x}>Flatten the light</span>
@@ -518,7 +731,12 @@ export default function BrandPage() {
         </div>
       </Section>
 
-      <Section id="downloads" label="Downloads" title="SVGs." lede="Text is outlined, so no fonts are needed.">
+      <Section
+        id="downloads"
+        label="Downloads"
+        title="SVGs."
+        lede="Text is outlined, so no fonts are needed."
+      >
         <ul className={s.downloads}>
           {downloads.map((d) => (
             <li key={d.file}>
