@@ -1,0 +1,279 @@
+.wrap {
+  display: grid;
+  grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr);
+  gap: 32px;
+  align-items: center;
+}
+
+.figure {
+  min-width: 0;
+}
+
+.svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+/* ---------- plates ---------- */
+.plate {
+  transition: opacity 0.35s ease;
+  animation: settle 0.9s ease backwards;
+  animation-delay: calc(var(--i) * 0.12s);
+}
+
+/* plates appear in place, bottom first: light coming on, not glass moving */
+@keyframes settle {
+  from {
+    opacity: 0;
+  }
+}
+
+.dim {
+  opacity: 0.16;
+}
+
+.top {
+  fill: color-mix(in srgb, var(--glass) 70%, transparent);
+  stroke: color-mix(in srgb, var(--fg) 26%, transparent);
+  stroke-width: 0.8;
+}
+
+.edge {
+  fill: color-mix(in srgb, var(--fg) 10%, var(--bg));
+  stroke: color-mix(in srgb, var(--fg) 18%, transparent);
+  stroke-width: 0.6;
+}
+
+.cell {
+  fill: color-mix(in srgb, var(--fg) 6%, transparent);
+  stroke: color-mix(in srgb, var(--fg) 20%, transparent);
+  stroke-width: 0.6;
+}
+
+.own {
+  fill: color-mix(in srgb, var(--fg) 5%, transparent);
+  stroke: color-mix(in srgb, var(--fg) 40%, transparent);
+  stroke-width: 0.7;
+  stroke-dasharray: 3 2;
+}
+
+.lit {
+  stroke: none;
+  opacity: 0.92;
+}
+
+.socket {
+  fill: none;
+  stroke: var(--ink-sky);
+  stroke-opacity: 0.55;
+  stroke-width: 0.7;
+  stroke-dasharray: 2.5 2;
+}
+
+.chip {
+  fill: color-mix(in srgb, var(--fg) 13%, transparent);
+  stroke: color-mix(in srgb, var(--fg) 22%, transparent);
+  stroke-width: 0.6;
+}
+
+.cellText,
+.cellTextLit {
+  font: 500 7px var(--f-sans);
+  letter-spacing: -0.01em;
+  fill: color-mix(in srgb, var(--fg) 82%, transparent);
+  pointer-events: none;
+}
+
+.cellTextLit {
+  fill: #0a0b0f;
+}
+
+.plateLabel {
+  font: 500 5.6px var(--f-sans);
+  letter-spacing: 0.16em;
+  fill: var(--faint);
+  pointer-events: none;
+}
+
+/* ---------- light ---------- */
+.beamRail,
+.wireRail {
+  stroke: color-mix(in srgb, var(--sky) 22%, transparent);
+  stroke-width: 0.8;
+  fill: none;
+}
+
+.beam,
+.wire,
+.wireEmber {
+  fill: none;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-dasharray: 6 60;
+  animation: flow 2.4s linear infinite;
+}
+
+.beam {
+  stroke: var(--sky);
+  filter: drop-shadow(0 0 3px var(--sky));
+}
+
+/* every line is drawn from its source, so a falling offset carries the light
+   toward its destination: up the stack, and out to the house */
+
+.wire {
+  stroke: var(--violet);
+  filter: drop-shadow(0 0 3px var(--violet));
+  stroke-dasharray: 8 70;
+  animation-duration: 2.8s;
+}
+
+.wireEmber {
+  stroke: var(--ember-b);
+  filter: drop-shadow(0 0 3px var(--ember-a));
+  stroke-dasharray: 6 40;
+  animation-duration: 1.8s;
+}
+
+@keyframes flow {
+  from {
+    stroke-dashoffset: 66;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* ---------- external systems ---------- */
+.extBox {
+  fill: var(--glass);
+  stroke: var(--edge);
+  stroke-width: 0.8;
+}
+
+.extTitle {
+  font: 500 10px var(--f-sans);
+  letter-spacing: -0.01em;
+  fill: var(--fg);
+}
+
+.extSub {
+  font: 400 7.6px var(--f-sans);
+  fill: var(--muted);
+}
+
+.dotSky,
+.dotEmber {
+  animation: breathe 2s ease-in-out infinite;
+}
+
+.dotSky {
+  fill: var(--green);
+}
+
+.dotEmber {
+  fill: var(--ember-b);
+}
+
+@keyframes breathe {
+  50% {
+    opacity: 0.45;
+  }
+}
+
+/* ---------- legend ---------- */
+.legend {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.item {
+  padding: 12px 14px;
+  border-radius: var(--r-pane);
+  border: 1px solid transparent;
+  transition:
+    opacity 0.3s ease,
+    background 0.3s ease,
+    border-color 0.3s ease;
+}
+
+.open {
+  background: var(--glass);
+  border-color: var(--edge);
+}
+
+.itemDim {
+  opacity: 0.5;
+}
+
+.itemBtn {
+  all: unset;
+  cursor: pointer;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  border-radius: 6px;
+}
+
+.itemBtn:focus-visible {
+  outline: 2px solid var(--sky);
+  outline-offset: 4px;
+}
+
+.itemName {
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+
+.itemCode {
+  font-size: 11.5px;
+  color: var(--ink-sky);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+.itemDesc {
+  margin-top: 4px;
+  font-size: 13.5px;
+  color: var(--muted);
+}
+
+.chips {
+  list-style: none;
+  margin: 10px 0 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.chips li {
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--edge);
+  background: var(--bg-2);
+}
+
+.itemNote {
+  margin-top: 10px;
+  font-size: 12.5px;
+  color: var(--faint);
+}
+
+@media (max-width: 900px) {
+  .wrap {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

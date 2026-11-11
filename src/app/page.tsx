@@ -1,11 +1,9 @@
 import { GlassTile } from "@/components/GlassTile";
+import { Stack } from "@/components/Stack";
 import {
   BaseGlyph,
-  FrameGlyph,
-  KilnGlyph,
   MicGlyph,
   MusicGlyph,
-  PaneGlyph,
   RadioGlyph,
   SensorGlyph,
   TimerGlyph,
@@ -66,31 +64,15 @@ export default function Home() {
 
       <section className={styles.section} aria-labelledby="fits">
         <div className={styles.head}>
-          <span className="label">How it fits</span>
+          <span className="label">How it&rsquo;s built</span>
           <h2 id="fits" className={styles.h2}>
             A frame holds panes. Kiln installs it.
           </h2>
+          <p className={styles.sectionLede}>
+            Each layer only knows the one below it. Hover or tap a layer to see what&rsquo;s in it.
+          </p>
         </div>
-        <div className={styles.trio}>
-          <article className={`glass ${styles.term}`}>
-            <FrameGlyph className={styles.termIcon} />
-            <h3 className={styles.termName}>Frame</h3>
-            <p>One device: its hardware, what it can do, and which panes it ships. Each build has exactly one.</p>
-          </article>
-          <article className={`glass ${styles.term}`}>
-            <PaneGlyph className={styles.termIcon} />
-            <h3 className={styles.termName}>Pane</h3>
-            <p>
-              A plugin. A pane says what it needs and a frame says what it has. Panes a frame can&rsquo;t run stay
-              listed, with the reason.
-            </p>
-          </article>
-          <article className={`glass ${styles.term}`}>
-            <KilnGlyph className={styles.termIcon} />
-            <h3 className={styles.termName}>Kiln</h3>
-            <p>The installer. It runs in your browser over USB and turns a stock device into a panel, one recipe per frame.</p>
-          </article>
-        </div>
+        <Stack />
         <p className={styles.example}>
           S1 Unleashed is a Glassworks frame with the radio and wall-base panes, installed with Kiln.
         </p>
