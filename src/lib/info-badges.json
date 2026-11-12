@@ -1,7 +1,8 @@
 [
   { "id": "license", "label": "LICENSE", "value": "MPL-2.0" },
-  { "id": "status-works-today", "label": "STATUS", "value": "WORKS TODAY", "status": "ready" },
-  { "id": "status-in-progress", "label": "STATUS", "value": "IN PROGRESS", "status": "working" },
-  { "id": "status-planned", "label": "STATUS", "value": "PLANNED", "status": "planned" },
+  { "id": "status-under-development", "label": "STATUS", "value": "UNDER DEVELOPMENT", "status": "development" },
+  { "id": "status-alpha", "label": "STATUS", "value": "ALPHA", "status": "alpha" },
+  { "id": "status-beta", "label": "STATUS", "value": "BETA", "status": "beta" },
+  { "id": "status-stable", "label": "STATUS", "value": "STABLE", "status": "stable" },
   { "id": "roadmap", "label": "ROADMAP", "value": "GLASSWORKS V1" }
 ]

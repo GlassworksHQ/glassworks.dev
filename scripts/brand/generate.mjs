@@ -8,7 +8,8 @@
  * for the org profile and the main README), core, kiln, and one per library in
  * src/lib/libraries.json. Each in -on-dark and -on-light.
  *
- * Info badges (30 px, in place of shields.io): licence, status, roadmap, from
+ * Info badges (30 px, in place of shields.io): licence, status (under
+ * development, alpha, beta, stable) and roadmap, from
  * src/lib/info-badges.json.
  *
  * "Built on Glassworks" (badge-on-*.svg) is the frame badge and isn't
@@ -95,11 +96,32 @@ const BADGES = {
 
 /* ---------- info badges ---------- */
 
-/* status colours only ever mean status (see /brand#colour) */
-const STATUS = {
+/*
+ * Status colours only ever mean status (see /brand#colour). The stages fill in
+ * as a project matures: a dashed grey ring, a hollow amber ring, a solid amber
+ * dot, then a solid green dot.
+ */
+const STATUS_INK = {
   dark: { ready: "#34d399", working: "#fbbf24" },
   light: { ready: "#047857", working: "#b45309" },
 };
+
+function statusDot(t, stage, cx) {
+  const ink = STATUS_INK[t.name];
+  const at = `cx="${cx.toFixed(2)}" cy="15.5"`;
+  switch (stage) {
+    case "development":
+      return `<circle ${at} r="2.6" fill="none" stroke="${t.mu}" stroke-width="1.1" stroke-dasharray="1.4 1.2"/>`;
+    case "alpha":
+      return `<circle ${at} r="2.6" fill="none" stroke="${ink.working}" stroke-width="1.3"/>`;
+    case "beta":
+      return `<circle ${at} r="3" fill="${ink.working}"/>`;
+    case "stable":
+      return `<circle ${at} r="3" fill="${ink.ready}"/>`;
+    default:
+      throw new Error(`unknown status stage: ${stage}`);
+  }
+}
 
 /** LABEL ¦ VALUE on the same field as the part badges, with a status dot when it has one. */
 function infoBadge(t, { label, value, status }) {
@@ -109,8 +131,7 @@ function infoBadge(t, { label, value, status }) {
   let vx = divider + 9;
   let dot = "";
   if (status) {
-    const c = STATUS[t.name][status] ?? t.fa;
-    dot = `<circle cx="${(vx + 3).toFixed(2)}" cy="15.5" r="3" fill="${c}"/>`;
+    dot = statusDot(t, status, vx + 3);
     vx += 11;
   }
   const w = vx + measure(value, CAPS_B) + 13;
