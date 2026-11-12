@@ -17,6 +17,7 @@
  *
  * The mark and everything built from it: mark-on-*, mark-mono, kiln-on-dark,
  * lockup-on-*, lockup-kiln-on-dark, app-icon, favicon (also src/app/icon.svg),
+ * and Kiln's app-icon-kiln and favicon-kiln (the same, with the ember floor),
  * and the frame badge, "Built on Glassworks" (badge-on-*). The mark's shape
  * comes from src/lib/markGeometry.ts, the same file <Mark> draws from.
  */
@@ -189,22 +190,25 @@ function lockup(ink, { kiln = false } = {}) {
   return plainSvg(w, H, kiln ? "Glassworks Kiln" : "Glassworks", grad("lit", kiln ? EMBER_STOPS : LIT_STOPS), body);
 }
 
-function appIcon() {
+/* kiln: Kiln's mark (the ember floor) on Kiln's room light, sky and ember, in place of sky and violet */
+function appIcon({ kiln = false } = {}) {
+  const [glow, glowOp] = kiln ? ["#f43f5e", ".18"] : ["#a78bfa", ".2"];
   const defs =
-    grad("lit", LIT_STOPS) +
+    grad("lit", kiln ? EMBER_STOPS : LIT_STOPS) +
     `<radialGradient id="sky" cx=".18" cy=".12" r=".7"><stop offset="0" stop-color="#38bdf8" stop-opacity=".22"/><stop offset="1" stop-color="#38bdf8" stop-opacity="0"/></radialGradient>` +
-    `<radialGradient id="vio" cx=".86" cy=".9" r=".7"><stop offset="0" stop-color="#a78bfa" stop-opacity=".2"/><stop offset="1" stop-color="#a78bfa" stop-opacity="0"/></radialGradient>`;
+    `<radialGradient id="vio" cx=".86" cy=".9" r=".7"><stop offset="0" stop-color="${glow}" stop-opacity="${glowOp}"/><stop offset="1" stop-color="${glow}" stop-opacity="0"/></radialGradient>`;
   const body =
     `<rect width="512" height="512" rx="112" fill="#0a0b0f"/><rect width="512" height="512" rx="112" fill="url(#sky)"/><rect width="512" height="512" rx="112" fill="url(#vio)"/>` +
     `<rect x=".5" y=".5" width="511" height="511" rx="111.5" fill="none" stroke="#fff" stroke-opacity=".08"/>` +
-    `<g transform="translate(96 96) scale(2.6667)">${markBody()}</g>`;
-  return plainSvg(512, 512, "Glassworks", defs, body);
+    `<g transform="translate(96 96) scale(2.6667)">${markBody({ kiln })}</g>`;
+  return plainSvg(512, 512, kiln ? "Glassworks Kiln" : "Glassworks", defs, body);
 }
 
-/* the favicon follows the OS theme: ink is set by a style block */
-function favicon() {
+/* the favicon follows the OS theme: ink is set by a style block. kiln: the small cut of Kiln's mark */
+function favicon({ kiln = false } = {}) {
   const style = `<style>.i{stroke:#0c0e13}@media (prefers-color-scheme:dark){.i{stroke:#f4f4f5}}</style>`;
-  return plainSvg(120, 120, "Glassworks", grad("lit", LIT_STOPS), style + markBody({ inkClass: "i", cut: "small" }));
+  return plainSvg(120, 120, kiln ? "Glassworks Kiln" : "Glassworks", grad("lit", kiln ? EMBER_STOPS : LIT_STOPS),
+    style + markBody({ inkClass: "i", cut: "small", kiln }));
 }
 
 /* ---------- info badges ---------- */
@@ -524,7 +528,9 @@ write("lockup-on-dark.svg", lockup(ink.dark));
 write("lockup-on-light.svg", lockup(ink.light));
 write("lockup-kiln-on-dark.svg", lockup(ink.dark, { kiln: true }));
 write("app-icon.svg", appIcon());
+write("app-icon-kiln.svg", appIcon({ kiln: true }));
 write("favicon.svg", favicon());
+write("favicon-kiln.svg", favicon({ kiln: true }));
 writeFileSync(join(root, "src/app/icon.svg"), favicon());
 written.push("../../src/app/icon.svg");
 
