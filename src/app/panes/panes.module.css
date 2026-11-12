@@ -1,73 +1,133 @@
-.top {
-  display: flex;
+.page {
+  display: grid;
+  gap: 40px;
+  padding-block: 40px 56px;
+}
+
+.head {
+  display: grid;
   gap: 14px;
-  align-items: flex-start;
+  max-width: 62ch;
 }
 
-.icon {
-  flex: none;
-  width: 40px;
-  height: 40px;
-  border-radius: 12px;
-  display: grid;
-  place-items: center;
-  border: 1px solid var(--edge);
-  background: var(--glass);
+.h1 {
+  font-size: clamp(38px, 5.4vw, 60px);
+  line-height: 1.02;
+  letter-spacing: -0.035em;
+  font-weight: 300;
 }
 
-.icon svg {
-  width: 20px;
-  height: 20px;
+.h2 {
+  font-size: clamp(22px, 2.6vw, 28px);
+  line-height: 1.15;
+  font-weight: 400;
+  letter-spacing: -0.02em;
 }
 
-.text {
-  display: grid;
-  gap: 6px;
-  min-width: 0;
-}
-
-.text p {
-  font-size: 14px;
+.lede {
+  font-size: 17px;
   color: var(--muted);
+  text-wrap: pretty;
 }
 
-.needs span {
-  font-family: var(--f-mono);
-  font-size: 11px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--faint);
-  margin-right: 6px;
+/* the key under the grid */
+.key {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 22px;
+  margin: -16px 0 0;
+  padding: 0;
 }
 
-.runs {
+/* frame panes */
+.frameSection {
+  display: grid;
+  gap: 18px;
+}
+
+.frameHead {
   display: grid;
   gap: 8px;
-  padding-top: 14px;
-  border-top: 1px solid var(--edge);
+  max-width: 62ch;
 }
 
-.devices {
+.frameList {
   list-style: none;
   margin: 0;
   padding: 0;
   display: grid;
-  gap: 6px;
+  gap: 8px;
 }
 
-.devices li {
-  display: flex;
-  justify-content: space-between;
+.frameRow {
+  display: grid;
+  grid-template-columns: auto minmax(0, 220px) minmax(0, 1fr);
   align-items: center;
-  gap: 10px;
-  font-size: 14px;
-}
-
-.devices a {
+  gap: 16px;
+  padding: 14px 18px;
+  border-radius: var(--r-pane);
+  border: 1px solid var(--edge);
+  background: var(--glass);
   color: inherit;
   text-decoration: none;
+  transition: border-color 0.3s ease;
 }
 
-.devices a:hover {
-  color: var(--ink-sky);
+.frameRow:hover,
+.frameRow:focus-visible {
+  border-color: color-mix(in srgb, var(--sky) 40%, var(--edge));
+}
+
+.frameIcon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--edge);
+  background: var(--bg-2);
+}
+
+.frameIcon svg {
+  width: 18px;
+  height: 18px;
+}
+
+.frameText {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.frameName {
+  font-weight: 500;
+}
+
+.frameOf {
+  font-size: 13px;
+  color: var(--faint);
+}
+
+.frameDoes {
+  font-size: 14px;
+  color: var(--muted);
+  min-width: 0;
+}
+
+@media (max-width: 620px) {
+
+  .frameRow {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .frameDoes {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .frameRow {
+    transition: none;
+  }
 }

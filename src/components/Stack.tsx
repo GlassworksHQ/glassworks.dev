@@ -11,9 +11,9 @@ import styles from "./Stack.module.css";
  * Plates never move; light does (dashes flowing up the columns and out to HA).
  */
 
-type LayerId = "panes" | "api" | "core" | "frame" | "hardware" | "kiln";
+export type LayerId = "panes" | "api" | "core" | "frame" | "hardware" | "kiln";
 
-type Layer = {
+export type Layer = {
   id: LayerId;
   name: string;
   code: string;
@@ -30,7 +30,7 @@ type Layer = {
   note?: string;
 };
 
-const LAYERS: Layer[] = [
+export const LAYERS: Layer[] = [
   {
     id: "panes",
     name: "Panes",
@@ -141,7 +141,7 @@ const LAYERS: Layer[] = [
 ];
 
 /* Kiln isn't a layer of the panel, but it's in the drawing and the list. */
-type Entry = Pick<Layer, "id" | "name" | "code" | "desc" | "items" | "note">;
+export type Entry = Pick<Layer, "id" | "name" | "code" | "desc" | "items" | "note">;
 
 const KILN_ENTRY: Entry = {
   id: "kiln",
@@ -158,7 +158,7 @@ const KILN_ENTRY: Entry = {
   note: "Not part of the running panel: it installs the layers above. Each frame brings its own install steps.",
 };
 
-const ENTRIES: Entry[] = [...LAYERS, KILN_ENTRY];
+export const ENTRIES: Entry[] = [...LAYERS, KILN_ENTRY];
 
 /* plate geometry, in plate units */
 const W = 200;
@@ -344,7 +344,7 @@ function Wire({ d, delay = 0 }: { d: string; delay?: number }) {
  */
 const KILN_Z = -96;
 const KILN_THICK = 6;
-const KILN_STEPS = ["USB", "Root", "Flash", "Provision"];
+export const KILN_STEPS = ["USB", "Root", "Flash", "Provision"];
 
 function KilnPlate({ dim, onEnter }: { dim: boolean; onEnter: () => void }) {
   const sw = 42.5;

@@ -1,0 +1,511 @@
+/* One tall section; its sticky frame holds the words on the left and the stack on the right. */
+/* the story sits on the page's own column, so its edges line up with the header */
+.story {
+  position: relative;
+  height: 620vh;
+}
+
+.sticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100svh;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr);
+  gap: 24px;
+  align-items: center;
+}
+
+/* hero copy and the layer list share one cell and crossfade */
+.text {
+  display: grid;
+  min-width: 0;
+}
+
+.hero,
+.steps {
+  grid-area: 1 / 1;
+  min-width: 0;
+  transition: none;
+}
+
+.hero {
+  display: grid;
+  gap: 20px;
+  align-content: center;
+}
+
+.h1 {
+  font-size: clamp(36px, 5.2vw, 58px);
+  line-height: 1.04;
+  letter-spacing: -0.035em;
+  font-weight: 300;
+  text-wrap: balance;
+}
+
+.lede {
+  font-size: 17px;
+  color: var(--muted);
+  max-width: 54ch;
+}
+
+.ctas {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 4px;
+}
+
+.primary,
+.secondary {
+  font-size: 14.5px;
+  font-weight: 500;
+  text-decoration: none;
+  padding: 12px 20px;
+  border-radius: 999px;
+}
+
+.primary {
+  background: var(--fg);
+  color: var(--bg);
+}
+
+.primary:hover {
+  opacity: 0.88;
+}
+
+.secondary {
+  border: 1px solid var(--edge);
+  background: var(--glass);
+}
+
+.secondary:hover {
+  border-color: color-mix(in srgb, var(--sky) 45%, var(--edge));
+}
+
+.scrollHint {
+  margin-top: 18px;
+  font: 500 11px/1 var(--f-mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--faint);
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.scrollHint::after {
+  content: "";
+  width: 1px;
+  height: 22px;
+  background: linear-gradient(var(--faint), transparent);
+  animation: hint 2.2s ease-in-out infinite;
+}
+
+@keyframes hint {
+  50% {
+    transform: translateY(5px);
+    opacity: 0.4;
+  }
+}
+
+/* the layer list */
+.steps {
+  display: grid;
+  gap: 14px;
+  align-content: center;
+}
+
+.h2 {
+  font-size: clamp(24px, 3vw, 32px);
+  line-height: 1.15;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+  margin-bottom: 6px;
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 2px;
+}
+
+.item {
+  border-radius: var(--r-pane);
+  border: 1px solid transparent;
+  transition:
+    opacity 0.35s ease,
+    background 0.35s ease,
+    border-color 0.35s ease;
+}
+
+.open {
+  background: var(--glass);
+  border-color: var(--edge);
+}
+
+.itemDim {
+  opacity: 0.45;
+}
+
+.itemBtn {
+  all: unset;
+  box-sizing: border-box;
+  cursor: pointer;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: var(--r-pane);
+}
+
+.itemBtn:focus-visible {
+  outline: 2px solid var(--sky);
+  outline-offset: 2px;
+}
+
+.itemName {
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.ember {
+  color: color-mix(in srgb, var(--ember-b) 75%, var(--fg));
+}
+
+.itemCode {
+  font-family: var(--f-mono);
+  font-size: 12.5px;
+  color: var(--ink-sky);
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+
+/* only the active layer opens */
+.itemBody {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.4s ease;
+}
+
+.itemInner {
+  overflow: hidden;
+  min-height: 0;
+}
+
+.open .itemBody {
+  grid-template-rows: 1fr;
+}
+
+.itemDesc {
+  font-size: 14px;
+  color: var(--muted);
+  padding: 0 14px;
+}
+
+.chips {
+  list-style: none;
+  margin: 0;
+  padding: 10px 14px 14px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.chips li {
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--edge);
+  background: var(--bg-2);
+}
+
+.coda {
+  font-size: 14px;
+  color: var(--muted);
+  max-width: 52ch;
+  padding: 4px 14px 0;
+  transition: opacity 0.4s ease;
+}
+
+/* the stack */
+.stage {
+  min-width: 0;
+  height: 100%;
+  display: grid;
+  align-items: center;
+}
+
+.svg {
+  display: block;
+  width: 100%;
+  max-height: 86svh;
+  overflow: visible;
+}
+
+/* an HTML wrapper, so the browser can float it without repainting the drawing */
+.float {
+  animation: float 6s ease-in-out infinite;
+  will-change: transform;
+}
+
+@keyframes float {
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+.skyStop {
+  stop-color: var(--sky);
+}
+
+.emberStop {
+  stop-color: var(--ember-b);
+}
+
+.skyGlow {
+  opacity: 0.22;
+}
+
+.emberGlow {
+  opacity: 0.32;
+}
+
+.layer {
+  transition:
+    opacity 0.45s ease,
+    transform 0.45s ease;
+}
+
+.top {
+  fill: color-mix(in srgb, var(--glass) 70%, var(--bg));
+  stroke: color-mix(in srgb, var(--fg) 26%, transparent);
+  stroke-width: 0.8;
+}
+
+.edge {
+  fill: color-mix(in srgb, var(--fg) 10%, var(--bg));
+  stroke: color-mix(in srgb, var(--fg) 18%, transparent);
+  stroke-width: 0.6;
+}
+
+.cell {
+  fill: color-mix(in srgb, var(--fg) 6%, transparent);
+  stroke: color-mix(in srgb, var(--fg) 20%, transparent);
+  stroke-width: 0.6;
+}
+
+.own {
+  fill: color-mix(in srgb, var(--fg) 5%, transparent);
+  stroke: color-mix(in srgb, var(--fg) 40%, transparent);
+  stroke-width: 0.7;
+  stroke-dasharray: 3 2;
+}
+
+.lit {
+  stroke: none;
+  opacity: 0.92;
+}
+
+.socket {
+  fill: none;
+  stroke: var(--ink-sky);
+  stroke-opacity: 0.55;
+  stroke-width: 0.7;
+  stroke-dasharray: 2.5 2;
+}
+
+.chip {
+  fill: color-mix(in srgb, var(--fg) 13%, transparent);
+  stroke: color-mix(in srgb, var(--fg) 22%, transparent);
+  stroke-width: 0.6;
+}
+
+.cellText,
+.cellTextLit {
+  font: 500 7px var(--f-sans);
+  letter-spacing: -0.01em;
+  fill: color-mix(in srgb, var(--fg) 82%, transparent);
+}
+
+.cellTextLit {
+  fill: #0a0b0f;
+}
+
+.plateLabel {
+  font: 500 5.6px var(--f-sans);
+  letter-spacing: 0.16em;
+  fill: var(--faint);
+}
+
+.kilnTop {
+  fill: color-mix(in srgb, var(--ember-b) 5%, var(--bg));
+  stroke: color-mix(in srgb, var(--ember-b) 80%, transparent);
+  stroke-width: 0.9;
+}
+
+.kilnEdge {
+  fill: color-mix(in srgb, var(--ember-b) 16%, var(--bg));
+  stroke: color-mix(in srgb, var(--ember-b) 35%, transparent);
+  stroke-width: 0.6;
+}
+
+.kilnStep {
+  font: 600 7px var(--f-sans);
+  fill: #1a0a0a;
+}
+
+.kilnLabel {
+  font: 500 5.6px var(--f-sans);
+  letter-spacing: 0.16em;
+  fill: color-mix(in srgb, var(--ember-b) 80%, var(--fg));
+}
+
+/* light rising up the columns, heat rising from Kiln, wires out to the house */
+.beam,
+.heat,
+.wire {
+  fill: none;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-dasharray: var(--dash) calc(var(--period) - var(--dash));
+  animation: flow var(--speed) linear infinite;
+}
+
+.beam {
+  --dash: 6px;
+  --period: 66px;
+  --speed: 2.4s;
+  stroke: var(--sky);
+  filter: drop-shadow(0 0 3px var(--sky));
+}
+
+.heat {
+  --dash: 6px;
+  --period: 46px;
+  --speed: 1.8s;
+  stroke: var(--ember-b);
+  filter: drop-shadow(0 0 3px var(--ember-a));
+}
+
+.wire {
+  --dash: 8px;
+  --period: 78px;
+  --speed: 2.8s;
+  stroke: var(--violet);
+  stroke-width: 1.2;
+  filter: drop-shadow(0 0 3px var(--violet));
+}
+
+@keyframes flow {
+  from {
+    stroke-dashoffset: var(--period);
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* the lines themselves, under the moving light */
+.wireRail,
+.beamRail,
+.heatRail {
+  fill: none;
+  stroke-width: 1;
+}
+
+.wireRail {
+  stroke: color-mix(in srgb, var(--violet) 55%, transparent);
+}
+
+.beamRail {
+  stroke: color-mix(in srgb, var(--sky) 40%, transparent);
+}
+
+.heatRail {
+  stroke: color-mix(in srgb, var(--ember-b) 45%, transparent);
+}
+
+.wireEnd {
+  fill: var(--violet);
+}
+
+.extBox {
+  fill: var(--glass);
+  stroke: var(--edge);
+  stroke-width: 0.8;
+}
+
+.extDot {
+  fill: var(--green);
+}
+
+.extTitle {
+  font: 500 12.5px var(--f-sans);
+  fill: var(--fg);
+}
+
+.extSub {
+  font: 400 9px var(--f-sans);
+  fill: var(--muted);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .float,
+  .scrollHint::after,
+  .beam,
+  .heat,
+  .wire {
+    animation: none;
+  }
+
+  .layer,
+  .item,
+  .itemBody {
+    transition: none;
+  }
+}
+
+/* phones and narrow windows: the stack above, the words below */
+@media (max-width: 900px) {
+  .sticky {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: 46svh minmax(0, 1fr);
+    gap: 8px;
+    align-items: start;
+  }
+
+  .stage {
+    grid-row: 1;
+  }
+
+  .text {
+    grid-row: 2;
+    overflow: hidden;
+  }
+
+  .svg {
+    max-height: 46svh;
+  }
+
+  .h1 {
+    font-size: clamp(30px, 8vw, 40px);
+  }
+
+  .lede {
+    font-size: 15px;
+  }
+
+  .scrollHint {
+    display: none;
+  }
+
+  .chips {
+    display: none;
+  }
+}

@@ -16,6 +16,7 @@
   --faint: #7d808b;
   --ink-sky: #0369a1;
   --ok-ink: #047857;
+  --work-ink: #b45309;
   --glow-a: 10%;
 
   /* light and heat (theme-independent) */
@@ -60,6 +61,7 @@
     --faint: #6b6b74;
     --ink-sky: #7dd3fc;
     --ok-ink: #34d399;
+    --work-ink: #fbbf24;
     --glow-a: 14%;
     color-scheme: dark;
   }
@@ -73,6 +75,9 @@
 
 html {
   -webkit-text-size-adjust: 100%;
+  /* full-bleed sections use 100vw, which includes the scrollbar in Firefox;
+     clip (unlike hidden) keeps position: sticky working */
+  overflow-x: clip;
 }
 
 body {

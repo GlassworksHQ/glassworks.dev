@@ -14,9 +14,9 @@ export type PaneId = "assist" | "timers" | "sendspin" | "radio" | "sensors" | "b
 export type Pane = { id: PaneId; name: string; does: string; requires: string; frame?: string };
 
 export const panes: Pane[] = [
-  { id: "assist", name: "Assist", does: "Wake word and voice overlay.", requires: "Microphone" },
+  { id: "assist", name: "Assist", does: "Wake word and voice overlay.", requires: "Microphone and speaker" },
   { id: "timers", name: "Timers", does: "Voice timers on screen.", requires: "Assist" },
-  { id: "sendspin", name: "Sendspin", does: "Synced Music Assistant player.", requires: "Any panel" },
+  { id: "sendspin", name: "Sendspin", does: "Synced Music Assistant player.", requires: "Speaker" },
   {
     id: "radio",
     name: "Zigbee / Thread radio",

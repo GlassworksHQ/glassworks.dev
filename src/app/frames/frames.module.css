@@ -34,47 +34,10 @@
   display: grid;
 }
 
-.card {
-  display: grid;
-  gap: 18px;
-  align-content: start;
-  padding: 18px;
-  text-decoration: none;
-  color: inherit;
-}
-
-.card:hover {
-  border-color: color-mix(in srgb, var(--sky) 45%, var(--edge));
-}
-
-.cardText {
-  display: grid;
-  gap: 6px;
-}
-
-.cardText p {
-  font-size: 14px;
-  color: var(--muted);
-}
-
-.cardTop {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
 .name {
   font-size: 18px;
   font-weight: 500;
   letter-spacing: -0.01em;
-}
-
-.cardText .aka {
-  font-size: 13px;
-  color: var(--faint);
-  margin-top: -2px;
 }
 
 .add {
