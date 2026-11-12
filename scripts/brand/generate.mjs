@@ -8,9 +8,9 @@
  * for the org profile and the main README), core, kiln, and one per library in
  * src/lib/libraries.json. Each in -on-dark and -on-light.
  *
- * Info badges (30 px, in place of shields.io): licence, status (under
- * development, α alpha, β beta, stable) and roadmap, from
- * src/lib/info-badges.json.
+ * Info badges (30 px, in place of shields.io): licence (MPL-2.0 for the core,
+ * MIT for libraries), status (under development, α alpha, β beta, stable) and
+ * roadmap, from src/lib/info-badges.json.
  *
  * Part icons (34 × 33, transparent, for tables and lists): frame, core, pane,
  * kiln. A tiny stack whose solid plate says where the part sits.

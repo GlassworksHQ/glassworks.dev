@@ -1,5 +1,6 @@
 [
   { "id": "license", "label": "LICENSE", "value": "MPL-2.0" },
+  { "id": "license-mit", "label": "LICENSE", "value": "MIT" },
   { "id": "status-under-development", "label": "STATUS", "value": "UNDER DEVELOPMENT", "status": "development" },
   { "id": "status-alpha", "label": "STATUS", "value": "ALPHA", "status": "alpha" },
   { "id": "status-beta", "label": "STATUS", "value": "BETA", "status": "beta" },
