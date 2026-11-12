@@ -1,4 +1,5 @@
 import type { DeviceStatus, RatingKey, Ratings, Support } from "@/lib/devices";
+import { statusText } from "@/lib/devices";
 import {
   cardTags,
   ratingFields,
@@ -122,14 +123,10 @@ export function SpecLabel({ label }: { label: string }) {
   );
 }
 
-const statusText: Record<DeviceStatus, string> = {
-  works: "Works today",
-  planned: "Planned",
-};
-
 export function StatusPill({ status }: { status: DeviceStatus }) {
   return (
     <span className={`${styles.pill} ${styles[status]}`}>
+      <StageMark stage={status} />
       {statusText[status]}
     </span>
   );
@@ -197,10 +194,20 @@ export function RatingValue({
   );
 }
 
-/** Pane support on a device. Only "works" gets colour; the rest are plain text. */
+/*
+ * The stage marker, the same as the status badges: a dashed ring for under
+ * development, an amber α or β for alpha and beta, a green dot for stable, a
+ * hollow ring for planned. Depends, not checked and no keep their own marks.
+ */
+export function StageMark({ stage }: { stage: DeviceStatus | Support }) {
+  return <span className={`${styles.mark} ${styles[`m_${stage}`]}`} aria-hidden="true" />;
+}
+
+/** Pane support on a device: its marker and its label. */
 export function SupportTag({ support }: { support: Support }) {
   return (
     <span className={`${styles.support} ${styles[`s_${support}`]}`}>
+      <StageMark stage={support} />
       {supportText[support]}
     </span>
   );

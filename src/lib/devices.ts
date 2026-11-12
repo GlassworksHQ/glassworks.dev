@@ -7,8 +7,17 @@ import type { PaneId } from "./site";
  * "Not checked" for anything nobody has confirmed on real hardware.
  */
 
-export type DeviceStatus = "works" | "planned";
-export type Support = "works" | "planned" | "depends" | "unknown" | "no";
+/*
+ * Release stages, the same ones as the status badges: under development, then
+ * alpha, beta and stable. Everything that runs today is beta until Glassworks V1.
+ */
+export type Stage = "development" | "alpha" | "beta" | "stable";
+export type DeviceStatus = Stage | "planned";
+export type Support = Stage | "planned" | "depends" | "unknown" | "no";
+
+/** Installable now: alpha, beta or stable. */
+export const ships = (s: DeviceStatus | Support): s is "alpha" | "beta" | "stable" =>
+  s === "alpha" || s === "beta" || s === "stable";
 
 /*
  * What installing does to a device, rated on fixed scales so devices compare at a
@@ -177,8 +186,19 @@ export type Device = {
   notice?: string;
 };
 
+export const statusText: Record<DeviceStatus, string> = {
+  planned: "Planned",
+  development: "Under development",
+  alpha: "Alpha",
+  beta: "Beta",
+  stable: "Stable",
+};
+
 export const supportText: Record<Support, string> = {
-  works: "Works",
+  development: "In development",
+  alpha: "Alpha",
+  beta: "Beta",
+  stable: "Stable",
   planned: "Planned",
   depends: "Depends",
   unknown: "Not checked",
@@ -189,7 +209,7 @@ export const devices: Device[] = [
   {
     slug: "aqara-s1",
     name: "Aqara S1 Plus",
-    status: "works",
+    status: "beta",
     shape: "s1",
     summary:
       "The reference frame. Every pane runs on it, including the Zigbee/Thread radio and the wall base.",
@@ -208,18 +228,18 @@ export const devices: Device[] = [
       { label: "Root", value: "FEL, then a patched boot image" },
     ],
     panes: {
-      assist: { support: "works" },
-      timers: { support: "works" },
-      sendspin: { support: "works" },
+      assist: { support: "beta" },
+      timers: { support: "beta" },
+      sendspin: { support: "beta" },
       radio: {
-        support: "works",
+        support: "beta",
         note: "Zigbee coordinator or router, and Thread.",
       },
       sensors: {
-        support: "works",
+        support: "beta",
         note: "Presence from the time-of-flight sensor.",
       },
-      base: { support: "works" },
+      base: { support: "beta" },
     },
     install: {
       how: "In the browser, over USB. It backs the panel up first, then roots and flashes it.",

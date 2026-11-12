@@ -13,7 +13,7 @@ import {
 } from "@/components/DeviceBits";
 import { KilnGlyph } from "@/components/Glyphs";
 import { Mark } from "@/components/Mark";
-import { deviceBySlug, devices, ratingKeys } from "@/lib/devices";
+import { deviceBySlug, devices, ratingKeys, ships } from "@/lib/devices";
 import { panes } from "@/lib/site";
 import s from "./device.module.css";
 
@@ -147,15 +147,17 @@ async function Device({ params }: { params: Params }) {
               const Icon = paneIcon[p.id];
               const sup = d.panes[p.id];
               return (
-                <li key={p.id} className={s.pane}>
-                  <span className={s.paneIc}>
-                    <Icon />
-                  </span>
-                  <span className={s.paneText}>
-                    <span className={s.paneName}>{p.name}</span>
-                    {sup.note && <span className={s.paneNote}>{sup.note}</span>}
-                  </span>
-                  <SupportTag support={sup.support} />
+                <li key={p.id}>
+                  <Link href={`/panes/${p.id}`} className={s.pane}>
+                    <span className={s.paneIc}>
+                      <Icon />
+                    </span>
+                    <span className={s.paneText}>
+                      <span className={s.paneName}>{p.name}</span>
+                      {sup.note && <span className={s.paneNote}>{sup.note}</span>}
+                    </span>
+                    <SupportTag support={sup.support} />
+                  </Link>
                 </li>
               );
             })}
@@ -165,7 +167,7 @@ async function Device({ params }: { params: Params }) {
 
       <section className={s.section} aria-labelledby="changes">
         <h2 id="changes" className={s.h2}>
-          {d.status === "works"
+          {ships(d.status)
             ? "What installing changes"
             : "What installing will change"}
         </h2>

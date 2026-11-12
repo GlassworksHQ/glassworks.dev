@@ -13,6 +13,7 @@ export function SiteHeader() {
       </Link>
       <nav className={styles.nav} aria-label="Main">
         <Link href="/frames">Devices</Link>
+        <Link href="/panes">Panes</Link>
         <Link href="/brand">Brand</Link>
         <a href={links.org} className={styles.gh} aria-label="GitHub">
           <GitHubGlyph className={styles.ghIcon} />

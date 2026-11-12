@@ -138,8 +138,19 @@
   border-top: 1px solid var(--edge);
 }
 
-.pane:first-child {
+.panes > li:first-child .pane {
   border-top: 0;
+}
+
+/* each pane links to its own page */
+.pane {
+  color: inherit;
+  text-decoration: none;
+}
+
+.pane:hover .paneName,
+.pane:focus-visible .paneName {
+  color: var(--ink-sky);
 }
 
 .paneIc {

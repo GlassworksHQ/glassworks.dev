@@ -1,15 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { DeviceModel } from "@/components/DeviceModel";
+import { DeviceCard } from "@/components/DeviceCard";
 import {
   RatingLabel,
-  RatingTags,
   RatingValue,
-  StatusPill,
   SupportTag,
   paneIcon,
 } from "@/components/DeviceBits";
-import { devices, difficultyHelp, ratingKeys } from "@/lib/devices";
+import { devices, difficultyHelp, ratingKeys, ships } from "@/lib/devices";
 import { links, panes } from "@/lib/site";
 import s from "./frames.module.css";
 
@@ -33,24 +31,7 @@ export default function DevicesPage() {
       <ul className={s.grid}>
         {devices.map((d) => (
           <li key={d.slug}>
-            <Link href={`/frames/${d.slug}`} className={`glass ${s.card}`}>
-              <DeviceModel
-                shape={d.shape}
-                label={`${d.name} running Glassworks`}
-              />
-              <div className={s.cardText}>
-                <div className={s.cardTop}>
-                  <h2 className={s.name}>{d.name}</h2>
-                  <StatusPill status={d.status} />
-                </div>
-                {d.aka && <p className={s.aka}>{d.aka}</p>}
-                <p>{d.summary}</p>
-                <RatingTags
-                  ratings={d.ratings}
-                  expected={d.status !== "works"}
-                />
-              </div>
-            </Link>
+            <DeviceCard d={d} heading="h2" />
           </li>
         ))}
         <li>
@@ -81,7 +62,7 @@ export default function DevicesPage() {
                 {devices.map((d) => (
                   <th key={d.slug} scope="col">
                     <Link href={`/frames/${d.slug}`}>{d.name}</Link>
-                    {d.status !== "works" && (
+                    {!ships(d.status) && (
                       <span className={s.expected}>expected</span>
                     )}
                   </th>
