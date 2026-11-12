@@ -98,13 +98,13 @@ const parts = [
     id: "core",
     name: "Core",
     alt: "Glassworks core",
-    use: "The core and anything shipped as part of it. Grey: the core is the drawing before the light.",
+    use: "The core and anything shipped as part of it. Pale glass: the core before the light comes on.",
   },
   {
     id: "pane",
     name: "Pane",
     alt: "Glassworks pane",
-    use: "A pane's README. The top plate is lit, like the panes plate in the stack.",
+    use: "A pane's README. Sky to violet, the light of the panes.",
   },
   {
     id: "kiln",
@@ -406,7 +406,7 @@ export default function BrandPage() {
         id="badge"
         label="Badge"
         title="Built on Glassworks."
-        lede="For any product, frame or app that ships the Glassworks core. It's required for a listing on this site and in Kiln."
+        lede="For any product, frame or app that ships the Glassworks core: something finished, so it's plain, with no construction. It's required for a listing on this site and in Kiln."
       >
         <div className={s.badges}>
           <div className={`${s.badgeGround} ${s.gNight}`}>
@@ -454,7 +454,7 @@ export default function BrandPage() {
         id="parts"
         label="Part badges"
         title="Core, pane, Kiln."
-        lede="One drawing, three kinds of light: the exploded stack from the home page, in miniature. The core is grey, a pane is lit and Kiln is ember. Device-specific code lives in a frame, so frames use Built on Glassworks."
+        lede="For the parts people build with. The mark sits in a drawing cell, because these are things under construction; the name sits on a sweep of the part's light, and the edge catches it. Finished products and frames use Built on Glassworks instead, which is plain."
       >
         <div className={s.parts}>
           {parts.map((p) => (
