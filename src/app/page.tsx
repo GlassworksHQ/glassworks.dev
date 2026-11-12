@@ -4,7 +4,7 @@ import Link from "next/link";
 import { DeviceModel } from "@/components/DeviceModel";
 import { RatingTags, StatusPill, paneIcon } from "@/components/DeviceBits";
 import { devices } from "@/lib/devices";
-import { links, panes } from "@/lib/site";
+import { generalPanes, links } from "@/lib/site";
 import styles from "./page.module.css";
 
 export default function Home() {
@@ -59,11 +59,16 @@ export default function Home() {
       </section>
 
       <section className={styles.section} aria-labelledby="panes">
-        <h2 id="panes" className={styles.h2}>
-          Panes
-        </h2>
+        <div className={styles.headRow}>
+          <h2 id="panes" className={styles.h2}>
+            Panes
+          </h2>
+          <Link href="/panes" className={styles.more}>
+            All panes
+          </Link>
+        </div>
         <ul className={styles.panes}>
-          {panes.map((p) => {
+          {generalPanes.map((p) => {
             const Icon = paneIcon[p.id];
             return (
               <li key={p.id} className={`glass ${styles.pane}`}>

@@ -11,7 +11,7 @@ import styles from "./Stack.module.css";
  * Plates never move; light does (dashes flowing up the columns and out to HA).
  */
 
-type LayerId = "panes" | "api" | "core" | "frame" | "hardware";
+type LayerId = "panes" | "api" | "core" | "frame" | "hardware" | "kiln";
 
 type Layer = {
   id: LayerId;
@@ -139,6 +139,26 @@ const LAYERS: Layer[] = [
     ],
   },
 ];
+
+/* Kiln isn't a layer of the panel, but it's in the drawing and the list. */
+type Entry = Pick<Layer, "id" | "name" | "code" | "desc" | "items" | "note">;
+
+const KILN_ENTRY: Entry = {
+  id: "kiln",
+  name: "Kiln",
+  code: "kiln.glassworks.dev",
+  desc: "The installer. Fires a stock device into a panel, over USB, from the browser.",
+  items: [
+    "Connects over USB, in the browser",
+    "Backs the device up first",
+    "Roots it, where the frame needs root",
+    "Flashes the frame and core",
+    "Provisions Wi-Fi and Home Assistant",
+  ],
+  note: "Not part of the running panel: it installs the layers above. Each frame brings its own install steps.",
+};
+
+const ENTRIES: Entry[] = [...LAYERS, KILN_ENTRY];
 
 /* plate geometry, in plate units */
 const W = 200;
@@ -326,12 +346,16 @@ const KILN_Z = -96;
 const KILN_THICK = 6;
 const KILN_STEPS = ["USB", "Root", "Flash", "Provision"];
 
-function KilnPlate() {
+function KilnPlate({ dim, onEnter }: { dim: boolean; onEnter: () => void }) {
   const sw = 42.5;
   const gap = (W - 20 - sw * KILN_STEPS.length) / (KILN_STEPS.length - 1);
   const [gx, gy] = iso(W / 2, D / 2, KILN_Z);
   return (
-    <g>
+    <g
+      className={`${styles.plate} ${dim ? styles.dim : ""}`}
+      style={{ ["--i" as string]: 0 }}
+      onMouseEnter={onEnter}
+    >
       <ellipse cx={gx} cy={gy} rx="120" ry="50" className={styles.kilnGlow} />
       <g transform={plane(KILN_Z - KILN_THICK)}>
         <rect width={W} height={D} rx="9" className={styles.kilnEdge} />
@@ -401,7 +425,10 @@ export function Stack() {
           </desc>
 
           {/* Kiln, and its heat rising into the hardware */}
-          <KilnPlate />
+          <KilnPlate
+            dim={active !== null && active !== "kiln"}
+            onEnter={() => setHover("kiln")}
+          />
           {COLUMNS.map(([x, y], c) => (
             <Beam
               key={c}
@@ -480,7 +507,7 @@ export function Stack() {
 
       <div className={styles.side}>
         <ol className={styles.legend} aria-label="Layers, top to bottom">
-          {LAYERS.map((l) => {
+          {ENTRIES.map((l) => {
             const open = active === l.id;
             return (
               <li
@@ -520,7 +547,7 @@ export function Stack() {
             </p>
             <p className={styles.panelHint}>Hover a layer for details.</p>
           </div>
-          {LAYERS.map((l) => (
+          {ENTRIES.map((l) => (
             <div
               key={l.id}
               className={`${styles.panel} ${active === l.id ? styles.shown : ""}`}

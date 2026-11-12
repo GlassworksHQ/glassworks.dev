@@ -13,6 +13,7 @@ export function SiteFooter() {
         </Link>
         <nav className={styles.footNav} aria-label="Footer">
           <Link href="/frames">Devices</Link>
+          <Link href="/panes">Panes</Link>
           <Link href="/brand">Brand</Link>
           <Link href="/trademarks">Trademarks</Link>
           <a href={links.org}>GitHub</a>
