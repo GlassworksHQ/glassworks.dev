@@ -11,7 +11,8 @@ pnpm install
 pnpm dev        # http://localhost:3000
 pnpm build      # every route is static
 pnpm lint
-pnpm brand      # regenerate the part badges and banners in public/brand/
+pnpm brand        # regenerate the mark files, badges and banners in public/brand/
+pnpm brand:raster # re-render the PNGs (app icon, GitHub avatar, social images) with headless Chrome
 ```
 
 Opening `pnpm dev` from another machine (a tailnet name, a LAN IP)? Next.js blocks its dev scripts
@@ -36,7 +37,7 @@ src/app/
   icon.svg             favicon (small cut, follows OS theme)
   apple-icon.png       180px, full-bleed
 src/components/
-  Mark.tsx             the mark: variant lit | ember | mono, cut full | small
+  Mark.tsx             the mark (three plates, the top one lit): variant lit | ember | mono, cut full | small
   Glyphs.tsx           Frame, Pane, Kiln and pane icons on a 24 grid
   GlassTile.tsx        the 2:1 night tile with the light sweep
   DeviceModel.tsx      3D device mockup: CSS front glass + computed SVG sides
@@ -44,7 +45,7 @@ src/components/
 src/lib/site.ts        links and panes
 src/lib/devices.ts     the device catalog: specs, pane support, install ratings
 src/lib/libraries.json the standalone libraries, one banner each
-scripts/brand/         `pnpm brand`: draws the core/pane/Kiln badges and the banners
+scripts/brand/         `pnpm brand` and `pnpm brand:raster`: every brand file, from src/lib/markGeometry.ts
 public/brand/          downloadable SVGs
 ```
 

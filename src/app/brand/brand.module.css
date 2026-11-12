@@ -95,6 +95,11 @@
   font: 500 3.4px var(--f-mono);
 }
 
+/* the mark's construction is drawn on a wider canvas, so its labels are larger */
+.construct svg .dimt {
+  font-size: 5.4px;
+}
+
 .guide {
   stroke: var(--faint);
   stroke-width: 0.25;
@@ -794,8 +799,12 @@
 }
 
 .rotated {
-  width: 46%;
-  transform: rotate(90deg) scale(0.6);
+  width: 40%;
+  transform: rotate(-24deg);
+}
+
+.dontMark {
+  width: 40%;
 }
 
 .fakeName {
@@ -891,5 +900,16 @@
   .pgroup {
     grid-template-columns: minmax(0, 1fr);
     gap: 8px;
+  }
+}
+
+/* four motion rules sit two by two */
+.vocab2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+@media (max-width: 620px) {
+  .vocab2 {
+    grid-template-columns: minmax(0, 1fr);
   }
 }

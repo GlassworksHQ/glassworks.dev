@@ -1,9 +1,11 @@
+import { markPlates } from "@/lib/markGeometry";
+
 /**
- * The Glassworks mark: a 2:1 frame (the panel's shape) holding three panes,
- * with the big one lit. Frame and clear panes use currentColor.
+ * The Glassworks mark: three plates of the stack at its isometric angle, the top
+ * one lit. Lower plates use currentColor.
  *
  * Gradients come from <MarkDefs/>, rendered once in the root layout.
- * Below ~40px wide, use cut="small": heavier frame, clear panes merged.
+ * Below ~40px wide, use cut="small": two plates and a heavier line.
  */
 type MarkProps = {
   variant?: "lit" | "ember" | "mono";
@@ -17,26 +19,24 @@ type MarkProps = {
 const LIT_FILL = { lit: "url(#gw-lit)", ember: "url(#gw-ember)", mono: "currentColor" } as const;
 
 export function Mark({ variant = "lit", cut = "full", className, title, width }: MarkProps) {
-  const lit = LIT_FILL[variant];
-  const clear = variant === "mono" ? 0.35 : 0.26;
   const a11y = title ? { role: "img", "aria-label": title } : { "aria-hidden": true };
-
-  if (cut === "small") {
-    return (
-      <svg viewBox="0 0 32 16" className={className} width={width} {...a11y}>
-        <rect x="1.5" y="1.5" width="29" height="13" rx="4" fill="none" stroke="currentColor" strokeWidth="3" />
-        <rect x="5" y="5" width="13" height="6" rx="1.5" fill={lit} />
-        <rect x="20" y="5" width="7" height="6" rx="1.5" fill="currentColor" fillOpacity={0.4} />
-      </svg>
-    );
-  }
-
   return (
-    <svg viewBox="0 0 120 60" className={className} width={width} {...a11y}>
-      <rect x="2" y="2" width="116" height="56" rx="14" fill="none" stroke="currentColor" strokeWidth="4" />
-      <rect x="10" y="10" width="54" height="40" rx="6" fill={lit} />
-      <rect x="70" y="10" width="40" height="17" rx="6" fill="currentColor" fillOpacity={clear} />
-      <rect x="70" y="33" width="40" height="17" rx="6" fill="currentColor" fillOpacity={clear} />
+    <svg viewBox="0 0 120 120" className={className} width={width} {...a11y}>
+      {markPlates(cut).map((p, i) =>
+        p.lit ? (
+          <path key={i} d={p.d} fill={LIT_FILL[variant]} />
+        ) : (
+          <path
+            key={i}
+            d={p.d}
+            fill="none"
+            stroke="currentColor"
+            strokeOpacity={p.opacity}
+            strokeWidth={p.strokeWidth}
+            strokeLinejoin="round"
+          />
+        ),
+      )}
     </svg>
   );
 }

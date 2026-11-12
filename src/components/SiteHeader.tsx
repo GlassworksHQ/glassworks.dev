@@ -8,7 +8,7 @@ export function SiteHeader() {
   return (
     <header className={`wrap ${styles.header}`}>
       <Link href="/" className={styles.home}>
-        <Mark className={styles.mark} />
+        <Mark cut="small" className={styles.mark} />
         <span className={styles.word}>Glassworks</span>
       </Link>
       <nav className={styles.nav} aria-label="Main">

@@ -195,7 +195,7 @@
 }
 
 .kilnMark {
-  width: 64px;
+  width: 52px;
   color: var(--fg);
 }
 
@@ -260,7 +260,7 @@
   }
 
   .kilnMark {
-    width: 48px;
+    width: 40px;
     margin-top: 2px;
   }
 

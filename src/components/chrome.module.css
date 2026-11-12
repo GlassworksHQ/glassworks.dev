@@ -15,7 +15,7 @@
 }
 
 .mark {
-  width: 40px;
+  width: 32px;
   color: var(--fg);
 }
 
@@ -85,7 +85,7 @@
 }
 
 .markSm {
-  width: 30px;
+  width: 24px;
   color: var(--fg);
 }
 

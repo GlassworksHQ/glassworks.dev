@@ -15,13 +15,16 @@
  * Part icons (34 × 33, transparent, for tables and lists): frame, core, pane,
  * kiln. A tiny stack whose solid plate says where the part sits.
  *
- * "Built on Glassworks" (badge-on-*.svg) is the frame badge and isn't
- * generated here.
+ * The mark and everything built from it: mark-on-*, mark-mono, kiln-on-dark,
+ * lockup-on-*, lockup-kiln-on-dark, app-icon, favicon (also src/app/icon.svg),
+ * and the frame badge, "Built on Glassworks" (badge-on-*). The mark's shape
+ * comes from src/lib/markGeometry.ts, the same file <Mark> draws from.
  */
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { measure, text } from "./text.mjs";
+import { markPlates } from "../../src/lib/markGeometry.ts";
 import {
   C,
   THEMES,
@@ -47,55 +50,165 @@ const EMBER = "#f43f5e";
 
 /* ---------- badges ---------- */
 
-const BS = 0.098; // plate scale inside a 30 px badge
 const CAPS = { font: "medium", size: 9.5, ls: 1.5 };
 const CAPS_B = { font: "semibold", size: 9.5, ls: 1.5 };
-const CAPS_GAP = 6.5;
 
-function badge(t, { label, icon, a, b, bFill, haze }) {
-  const x = 10;
-  const ox = x + backCorner(BS);
-  const after = x + C * 320 * BS + 9;
-  const wa = measure(a, CAPS);
-  const w = after + wa + CAPS_GAP + measure(b, CAPS_B) + 13;
-  const xs = [x, ox, ox + C * 200 * BS];
-  const inner =
-    guide(xs.map((v) => `M${v.toFixed(2)} 0V30`).join(""), t) +
-    guide(`M0 15H${w.toFixed(2)}`, t) +
-    icon(t, ox) +
-    text(a, { ...CAPS, x: after, y: 19, fill: t.mu }) +
-    text(b, { ...CAPS_B, x: after + wa + CAPS_GAP, y: 19, fill: bFill ?? t.fg });
-  return svg(w, 30, label, field(w, 30, t, 15, inner, { haze }), t);
+const SZ = 12.7; // the badges' type size
+const SPACE = () => measure(" ", { size: SZ }) + 0.6;
+const markIcon = (t, x, y, size, lit = "url(#lit)") =>
+  `<g transform="translate(${x} ${y}) scale(${(size / 120).toFixed(4)})">${markBody({ ink: t.fg, lit, cut: "small" })}</g>`;
+
+/*
+ * Built on Glassworks: the finished-product badge. A plain pill in sentence
+ * case, the mark and the words, and no construction: it marks a finished
+ * product, not a part being built.
+ */
+function builtOnBadge(t) {
+  const x0 = 39;
+  const gap = 48.7 - measure("Built on", { size: SZ });
+  const w = x0 + measure("Built on", { size: SZ }) + gap + measure("Glassworks", { font: "semibold", size: SZ }) + 12.4;
+  const body =
+    `<rect x=".5" y=".5" width="${w - 1}" height="29" rx="14.5" fill="${t.bg}" stroke="${t.edge}"/>` +
+    markIcon(t, 10, 5, 20) +
+    text("Built on", { size: SZ, x: x0, y: 19.73, fill: t.mu }) +
+    text("Glassworks", { font: "semibold", size: SZ, x: x0 + measure("Built on", { size: SZ }) + gap, y: 19.73, fill: t.fg });
+  return svg(w, 30, "Built on Glassworks", body, t);
 }
 
-const BADGES = {
+/*
+ * The part badges: a drawing cell for the mark (dot grid, diagonals), then
+ * "Glassworks <Part>" on a sweep of the part's light. One 1 px edge runs all
+ * the way round, neutral along the cell, catching the part's colour across the
+ * text and brightening toward the end, like glass lit from inside.
+ */
+const PART = {
   core: {
-    label: "Glassworks core",
-    a: "GLASSWORKS",
-    b: "CORE",
-    icon: (t, ox) =>
-      plate(t, ox, 11.6, BS, "ghost") + plate(t, ox, 7.4, BS, "core") + plate(t, ox, 3.2, BS, "ghost"),
+    name: "Core",
+    sweep: ["#e2e8f0", "#7dd3fc"],
+    strength: 0.55, // core is glass before the light comes on: a fainter sweep
+    rim: { dark: ["#e2e8f0", "#bae6fd"], light: ["#94a3b8", "#0ea5e9"] },
+    ink: { dark: null, light: null },
   },
   pane: {
-    label: "Glassworks pane",
-    a: "GLASSWORKS",
-    b: "PANE",
-    icon: (t, ox) =>
-      plate(t, ox, 11.6, BS, "ghost") +
-      plate(t, ox, 7.4, BS, "ghost", { op: 0.35 }) +
-      plate(t, ox, 3.2, BS, "lit", { lit: [0, 4] }),
+    name: "Pane",
+    sweep: ["#38bdf8", "#a78bfa"],
+    strength: 1,
+    rim: { dark: ["#7dd3fc", "#c4b5fd"], light: ["#0ea5e9", "#8b5cf6"] },
+    ink: { dark: null, light: null },
   },
   kiln: {
-    label: "Glassworks Kiln",
-    a: "GLASSWORKS",
-    b: "KILN",
-    bFill: "url(#emberH)",
-    haze: "emberHaze",
-    icon: (t, ox) =>
-      plate(t, ox, 11.6, BS, "ember", { thick: 24, topStroke: EMBER, topOp: 0.8 }) +
-      plate(t, ox, 4.2, BS, "ghost", { op: 0.45 }),
+    name: "Kiln",
+    sweep: ["#fdba74", "#f43f5e"],
+    strength: 1,
+    rim: { dark: ["#fed7aa", "#fda4af"], light: ["#fb923c", "#e11d48"] },
+    // contrast: deep ember on light (about 5.4:1 on the sweep), peach on dark
+    ink: { dark: "#fdba74", light: "#7c2d12" },
+    lit: "url(#ember)",
   },
 };
+
+function partBadge(t, id) {
+  const p = PART[id];
+  const light = t.name === "light";
+  const cell = 44;
+  const wa = measure("Glassworks", { size: SZ });
+  const tw = 12 + wa + SPACE() + measure(p.name, { font: "semibold", size: SZ }) + 14;
+  const w = cell + tw;
+  const k = p.strength;
+  const end = light ? 0.4 : 0.5;
+  const [a, b] = p.sweep;
+  const [ra, rb] = p.rim[t.name];
+  const defs =
+    `<linearGradient id="sweep" gradientUnits="userSpaceOnUse" x1="${cell}" y1="0" x2="${w}" y2="0"><stop offset="0" stop-color="${a}" stop-opacity="${0.08 * k}"/><stop offset=".55" stop-color="${a}" stop-opacity="${0.22 * k}"/><stop offset="1" stop-color="${b}" stop-opacity="${end * k}"/></linearGradient>` +
+    `<linearGradient id="rim" gradientUnits="userSpaceOnUse" x1="${cell}" y1="0" x2="${w}" y2="0"><stop offset="0" stop-color="${ra}"/><stop offset="1" stop-color="${rb}"/></linearGradient>` +
+    `<linearGradient id="ramp" gradientUnits="userSpaceOnUse" x1="${cell}" y1="0" x2="${w - 4}" y2="0"><stop offset="0" stop-color="#fff" stop-opacity=".3"/><stop offset="1" stop-color="#fff"/></linearGradient>` +
+    `<mask id="lit-edge" maskUnits="userSpaceOnUse" x="${cell}" y="0" width="${tw}" height="30"><rect x="${cell}" width="${tw}" height="30" fill="url(#ramp)"/></mask>`;
+  const pill = `x=".5" y=".5" width="${w - 1}" height="29" rx="14.5"`;
+  const body =
+    `<defs>${defs}</defs><clipPath id="clip"><rect x="1" y="1" width="${w - 2}" height="28" rx="14"/></clipPath>` +
+    `<rect ${pill} fill="${t.bg}"/>` +
+    `<g clip-path="url(#clip)"><rect width="${cell}" height="30" fill="url(#dot)"/>${guide(`M0 0L${cell} 30M0 30L${cell} 0M${cell / 2} 0V30M0 15H${cell}`, t, { op: 0.32 })}<rect x="${cell}" width="${tw}" height="30" fill="url(#sweep)"/></g>` +
+    guide(`M${cell} 0V30`, t, { op: 0.6, w: 0.6, dash: "2 1.4" }) +
+    `<rect ${pill} fill="none" stroke="${light ? "#c9ccd4" : "#3a3d46"}"/>` +
+    `<rect ${pill} fill="none" stroke="url(#rim)" mask="url(#lit-edge)"/>` +
+    markIcon(t, cell / 2 - 10, 5, 20, p.lit) +
+    text("Glassworks", { size: SZ, x: cell + 12, y: 19.73, fill: t.mu }) +
+    text(p.name, { font: "semibold", size: SZ, x: cell + 12 + wa + SPACE(), y: 19.73, fill: p.ink[t.name] ?? t.fg });
+  return svg(w, 30, `Glassworks ${p.name}`, body, t);
+}
+
+/* ---------- the mark ---------- */
+
+const LIT_STOPS = ["#38bdf8", "#a78bfa"];
+const EMBER_STOPS = ["#fdba74", "#f43f5e"];
+const grad = (id, [a, b]) =>
+  `<linearGradient id="${id}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${a}"/><stop offset="1" stop-color="${b}"/></linearGradient>`;
+
+/** The mark's plates on its 120 × 120 canvas. ink: a colour, or a class name for themed files. */
+function markBody({ ink = "#f4f4f5", inkClass, lit = "url(#lit)", cut = "full" } = {}) {
+  const inkAttr = (k) => (inkClass ? `class="${inkClass}" ${k}-opacity` : `${k}="${ink}" ${k}-opacity`);
+  return markPlates(cut)
+    .map((p) =>
+      p.lit
+        ? `<path d="${p.d}" fill="${lit}"/>`
+        : `<path d="${p.d}" fill="none" ${inkAttr("stroke")}="${p.opacity}" stroke-width="${p.strokeWidth}" stroke-linejoin="round"/>`,
+    )
+    .join("");
+}
+
+const plainSvg = (w, h, label, defs, body) =>
+  `<svg xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${label}" viewBox="0 0 ${w.toFixed(2)} ${h.toFixed(2)}" width="${Math.round(w)}" height="${Math.round(h)}"><title>${label}</title>${defs ? `<defs>${defs}</defs>` : ""}${body}</svg>\n`;
+
+/* the wordmark is kept exactly as drawn: read its outline from wordmark.svg */
+const WORDMARK = (() => {
+  const src = readFileSync(join(out, "wordmark.svg"), "utf8");
+  const d = src.match(/ d="([^"]+)"/)[1];
+  const [, w, h] = src.match(/viewBox="0 0 ([\d.]+) ([\d.]+)"/);
+  const [, tx, ty] = src.match(/translate\(([\d.]+) ([\d.]+)\)/);
+  return { d, w: +w, h: +h, tx: +tx, ty: +ty };
+})();
+// the wordmark's size in Inter Light, found from its width, so "Kiln" can match it
+const WORD_SIZE = (() => {
+  let size = 30;
+  while (measure("Glassworks", { font: "light", size, ls: -0.025 * size }) < WORDMARK.w - 2 * WORDMARK.tx) size += 0.1;
+  return size;
+})();
+
+function lockup(ink, { kiln = false } = {}) {
+  // the stack is lighter than a solid shape, so the mark runs taller than the
+  // wordmark; the wordmark sits centred on it
+  const H = 52;
+  const M = 52; // mark size
+  const x = M + 12;
+  const wy = (H - WORDMARK.h) / 2 + WORDMARK.ty;
+  let body = `<g transform="scale(${(M / 120).toFixed(4)})">${markBody({ ink, lit: "url(#lit)" })}</g>`;
+  body += `<path transform="translate(${x + WORDMARK.tx} ${wy.toFixed(2)})" d="${WORDMARK.d}" fill="${ink}"/>`;
+  let w = x + WORDMARK.w;
+  if (kiln) {
+    const kx = w + measure(" ", { font: "light", size: WORD_SIZE });
+    body += text("Kiln", { font: "medium", size: WORD_SIZE, ls: -0.01 * WORD_SIZE, x: kx, y: wy, fill: ink });
+    w = kx + measure("Kiln", { font: "medium", size: WORD_SIZE, ls: -0.01 * WORD_SIZE }) + 2;
+  }
+  return plainSvg(w, H, kiln ? "Glassworks Kiln" : "Glassworks", grad("lit", kiln ? EMBER_STOPS : LIT_STOPS), body);
+}
+
+function appIcon() {
+  const defs =
+    grad("lit", LIT_STOPS) +
+    `<radialGradient id="sky" cx=".18" cy=".12" r=".7"><stop offset="0" stop-color="#38bdf8" stop-opacity=".22"/><stop offset="1" stop-color="#38bdf8" stop-opacity="0"/></radialGradient>` +
+    `<radialGradient id="vio" cx=".86" cy=".9" r=".7"><stop offset="0" stop-color="#a78bfa" stop-opacity=".2"/><stop offset="1" stop-color="#a78bfa" stop-opacity="0"/></radialGradient>`;
+  const body =
+    `<rect width="512" height="512" rx="112" fill="#0a0b0f"/><rect width="512" height="512" rx="112" fill="url(#sky)"/><rect width="512" height="512" rx="112" fill="url(#vio)"/>` +
+    `<rect x=".5" y=".5" width="511" height="511" rx="111.5" fill="none" stroke="#fff" stroke-opacity=".08"/>` +
+    `<g transform="translate(96 96) scale(2.6667)">${markBody()}</g>`;
+  return plainSvg(512, 512, "Glassworks", defs, body);
+}
+
+/* the favicon follows the OS theme: ink is set by a style block */
+function favicon() {
+  const style = `<style>.i{stroke:#0c0e13}@media (prefers-color-scheme:dark){.i{stroke:#f4f4f5}}</style>`;
+  return plainSvg(120, 120, "Glassworks", grad("lit", LIT_STOPS), style + markBody({ inkClass: "i", cut: "small" }));
+}
 
 /* ---------- info badges ---------- */
 
@@ -323,7 +436,8 @@ const write = (file, body) => {
 
 for (const t of Object.values(THEMES)) {
   const on = `on-${t.name}`;
-  for (const [id, spec] of Object.entries(BADGES)) write(`badge-${id}-${on}.svg`, badge(t, spec));
+  write(`badge-${on}.svg`, builtOnBadge(t));
+  for (const id of Object.keys(PART)) write(`badge-${id}-${on}.svg`, partBadge(t, id));
   for (const b of infoBadges) write(`badge-${b.id}-${on}.svg`, infoBadge(t, b));
   for (const [id, spec] of Object.entries(ICON)) write(`icon-${id}-${on}.svg`, partIcon(t, spec));
   write(`banner-glassworks-${on}.svg`, glassworksBanner(t));
@@ -331,5 +445,19 @@ for (const t of Object.values(THEMES)) {
   write(`banner-kiln-${on}.svg`, kilnBanner(t));
   for (const lib of libraries) write(`banner-library-${lib.name}-${on}.svg`, libraryBanner(t, lib));
 }
+
+// the mark's own files
+const ink = { dark: "#f4f4f5", light: "#0c0e13" };
+write("mark-on-dark.svg", plainSvg(120, 120, "Glassworks", grad("lit", LIT_STOPS), markBody({ ink: ink.dark })));
+write("mark-on-light.svg", plainSvg(120, 120, "Glassworks", grad("lit", LIT_STOPS), markBody({ ink: ink.light })));
+write("mark-mono.svg", plainSvg(120, 120, "Glassworks", "", markBody({ ink: "currentColor", lit: "currentColor" })));
+write("kiln-on-dark.svg", plainSvg(120, 120, "Glassworks Kiln", grad("lit", EMBER_STOPS), markBody({ ink: ink.dark })));
+write("lockup-on-dark.svg", lockup(ink.dark));
+write("lockup-on-light.svg", lockup(ink.light));
+write("lockup-kiln-on-dark.svg", lockup(ink.dark, { kiln: true }));
+write("app-icon.svg", appIcon());
+write("favicon.svg", favicon());
+writeFileSync(join(root, "src/app/icon.svg"), favicon());
+written.push("../../src/app/icon.svg");
 
 console.log(`Wrote ${written.length} files to public/brand/:\n  ${written.join("\n  ")}`);
