@@ -140,6 +140,7 @@ const downloads = [
   { file: "mark-mono.svg", what: "One colour, follows currentColor" },
   { file: "kiln-on-dark.svg", what: "Kiln mark, ember floor" },
   { file: "app-icon.svg", what: "App icon, 512 × 512" },
+  { file: "app-icon-kiln.svg", what: "Kiln app icon, 512 × 512, ember floor" },
   { file: "badge-on-dark.svg", what: "Built on Glassworks, dark" },
   { file: "badge-on-light.svg", what: "Built on Glassworks, light" },
   ...parts.flatMap((p) => [
@@ -159,6 +160,7 @@ const downloads = [
     what: `${l.name} banner, dark (light too)`,
   })),
   { file: "favicon.svg", what: "Small cut, follows the OS theme" },
+  { file: "favicon-kiln.svg", what: "Kiln favicon: small cut, ember floor, follows the OS theme" },
 ];
 
 function Section({
