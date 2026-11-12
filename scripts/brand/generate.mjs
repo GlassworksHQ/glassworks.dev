@@ -9,7 +9,7 @@
  * src/lib/libraries.json. Each in -on-dark and -on-light.
  *
  * Info badges (30 px, in place of shields.io): licence, status (under
- * development, alpha, beta, stable) and roadmap, from
+ * development, α alpha, β beta, stable) and roadmap, from
  * src/lib/info-badges.json.
  *
  * "Built on Glassworks" (badge-on-*.svg) is the frame badge and isn't
@@ -97,50 +97,44 @@ const BADGES = {
 /* ---------- info badges ---------- */
 
 /*
- * Status colours only ever mean status (see /brand#colour). The stages fill in
- * as a project matures: a dashed grey ring, a hollow amber ring, a solid amber
- * dot, then a solid green dot.
+ * Status colours only ever mean status (see /brand#colour). The marker matures
+ * with the project: a dashed grey ring, an amber α, an amber β, a green dot.
  */
 const STATUS_INK = {
   dark: { ready: "#34d399", working: "#fbbf24" },
   light: { ready: "#047857", working: "#b45309" },
 };
+const GREEK = { alpha: "α", beta: "β" };
+const GREEK_SIZE = 12.5;
 
-function statusDot(t, stage, cx) {
+/** The stage marker at x: its SVG and how much room it takes before the value. */
+function statusMarker(t, stage, x) {
   const ink = STATUS_INK[t.name];
-  const at = `cx="${cx.toFixed(2)}" cy="15.5"`;
-  switch (stage) {
-    case "development":
-      return `<circle ${at} r="2.6" fill="none" stroke="${t.mu}" stroke-width="1.1" stroke-dasharray="1.4 1.2"/>`;
-    case "alpha":
-      return `<circle ${at} r="2.6" fill="none" stroke="${ink.working}" stroke-width="1.3"/>`;
-    case "beta":
-      return `<circle ${at} r="3" fill="${ink.working}"/>`;
-    case "stable":
-      return `<circle ${at} r="3" fill="${ink.ready}"/>`;
-    default:
-      throw new Error(`unknown status stage: ${stage}`);
-  }
+  const at = `cx="${(x + 3).toFixed(2)}" cy="15.5"`;
+  if (stage === "development")
+    return { svg: `<circle ${at} r="2.6" fill="none" stroke="${t.mu}" stroke-width="1.1" stroke-dasharray="1.4 1.2"/>`, w: 11 };
+  if (stage === "stable") return { svg: `<circle ${at} r="3" fill="${ink.ready}"/>`, w: 11 };
+  const ch = GREEK[stage];
+  if (!ch) throw new Error(`unknown status stage: ${stage}`);
+  return {
+    svg: text(ch, { font: "greek", size: GREEK_SIZE, x, y: 19.6, fill: ink.working }),
+    w: measure(ch, { font: "greek", size: GREEK_SIZE }) + 6,
+  };
 }
 
-/** LABEL ¦ VALUE on the same field as the part badges, with a status dot when it has one. */
+/** LABEL VALUE on the same field as the part badges, with a stage marker for status. */
 function infoBadge(t, { label, value, status }) {
   const x = 12;
-  const wl = measure(label, CAPS);
-  const divider = x + wl + 9;
-  let vx = divider + 9;
-  let dot = "";
+  let vx = x + measure(label, CAPS) + 10;
+  let marker = "";
   if (status) {
-    dot = statusDot(t, status, vx + 3);
-    vx += 11;
+    const m = statusMarker(t, status, vx);
+    marker = m.svg;
+    vx += m.w;
   }
   const w = vx + measure(value, CAPS_B) + 13;
   const inner =
-    guide(`M0 15H${w.toFixed(2)}`, t) +
-    guide(`M${divider.toFixed(2)} 0V30`, t, { op: 0.6, w: 0.6, dash: "2 1.4" }) +
-    text(label, { ...CAPS, x, y: 19, fill: t.mu }) +
-    dot +
-    text(value, { ...CAPS_B, x: vx, y: 19, fill: t.fg });
+    text(label, { ...CAPS, x, y: 19, fill: t.mu }) + marker + text(value, { ...CAPS_B, x: vx, y: 19, fill: t.fg });
   return svg(w, 30, `${label.toLowerCase()}: ${value}`, field(w, 30, t, 15, inner), t);
 }
 

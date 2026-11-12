@@ -22,6 +22,8 @@ export const FONTS = {
   medium: load("@fontsource/inter", "inter-latin-500-normal.woff"),
   semibold: load("@fontsource/inter", "inter-latin-600-normal.woff"),
   mono: load("@fontsource/jetbrains-mono", "jetbrains-mono-latin-500-normal.woff"),
+  // Inter's Latin files have no Greek; α and β come from its Greek subset
+  greek: load("@fontsource/inter", "inter-greek-600-normal.woff"),
 };
 
 function layout(str, font, size, ls) {
