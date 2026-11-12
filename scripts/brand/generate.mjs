@@ -12,6 +12,9 @@
  * development, α alpha, β beta, stable) and roadmap, from
  * src/lib/info-badges.json.
  *
+ * Part icons (34 × 33, transparent, for tables and lists): frame, core, pane,
+ * kiln. A tiny stack whose solid plate says where the part sits.
+ *
  * "Built on Glassworks" (badge-on-*.svg) is the frame badge and isn't
  * generated here.
  */
@@ -136,6 +139,29 @@ function infoBadge(t, { label, value, status }) {
   const inner =
     text(label, { ...CAPS, x, y: 19, fill: t.mu }) + marker + text(value, { ...CAPS_B, x: vx, y: 19, fill: t.fg });
   return svg(w, 30, `${label.toLowerCase()}: ${value}`, field(w, 30, t, 15, inner), t);
+}
+
+/* ---------- part icons ---------- */
+
+const IS = 0.1; // plate scale in an icon
+const IGAP = 5;
+const ICON = {
+  frame: { label: "Glassworks frame", draw: (t, ox, y) => plate(t, ox, y(2), IS, "core") + plate(t, ox, y(1), IS, "ghost", { op: 0.35 }) + plate(t, ox, y(0), IS, "ghost", { op: 0.35 }) },
+  core: { label: "Glassworks core", draw: (t, ox, y) => plate(t, ox, y(2), IS, "ghost") + plate(t, ox, y(1), IS, "core") + plate(t, ox, y(0), IS, "ghost") },
+  pane: { label: "Glassworks pane", draw: (t, ox, y) => plate(t, ox, y(2), IS, "ghost") + plate(t, ox, y(1), IS, "ghost", { op: 0.35 }) + plate(t, ox, y(0), IS, "lit", { lit: [0, 4] }) },
+  kiln: {
+    label: "Glassworks Kiln",
+    draw: (t, ox, y) =>
+      plate(t, ox, y(2), IS, "ember", { thick: 24, topStroke: EMBER, topOp: 0.8 }) +
+      plate(t, ox, y(1), IS, "ghost", { op: 0.4 }) +
+      plate(t, ox, y(0), IS, "ghost", { op: 0.3 }),
+  },
+};
+
+function partIcon(t, { label, draw }) {
+  const w = C * 320 * IS + 2;
+  const h = 1 + IGAP * 2 + plateHeight(IS) + 24 * IS + 1;
+  return svg(w, h, label, draw(t, 1 + backCorner(IS), (i) => 1 + IGAP * i), t);
 }
 
 /* ---------- banners ---------- */
@@ -299,6 +325,7 @@ for (const t of Object.values(THEMES)) {
   const on = `on-${t.name}`;
   for (const [id, spec] of Object.entries(BADGES)) write(`badge-${id}-${on}.svg`, badge(t, spec));
   for (const b of infoBadges) write(`badge-${b.id}-${on}.svg`, infoBadge(t, b));
+  for (const [id, spec] of Object.entries(ICON)) write(`icon-${id}-${on}.svg`, partIcon(t, spec));
   write(`banner-glassworks-${on}.svg`, glassworksBanner(t));
   write(`banner-core-${on}.svg`, coreBanner(t));
   write(`banner-kiln-${on}.svg`, kilnBanner(t));
