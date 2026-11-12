@@ -144,6 +144,10 @@ const downloads = [
     { file: `badge-${p.id}-on-dark.svg`, what: `${p.name} badge, dark` },
     { file: `badge-${p.id}-on-light.svg`, what: `${p.name} badge, light` },
   ]),
+  ...["frame", "core", "pane", "kiln"].map((id) => ({
+    file: `icon-${id}-on-dark.svg`,
+    what: `${id[0].toUpperCase()}${id.slice(1)} icon, for tables (light too)`,
+  })),
   { file: "banner-glassworks-on-dark.svg", what: "Glassworks banner, dark" },
   { file: "banner-core-on-dark.svg", what: "Core banner, dark" },
   { file: "banner-kiln-on-dark.svg", what: "Kiln banner, dark" },
