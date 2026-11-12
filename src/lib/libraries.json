@@ -1,6 +1,7 @@
 [
-  { "name": "esphome-api", "description": "ESPHome native API client." },
-  { "name": "improv", "description": "Improv Wi-Fi provisioning." },
+  { "name": "esphome-api", "description": "The device side of the ESPHome native API, in Kotlin." },
+  { "name": "esphome-api-android", "description": "Android helpers for esphome-api: mDNS discovery." },
+  { "name": "improv", "description": "The device side of Improv Wi-Fi, for Android." },
   { "name": "ha-auth", "description": "Home Assistant sign-in and tokens." },
   { "name": "sendspin-protocol", "description": "The Sendspin synced-audio protocol." }
 ]

@@ -81,6 +81,8 @@ const rect = (x, y, w, h, rx, attrs) => `<rect x="${x}" y="${y}" width="${w}" he
  *  lit     grey cells, some lit (o.lit: cell indexes)
  *  ember   one ember inset (Kiln)
  *  holed   grey cells with one empty socket (o.hole)
+ *  chips   darker grey cells (hardware)
+ *  sockets dashed sky outlines (the pane API)
  */
 export function plate(t, ox, oy, s, kind, o = {}) {
   if (kind === "ghost") {
@@ -94,6 +96,10 @@ export function plate(t, ox, oy, s, kind, o = {}) {
   const grey = (x, y) => rect(x, y, 54, 40, 5, `fill="${t.fg}" fill-opacity=".1" stroke="${t.fg}" stroke-opacity=".35" stroke-width=".5"`);
   let cells = "";
   if (kind === "core") cells = CELLS.map(([x, y]) => grey(x, y)).join("");
+  if (kind === "chips")
+    cells = CELLS.map(([x, y]) => rect(x, y, 54, 40, 5, `fill="${t.fg}" fill-opacity=".18" stroke="${t.fg}" stroke-opacity=".3" stroke-width=".5"`)).join("");
+  if (kind === "sockets")
+    cells = CELLS.map(([x, y]) => rect(x, y, 54, 40, 5, `fill="none" stroke="${t.name === "dark" ? "#7dd3fc" : "#0369a1"}" stroke-opacity=".7" stroke-width=".6" stroke-dasharray="1.6 1.2"`)).join("");
   if (kind === "lit")
     cells = CELLS.map(([x, y], i) =>
       o.lit.includes(i)

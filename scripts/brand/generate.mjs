@@ -4,8 +4,9 @@
  *   pnpm brand
  *
  * Badges (30 px, for a row of shields): core, pane, kiln.
- * Banners (640 × 180, for the top of a README): core, kiln, and one per
- * library in src/lib/libraries.json. Each in -on-dark and -on-light.
+ * Banners (640 × 180, for the top of a README): glassworks (the whole stack,
+ * for the org profile and the main README), core, kiln, and one per library in
+ * src/lib/libraries.json. Each in -on-dark and -on-light.
  *
  * "Built on Glassworks" (badge-on-*.svg) is the frame badge and isn't
  * generated here.
@@ -111,16 +112,17 @@ function bannerGuides(t, ox, s, ys, color) {
 }
 
 /** Kicker, title (one or two words), code line and description. The title shrinks to fit. */
-function bannerText(t, { kicker, nameA, nameB, bFill, code, desc }) {
+function bannerText(t, { kicker, nameA, nameB, bFill, code, desc, strong }) {
   let size = 34;
+  const fontA = strong ? "semibold" : "light";
   const width = () =>
-    measure(nameA, { font: "light", size, ls: -0.6 }) +
+    measure(nameA, { font: fontA, size, ls: -0.6 }) +
     (nameB ? 9 + measure(nameB, { font: "semibold", size, ls: -0.6 }) : 0);
   while (width() > TITLE_MAX && size > 20) size -= 1;
-  const wa = measure(nameA, { font: "light", size, ls: -0.6 });
+  const wa = measure(nameA, { font: fontA, size, ls: -0.6 });
   return (
     text(kicker, { font: "medium", size: 9, ls: 2, x: TX, y: 52, fill: t.fa }) +
-    text(nameA, { font: "light", size, ls: -0.6, x: TX, y: 92, fill: t.mu }) +
+    text(nameA, { font: fontA, size, ls: -0.6, x: TX, y: 92, fill: strong ? t.fg : t.mu }) +
     (nameB ? text(nameB, { font: "semibold", size, ls: -0.6, x: TX + wa + 9, y: 92, fill: bFill ?? t.fg }) : "") +
     text(code, { font: "mono", size: 12, x: TX + 1, y: 118, fill: t.mu }) +
     text(desc, { font: "regular", size: 11.5, x: TX + 1, y: 138, fill: t.fa })
@@ -129,6 +131,35 @@ function bannerText(t, { kicker, nameA, nameB, bFill, code, desc }) {
 
 const banner = (t, label, drawing, words, haze = "haze") =>
   svg(BW, BH, label, field(BW, BH, t, 16, drawing, { dots: "dotL", haze }) + bannerText(t, words), t);
+
+/** The whole stack, lit at the top and fired from below: the org's banner. */
+function glassworksBanner(t) {
+  const s = 0.5;
+  const ox = 56 + backCorner(s);
+  const y = 4;
+  const gap = 16;
+  const at = (i) => y + gap * i; // 0 = panes (top) … 5 = Kiln (bottom)
+  const [gx, gy] = project(ox, at(5), s)(100, 60);
+  return banner(
+    t,
+    "Glassworks: the open core for Home Assistant wall panels",
+    bannerGuides(t, ox, s, [at(0), at(5), at(5) + plateHeight(s)]) +
+      `<ellipse cx="${gx.toFixed(2)}" cy="${(gy + 8).toFixed(2)}" rx="70" ry="26" fill="${EMBER}" opacity=".35" filter="url(#softL)"/>` +
+      plate(t, ox, at(5), s, "ember", { thick: 20, topStroke: EMBER, topOp: 0.8 }) +
+      plate(t, ox, at(4), s, "chips", { thick: 16 }) +
+      plate(t, ox, at(3), s, "core", { thick: 16 }) +
+      plate(t, ox, at(2), s, "core", { thick: 16 }) +
+      plate(t, ox, at(1), s, "sockets", { thick: 10 }) +
+      plate(t, ox, at(0), s, "lit", { lit: [0, 2, 3, 5], thick: 16 }),
+    {
+      kicker: "OPEN SOURCE · MPL-2.0",
+      nameA: "Glassworks",
+      strong: true,
+      code: "glassworks.dev",
+      desc: "The open core for Home Assistant wall panels.",
+    },
+  );
+}
 
 function coreBanner(t) {
   const s = 0.62;
@@ -217,6 +248,7 @@ const write = (file, body) => {
 for (const t of Object.values(THEMES)) {
   const on = `on-${t.name}`;
   for (const [id, spec] of Object.entries(BADGES)) write(`badge-${id}-${on}.svg`, badge(t, spec));
+  write(`banner-glassworks-${on}.svg`, glassworksBanner(t));
   write(`banner-core-${on}.svg`, coreBanner(t));
   write(`banner-kiln-${on}.svg`, kilnBanner(t));
   for (const lib of libraries) write(`banner-library-${lib.name}-${on}.svg`, libraryBanner(t, lib));

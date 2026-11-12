@@ -113,6 +113,11 @@ const parts = [
 ];
 
 const banners = [
+  {
+    base: "banner-glassworks",
+    alt: "Glassworks: the open core for Home Assistant wall panels",
+    what: "Glassworks: the whole stack, for the org profile and main README",
+  },
   { base: "banner-core", alt: "Glassworks core", what: "Core" },
   {
     base: `banner-library-${libraries[0].name}`,
@@ -138,6 +143,7 @@ const downloads = [
     { file: `badge-${p.id}-on-dark.svg`, what: `${p.name} badge, dark` },
     { file: `badge-${p.id}-on-light.svg`, what: `${p.name} badge, light` },
   ]),
+  { file: "banner-glassworks-on-dark.svg", what: "Glassworks banner, dark" },
   { file: "banner-core-on-dark.svg", what: "Core banner, dark" },
   { file: "banner-kiln-on-dark.svg", what: "Kiln banner, dark" },
   ...libraries.map((l) => ({
@@ -504,7 +510,7 @@ export default function BrandPage() {
         id="banners"
         label="Banners"
         title="The top of a README."
-        lede="Core and Kiln have their own banner. Every library shares one drawing, a block lifted out of the core, so only its name and line change."
+        lede="Glassworks, core and Kiln each have their own banner. Every library shares one drawing, a block lifted out of the core, so only its name and line change."
       >
         <div className={s.banners}>
           {banners.map((b) => (
