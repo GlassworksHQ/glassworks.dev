@@ -1,8 +1,9 @@
-import { markPlates } from "@/lib/markGeometry";
+import { kilnPlates, markPlates } from "@/lib/markGeometry";
 
 /**
  * The Glassworks mark: three plates of the stack at its isometric angle, the top
- * one lit. Lower plates use currentColor.
+ * one lit. Lower plates use currentColor. variant="ember" is Kiln's mark: the
+ * bottom plate fired instead, the floor the stack is fired on.
  *
  * Gradients come from <MarkDefs/>, rendered once in the root layout.
  * Below ~40px wide, use cut="small": two plates and a heavier line.
@@ -22,7 +23,7 @@ export function Mark({ variant = "lit", cut = "full", className, title, width }:
   const a11y = title ? { role: "img", "aria-label": title } : { "aria-hidden": true };
   return (
     <svg viewBox="0 0 120 120" className={className} width={width} {...a11y}>
-      {markPlates(cut).map((p, i) =>
+      {(variant === "ember" ? kilnPlates(cut) : markPlates(cut)).map((p, i) =>
         p.lit ? (
           <path key={i} d={p.d} fill={LIT_FILL[variant]} />
         ) : (

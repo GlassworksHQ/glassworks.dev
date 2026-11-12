@@ -71,7 +71,7 @@ export const LAYERS: Layer[] = [
   },
   {
     id: "core",
-    name: "Glassworks core",
+    name: "Glassworks Core",
     code: ":glassworks-core",
     z: 140,
     thick: 5,
