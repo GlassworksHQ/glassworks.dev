@@ -15,13 +15,16 @@
  * Part icons (34 × 33, transparent, for tables and lists): frame, core, pane,
  * kiln. A tiny stack whose solid plate says where the part sits.
  *
- * "Built on Glassworks" (badge-on-*.svg) is the frame badge and isn't
- * generated here.
+ * The mark and everything built from it: mark-on-*, mark-mono, kiln-on-dark,
+ * lockup-on-*, lockup-kiln-on-dark, app-icon, favicon (also src/app/icon.svg),
+ * and the frame badge, "Built on Glassworks" (badge-on-*). The mark's shape
+ * comes from src/lib/markGeometry.ts, the same file <Mark> draws from.
  */
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { measure, text } from "./text.mjs";
+import { markPlates } from "../../src/lib/markGeometry.ts";
 import {
   C,
   THEMES,
@@ -69,6 +72,14 @@ function badge(t, { label, icon, a, b, bFill, haze }) {
 }
 
 const BADGES = {
+  // the frame badge: "Built on Glassworks", with the mark itself as the icon
+  "": {
+    label: "Built on Glassworks",
+    a: "BUILT ON",
+    b: "GLASSWORKS",
+    icon: (t, ox) =>
+      `<g transform="translate(${(ox - C * 120 * BS).toFixed(2)} 1.5) scale(${((C * 320 * BS) / 120).toFixed(4)})">${markBody({ ink: t.fg, cut: "small" })}</g>`,
+  },
   core: {
     label: "Glassworks core",
     a: "GLASSWORKS",
@@ -96,6 +107,79 @@ const BADGES = {
       plate(t, ox, 4.2, BS, "ghost", { op: 0.45 }),
   },
 };
+
+/* ---------- the mark ---------- */
+
+const LIT_STOPS = ["#38bdf8", "#a78bfa"];
+const EMBER_STOPS = ["#fdba74", "#f43f5e"];
+const grad = (id, [a, b]) =>
+  `<linearGradient id="${id}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${a}"/><stop offset="1" stop-color="${b}"/></linearGradient>`;
+
+/** The mark's plates on its 120 × 120 canvas. ink: a colour, or a class name for themed files. */
+function markBody({ ink = "#f4f4f5", inkClass, lit = "url(#lit)", cut = "full" } = {}) {
+  const inkAttr = (k) => (inkClass ? `class="${inkClass}" ${k}-opacity` : `${k}="${ink}" ${k}-opacity`);
+  return markPlates(cut)
+    .map((p) =>
+      p.lit
+        ? `<path d="${p.d}" fill="${lit}"/>`
+        : `<path d="${p.d}" fill="none" ${inkAttr("stroke")}="${p.opacity}" stroke-width="${p.strokeWidth}" stroke-linejoin="round"/>`,
+    )
+    .join("");
+}
+
+const plainSvg = (w, h, label, defs, body) =>
+  `<svg xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${label}" viewBox="0 0 ${w.toFixed(2)} ${h.toFixed(2)}" width="${Math.round(w)}" height="${Math.round(h)}"><title>${label}</title>${defs ? `<defs>${defs}</defs>` : ""}${body}</svg>\n`;
+
+/* the wordmark is kept exactly as drawn: read its outline from wordmark.svg */
+const WORDMARK = (() => {
+  const src = readFileSync(join(out, "wordmark.svg"), "utf8");
+  const d = src.match(/ d="([^"]+)"/)[1];
+  const [, w, h] = src.match(/viewBox="0 0 ([\d.]+) ([\d.]+)"/);
+  const [, tx, ty] = src.match(/translate\(([\d.]+) ([\d.]+)\)/);
+  return { d, w: +w, h: +h, tx: +tx, ty: +ty };
+})();
+// the wordmark's size in Inter Light, found from its width, so "Kiln" can match it
+const WORD_SIZE = (() => {
+  let size = 30;
+  while (measure("Glassworks", { font: "light", size, ls: -0.025 * size }) < WORDMARK.w - 2 * WORDMARK.tx) size += 0.1;
+  return size;
+})();
+
+function lockup(ink, { kiln = false } = {}) {
+  // the stack is lighter than a solid shape, so the mark runs taller than the
+  // wordmark; the wordmark sits centred on it
+  const H = 52;
+  const M = 52; // mark size
+  const x = M + 12;
+  const wy = (H - WORDMARK.h) / 2 + WORDMARK.ty;
+  let body = `<g transform="scale(${(M / 120).toFixed(4)})">${markBody({ ink, lit: "url(#lit)" })}</g>`;
+  body += `<path transform="translate(${x + WORDMARK.tx} ${wy.toFixed(2)})" d="${WORDMARK.d}" fill="${ink}"/>`;
+  let w = x + WORDMARK.w;
+  if (kiln) {
+    const kx = w + measure(" ", { font: "light", size: WORD_SIZE });
+    body += text("Kiln", { font: "medium", size: WORD_SIZE, ls: -0.01 * WORD_SIZE, x: kx, y: wy, fill: ink });
+    w = kx + measure("Kiln", { font: "medium", size: WORD_SIZE, ls: -0.01 * WORD_SIZE }) + 2;
+  }
+  return plainSvg(w, H, kiln ? "Glassworks Kiln" : "Glassworks", grad("lit", kiln ? EMBER_STOPS : LIT_STOPS), body);
+}
+
+function appIcon() {
+  const defs =
+    grad("lit", LIT_STOPS) +
+    `<radialGradient id="sky" cx=".18" cy=".12" r=".7"><stop offset="0" stop-color="#38bdf8" stop-opacity=".22"/><stop offset="1" stop-color="#38bdf8" stop-opacity="0"/></radialGradient>` +
+    `<radialGradient id="vio" cx=".86" cy=".9" r=".7"><stop offset="0" stop-color="#a78bfa" stop-opacity=".2"/><stop offset="1" stop-color="#a78bfa" stop-opacity="0"/></radialGradient>`;
+  const body =
+    `<rect width="512" height="512" rx="112" fill="#0a0b0f"/><rect width="512" height="512" rx="112" fill="url(#sky)"/><rect width="512" height="512" rx="112" fill="url(#vio)"/>` +
+    `<rect x=".5" y=".5" width="511" height="511" rx="111.5" fill="none" stroke="#fff" stroke-opacity=".08"/>` +
+    `<g transform="translate(96 96) scale(2.6667)">${markBody()}</g>`;
+  return plainSvg(512, 512, "Glassworks", defs, body);
+}
+
+/* the favicon follows the OS theme: ink is set by a style block */
+function favicon() {
+  const style = `<style>.i{stroke:#0c0e13}@media (prefers-color-scheme:dark){.i{stroke:#f4f4f5}}</style>`;
+  return plainSvg(120, 120, "Glassworks", grad("lit", LIT_STOPS), style + markBody({ inkClass: "i", cut: "small" }));
+}
 
 /* ---------- info badges ---------- */
 
@@ -323,7 +407,7 @@ const write = (file, body) => {
 
 for (const t of Object.values(THEMES)) {
   const on = `on-${t.name}`;
-  for (const [id, spec] of Object.entries(BADGES)) write(`badge-${id}-${on}.svg`, badge(t, spec));
+  for (const [id, spec] of Object.entries(BADGES)) write(id ? `badge-${id}-${on}.svg` : `badge-${on}.svg`, badge(t, spec));
   for (const b of infoBadges) write(`badge-${b.id}-${on}.svg`, infoBadge(t, b));
   for (const [id, spec] of Object.entries(ICON)) write(`icon-${id}-${on}.svg`, partIcon(t, spec));
   write(`banner-glassworks-${on}.svg`, glassworksBanner(t));
@@ -331,5 +415,19 @@ for (const t of Object.values(THEMES)) {
   write(`banner-kiln-${on}.svg`, kilnBanner(t));
   for (const lib of libraries) write(`banner-library-${lib.name}-${on}.svg`, libraryBanner(t, lib));
 }
+
+// the mark's own files
+const ink = { dark: "#f4f4f5", light: "#0c0e13" };
+write("mark-on-dark.svg", plainSvg(120, 120, "Glassworks", grad("lit", LIT_STOPS), markBody({ ink: ink.dark })));
+write("mark-on-light.svg", plainSvg(120, 120, "Glassworks", grad("lit", LIT_STOPS), markBody({ ink: ink.light })));
+write("mark-mono.svg", plainSvg(120, 120, "Glassworks", "", markBody({ ink: "currentColor", lit: "currentColor" })));
+write("kiln-on-dark.svg", plainSvg(120, 120, "Glassworks Kiln", grad("lit", EMBER_STOPS), markBody({ ink: ink.dark })));
+write("lockup-on-dark.svg", lockup(ink.dark));
+write("lockup-on-light.svg", lockup(ink.light));
+write("lockup-kiln-on-dark.svg", lockup(ink.dark, { kiln: true }));
+write("app-icon.svg", appIcon());
+write("favicon.svg", favicon());
+writeFileSync(join(root, "src/app/icon.svg"), favicon());
+written.push("../../src/app/icon.svg");
 
 console.log(`Wrote ${written.length} files to public/brand/:\n  ${written.join("\n  ")}`);

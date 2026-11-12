@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import type { CSSProperties, ReactNode } from "react";
 import { GlassTile } from "@/components/GlassTile";
 import { Mark } from "@/components/Mark";
+import { MARK_SPEC, markPlates } from "@/lib/markGeometry";
 import { Switch } from "@/components/Switch";
 import { CopySnippet } from "@/components/CopySnippet";
 import Link from "next/link";
@@ -136,7 +137,7 @@ const downloads = [
   { file: "mark-on-dark.svg", what: "Mark for dark backgrounds" },
   { file: "mark-on-light.svg", what: "Mark for light backgrounds" },
   { file: "mark-mono.svg", what: "One colour, follows currentColor" },
-  { file: "kiln-on-dark.svg", what: "Kiln mark, ember pane" },
+  { file: "kiln-on-dark.svg", what: "Kiln mark, ember plate" },
   { file: "app-icon.svg", what: "App icon, 512 × 512" },
   { file: "badge-on-dark.svg", what: "Built on Glassworks, dark" },
   { file: "badge-on-light.svg", what: "Built on Glassworks, light" },
@@ -189,22 +190,82 @@ function Section({
   );
 }
 
+/*
+ * The mark's construction, drawn from the same geometry as the mark itself:
+ * the 30° axes, the plate's side, the step between plates and the line weight.
+ */
+function MarkConstruction() {
+  const m = MARK_SPEC.full;
+  const C = Math.cos(Math.PI / 6);
+  // the mark sits at (60, 10) in a 240 × 140 drawing
+  const ox = 60;
+  const oy = 10;
+  const top = m.top + oy;
+  const left = [ox + 60 - C * m.side, top + m.side / 2];
+  const right = [ox + 60 + C * m.side, top + m.side / 2];
+  const back = [ox + 60, top];
+  const arcR = 18;
+  const arcEnd = [left[0] + arcR * C, left[1] - arcR / 2];
+  return (
+    <svg viewBox="0 0 240 140" role="img" aria-label="Construction: three square plates at 30°, 60 units a side, 19 units apart; the top plate lit, the two below outlined at 45% and 20%">
+      <g transform={`translate(${ox} ${oy})`} style={{ color: "var(--fg)" }}>
+        {markPlates("full").map((p, i) =>
+          p.lit ? (
+            <path key={i} d={p.d} fill="url(#gw-lit)" />
+          ) : (
+            <path key={i} d={p.d} fill="none" stroke="currentColor" strokeOpacity={p.opacity} strokeWidth={p.strokeWidth} strokeLinejoin="round" />
+          ),
+        )}
+      </g>
+      {/* the 30° axis, measured off a level guide at the left corner */}
+      <path className={s.guide} d={`M${left[0] - 22} ${left[1]} H${left[0] + 26}`} />
+      <path className={s.dim} d={`M${left[0] + arcR} ${left[1]} A${arcR} ${arcR} 0 0 0 ${arcEnd[0].toFixed(2)} ${arcEnd[1].toFixed(2)}`} />
+      <text className={s.dimt} x={left[0] - 28} y={left[1] - 6}>
+        30°
+      </text>
+      {/* the side of a plate, along its open back-right edge */}
+      <path
+        className={s.dim}
+        d={`M${back[0] + 5} ${back[1] - 8.66} L${right[0] + 5} ${right[1] - 8.66} M${back[0] + 3} ${back[1] - 12.1} l4 6.9 M${right[0] + 3} ${right[1] - 12.1} l4 6.9`}
+      />
+      <text className={s.dimt} x={(back[0] + right[0]) / 2 + 9} y={(back[1] + right[1]) / 2 - 12}>
+        side {m.side}
+      </text>
+      {/* the step between plates */}
+      <path className={s.guide} d={`M${right[0] + 3} ${right[1]} H${right[0] + 22} M${right[0] + 3} ${right[1] + m.step} H${right[0] + 22}`} />
+      <path className={s.dim} d={`M${right[0] + 18} ${right[1]} V${right[1] + m.step} M${right[0] + 16} ${right[1]} H${right[0] + 20} M${right[0] + 16} ${right[1] + m.step} H${right[0] + 20}`} />
+      <text className={s.dimt} x={right[0] + 24} y={right[1] + m.step / 2 + 1.5}>
+        step {m.step}
+      </text>
+      {/* line weight and the lit plate */}
+      <path className={s.dim} d={`M${right[0] - 6} ${right[1] + 2 * m.step + 6} L${right[0] + 14} ${right[1] + 2 * m.step + 22}`} />
+      <text className={s.dimt} x={right[0] + 16} y={right[1] + 2 * m.step + 25}>
+        stroke {m.stroke}
+      </text>
+      <path className={s.dim} d={`M${ox + 44} ${top + 16} L${ox + 30} ${oy + 2} H${ox - 4}`} />
+      <text className={s.dimt} x={4} y={oy + 4}>
+        only the top plate is lit
+      </text>
+    </svg>
+  );
+}
+
 export default function BrandPage() {
   return (
     <div className={`wrap ${s.page}`}>
       <header className={s.hero}>
         <div className={s.heroCopy}>
           <span className="label">Brand</span>
-          <h1 className={s.h1}>A frame of panes, one of them lit.</h1>
+          <h1 className={s.h1}>A stack of plates, the top one lit.</h1>
           <p className={s.heroLede}>
-            Taken from S1 Unleashed&rsquo;s boot screen: dark glass, thin Inter,
-            sky-to-violet light.
+            Drawn from the exploded stack on the home page: dark glass, thin
+            Inter, sky-to-violet light.
           </p>
         </div>
         <GlassTile
           label="Open core for wall panels"
           status="MPL-2.0"
-          footLeft="Frames · Panes · Kiln"
+          footLeft="Frames · Panes · Core · Kiln"
           footRight="glassworks.dev"
           replay
         />
@@ -213,113 +274,33 @@ export default function BrandPage() {
       <Section
         id="mark"
         label="The mark"
-        title="2:1, like the panel."
-        lede="Three panes in a frame. Only the big one is lit. Every gap is 6 units."
+        title="Seen from the stack."
+        lede="Three plates at the stack's isometric angle. Only the top one is lit: the panes. Below it, the core and the frame."
       >
         <div className={`glass ${s.construct}`}>
-          <svg
-            viewBox="0 0 170 90"
-            role="img"
-            aria-label="Construction: a 2:1 frame with radius 14 and stroke 4, three panes separated by 6-unit gaps"
-          >
-            <g transform="translate(25 15)" style={{ color: "var(--fg)" }}>
-              <rect
-                x="2"
-                y="2"
-                width="116"
-                height="56"
-                rx="14"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="4"
-              />
-              <rect
-                x="10"
-                y="10"
-                width="54"
-                height="40"
-                rx="6"
-                fill="url(#gw-lit)"
-              />
-              <rect
-                x="70"
-                y="10"
-                width="40"
-                height="17"
-                rx="6"
-                fill="currentColor"
-                fillOpacity={0.26}
-              />
-              <rect
-                x="70"
-                y="33"
-                width="40"
-                height="17"
-                rx="6"
-                fill="currentColor"
-                fillOpacity={0.26}
-              />
-            </g>
-            <path className={s.dim} d="M25 9 H145 M25 7 V11 M145 7 V11" />
-            <text className={s.dimt} x="85" y="6.5" textAnchor="middle">
-              120 · 2 : 1, the panel
-            </text>
-            <path className={s.dim} d="M151 15 V75 M149 15 H153 M149 75 H153" />
-            <text className={s.dimt} x="154" y="46.5">
-              60
-            </text>
-            <circle className={s.guide} cx="41" cy="31" r="14" />
-            <path className={s.dim} d="M14 21 H29 L31 23" />
-            <text className={s.dimt} x="6" y="19.5">
-              r 14
-            </text>
-            <path className={s.guide} d="M89 75 V65 M95 75 V65" />
-            <path className={s.dim} d="M89 80 H95 M89 78 V82 M95 78 V82" />
-            <text className={s.dimt} x="92" y="87" textAnchor="middle">
-              6
-            </text>
-            <path className={s.dim} d="M20 78 H25 L26.5 74" />
-            <text className={s.dimt} x="2" y="79">
-              stroke 4
-            </text>
-            <path className={s.guide} d="M62 82 V65" />
-            <text className={s.dimt} x="62" y="87" textAnchor="middle">
-              lit pane 54 × 40
-            </text>
-          </svg>
+          <MarkConstruction />
         </div>
         <div className={s.meaning}>
           <div>
             <h3 className={s.chip}>
-              <span
-                className={s.sw}
-                style={{ border: "2px solid var(--fg)" }}
-              />
-              Frame
+              <span className={s.sw} style={{ background: "var(--lit-gradient)" }} />
+              Lit plate
             </h3>
-            <p>The device.</p>
+            <p>The panes. The only colour in the mark.</p>
           </div>
           <div>
             <h3 className={s.chip}>
-              <span
-                className={s.sw}
-                style={{ background: "var(--lit-gradient)" }}
-              />
-              Lit pane
+              <span className={s.sw} style={{ border: "2px solid color-mix(in srgb, var(--fg) 45%, transparent)" }} />
+              Middle plate
             </h3>
-            <p>The dashboard. The only colour in the mark.</p>
+            <p>The core.</p>
           </div>
           <div>
             <h3 className={s.chip}>
-              <span
-                className={s.sw}
-                style={{
-                  background: "color-mix(in srgb, var(--fg) 26%, transparent)",
-                }}
-              />
-              Clear panes
+              <span className={s.sw} style={{ border: "2px solid color-mix(in srgb, var(--fg) 20%, transparent)" }} />
+              Bottom plate
             </h3>
-            <p>Plugins.</p>
+            <p>The frame, on its hardware.</p>
           </div>
         </div>
         <div className={`glass ${s.sizes}`}>
@@ -339,8 +320,8 @@ export default function BrandPage() {
           </figure>
         </div>
         <p className={s.note}>
-          Under 40 px wide, use the small cut: heavier frame, clear panes
-          merged.
+          Under 40 px wide, use the small cut: two plates and a heavier line, so
+          it holds at 16 px.
         </p>
         <div className={s.grounds}>
           <div className={`${s.ground} ${s.gNight}`}>
@@ -373,7 +354,7 @@ export default function BrandPage() {
           <div className={`glass ${s.lockup}`}>
             <span className="label">Primary</span>
             <div className={s.row}>
-              <Mark width={76} className={s.ink} />
+              <Mark width={62} className={s.ink} />
               <span className={s.word} style={{ fontSize: 42 }}>
                 Glassworks
               </span>
@@ -396,22 +377,22 @@ export default function BrandPage() {
           <div className={`glass ${s.lockup}`}>
             <span className="label">Kiln, the installer</span>
             <div className={s.row}>
-              <Mark variant="ember" width={64} className={s.ink} />
+              <Mark variant="ember" width={50} className={s.ink} />
               <span className={s.word} style={{ fontSize: 32 }}>
                 Glassworks <span className={s.sub}>Kiln</span>
               </span>
             </div>
             <p className={s.note}>
-              The lit pane turns ember. Only Kiln uses it.
+              The lit plate turns ember. Only Kiln uses it.
             </p>
           </div>
           <div className={`glass ${s.lockup}`}>
             <span className="label">For frame projects</span>
             <div className={s.row}>
-              <span className={s.badge}>
-                <Mark width={30} className={s.ink} />
-                Built on <b>Glassworks</b>
-              </span>
+              <picture>
+                <source media="(prefers-color-scheme: dark)" srcSet="/brand/badge-on-dark.svg" />
+                <img src="/brand/badge-on-light.svg" alt="Built on Glassworks" height={30} />
+              </picture>
             </div>
             <p className={s.note}>
               For frame projects&rsquo; READMEs and sites.{" "}
@@ -433,8 +414,8 @@ export default function BrandPage() {
             <img
               src="/brand/badge-on-dark.svg"
               alt="Built on Glassworks badge, dark"
-              width={166}
               height={30}
+              className={s.badgeImg}
             />
           </div>
           <div className={`${s.badgeGround} ${s.gDay}`}>
@@ -442,8 +423,8 @@ export default function BrandPage() {
             <img
               src="/brand/badge-on-light.svg"
               alt="Built on Glassworks badge, light"
-              width={166}
               height={30}
+              className={s.badgeImg}
             />
           </div>
         </div>
@@ -818,19 +799,24 @@ export default function BrandPage() {
       <Section
         id="motion"
         label="Motion"
-        title="Light moves; glass doesn't."
-        lede="No bouncing, scaling or sliding. All of it stops under reduced motion."
+        title="Light moves. Glass lifts when you reach for it."
+        lede="Light flows on its own. Glass only moves when you point at it, and settles when you let go. All of it stops under reduced motion."
       >
-        <div className={s.vocab}>
+        <div className={`${s.vocab} ${s.vocab2}`}>
           <div className={`glass ${s.mo}`}>
             <span className={s.ruleK}>sweep · 1.5 s · once</span>
             <h3>Waking</h3>
             <p>A diagonal sheen on boot, sign-in and install.</p>
           </div>
           <div className={`glass ${s.mo}`}>
-            <span className={s.ruleK}>drift · 6 s · loop</span>
+            <span className={s.ruleK}>flow · 2.4 s · loop</span>
             <h3>Alive</h3>
-            <p>Background glows drift, slowly enough to miss.</p>
+            <p>Light runs up the stack and out along its wires. Glows drift slowly enough to miss.</p>
+          </div>
+          <div className={`glass ${s.mo}`}>
+            <span className={s.ruleK}>lift · 0.85 s · spring</span>
+            <h3>Reaching</h3>
+            <p>On hover, a pane rises out of its socket and a device floats off its card, then settles back.</p>
           </div>
           <div className={`glass ${s.mo}`}>
             <span className={s.ruleK}>breathe · 2 s · loop</span>
@@ -844,43 +830,14 @@ export default function BrandPage() {
         <div className={s.donts}>
           <div className={s.dont}>
             <div className={`${s.ground} ${s.gNight}`}>
-              <svg viewBox="0 0 120 60" aria-hidden="true">
-                <rect
-                  x="2"
-                  y="2"
-                  width="116"
-                  height="56"
-                  rx="14"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="4"
-                />
-                <rect
-                  x="10"
-                  y="10"
-                  width="54"
-                  height="40"
-                  rx="6"
-                  fill="#38bdf8"
-                />
-                <rect
-                  x="70"
-                  y="10"
-                  width="40"
-                  height="17"
-                  rx="6"
-                  fill="currentColor"
-                  fillOpacity={0.26}
-                />
-                <rect
-                  x="70"
-                  y="33"
-                  width="40"
-                  height="17"
-                  rx="6"
-                  fill="currentColor"
-                  fillOpacity={0.26}
-                />
+              <svg viewBox="0 0 120 120" aria-hidden="true" className={s.dontMark}>
+                {markPlates("full").map((p, i) =>
+                  p.lit ? (
+                    <path key={i} d={p.d} fill="#38bdf8" />
+                  ) : (
+                    <path key={i} d={p.d} fill="none" stroke="currentColor" strokeOpacity={p.opacity} strokeWidth={p.strokeWidth} strokeLinejoin="round" />
+                  ),
+                )}
               </svg>
             </div>
             <span className={s.x}>Flatten the light</span>
@@ -890,12 +847,12 @@ export default function BrandPage() {
             <div className={`${s.ground} ${s.gNight}`}>
               <Mark className={s.rotated} />
             </div>
-            <span className={s.x}>Turn it portrait</span>
-            <p>It&rsquo;s always landscape.</p>
+            <span className={s.x}>Change the angle</span>
+            <p>It&rsquo;s always the stack&rsquo;s angle.</p>
           </div>
           <div className={s.dont}>
             <div className={`${s.ground} ${s.gGrad}`}>
-              <Mark />
+              <Mark className={s.dontMark} />
             </div>
             <span className={s.x}>Light on light</span>
             <p>Use one colour on coloured backgrounds.</p>

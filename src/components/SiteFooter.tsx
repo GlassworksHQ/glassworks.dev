@@ -8,7 +8,7 @@ export function SiteFooter() {
     <footer className={`wrap ${styles.footer}`}>
       <div className={styles.footTop}>
         <Link href="/" className={styles.home}>
-          <Mark className={styles.markSm} />
+          <Mark cut="small" className={styles.markSm} />
           <span className={styles.wordSm}>Glassworks</span>
         </Link>
         <nav className={styles.footNav} aria-label="Footer">
