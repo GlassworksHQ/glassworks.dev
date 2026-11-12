@@ -8,6 +8,9 @@
  * for the org profile and the main README), core, kiln, and one per library in
  * src/lib/libraries.json. Each in -on-dark and -on-light.
  *
+ * Info badges (30 px, in place of shields.io): licence, status, roadmap, from
+ * src/lib/info-badges.json.
+ *
  * "Built on Glassworks" (badge-on-*.svg) is the frame badge and isn't
  * generated here.
  */
@@ -32,7 +35,9 @@ import {
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "../..");
 const out = join(root, "public/brand");
-const libraries = JSON.parse(readFileSync(join(root, "src/lib/libraries.json"), "utf8"));
+const readJson = (file) => JSON.parse(readFileSync(join(root, file), "utf8"));
+const libraries = readJson("src/lib/libraries.json");
+const infoBadges = readJson("src/lib/info-badges.json");
 
 const EMBER = "#f43f5e";
 
@@ -87,6 +92,36 @@ const BADGES = {
       plate(t, ox, 4.2, BS, "ghost", { op: 0.45 }),
   },
 };
+
+/* ---------- info badges ---------- */
+
+/* status colours only ever mean status (see /brand#colour) */
+const STATUS = {
+  dark: { ready: "#34d399", working: "#fbbf24" },
+  light: { ready: "#047857", working: "#b45309" },
+};
+
+/** LABEL ¦ VALUE on the same field as the part badges, with a status dot when it has one. */
+function infoBadge(t, { label, value, status }) {
+  const x = 12;
+  const wl = measure(label, CAPS);
+  const divider = x + wl + 9;
+  let vx = divider + 9;
+  let dot = "";
+  if (status) {
+    const c = STATUS[t.name][status] ?? t.fa;
+    dot = `<circle cx="${(vx + 3).toFixed(2)}" cy="15.5" r="3" fill="${c}"/>`;
+    vx += 11;
+  }
+  const w = vx + measure(value, CAPS_B) + 13;
+  const inner =
+    guide(`M0 15H${w.toFixed(2)}`, t) +
+    guide(`M${divider.toFixed(2)} 0V30`, t, { op: 0.6, w: 0.6, dash: "2 1.4" }) +
+    text(label, { ...CAPS, x, y: 19, fill: t.mu }) +
+    dot +
+    text(value, { ...CAPS_B, x: vx, y: 19, fill: t.fg });
+  return svg(w, 30, `${label.toLowerCase()}: ${value}`, field(w, 30, t, 15, inner), t);
+}
 
 /* ---------- banners ---------- */
 
@@ -248,6 +283,7 @@ const write = (file, body) => {
 for (const t of Object.values(THEMES)) {
   const on = `on-${t.name}`;
   for (const [id, spec] of Object.entries(BADGES)) write(`badge-${id}-${on}.svg`, badge(t, spec));
+  for (const b of infoBadges) write(`badge-${b.id}-${on}.svg`, infoBadge(t, b));
   write(`banner-glassworks-${on}.svg`, glassworksBanner(t));
   write(`banner-core-${on}.svg`, coreBanner(t));
   write(`banner-kiln-${on}.svg`, kilnBanner(t));

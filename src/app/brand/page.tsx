@@ -14,6 +14,7 @@ import {
   PaneGlyph,
   RadioGlyph,
 } from "@/components/Glyphs";
+import infoBadges from "@/lib/info-badges.json";
 import libraries from "@/lib/libraries.json";
 import s from "./brand.module.css";
 
@@ -503,6 +504,49 @@ export default function BrandPage() {
         <CopySnippet
           label="README · swap core for pane or kiln"
           code={readmeSnippet("badge-core", "Glassworks core", 'height="30"')}
+        />
+      </Section>
+
+      <Section
+        id="info"
+        label="Info badges"
+        title="Our own shields."
+        lede="Licence, status and roadmap, on the same field as the part badges. Use these instead of shields.io next to a Glassworks badge. Status dots use the status colours, so they only ever mean status."
+      >
+        <div className={s.badges}>
+          <div className={`${s.badgeGround} ${s.gNight} ${s.infoRow}`}>
+            {infoBadges.map((b) => (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                key={b.id}
+                src={`/brand/badge-${b.id}-on-dark.svg`}
+                alt={`${b.label.toLowerCase()}: ${b.value}`}
+                height={30}
+                className={s.badgeImg}
+              />
+            ))}
+          </div>
+          <div className={`${s.badgeGround} ${s.gDay} ${s.infoRow}`}>
+            {infoBadges.map((b) => (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                key={b.id}
+                src={`/brand/badge-${b.id}-on-light.svg`}
+                alt={`${b.label.toLowerCase()}: ${b.value}`}
+                height={30}
+                className={s.badgeImg}
+              />
+            ))}
+          </div>
+        </div>
+        <p className={s.note}>
+          {infoBadges.map((b) => `badge-${b.id}`).join(", ")}. A new one is an
+          entry in <code>src/lib/info-badges.json</code> and a run of{" "}
+          <code>pnpm brand</code>.
+        </p>
+        <CopySnippet
+          label="README · swap license for any of the above"
+          code={readmeSnippet("badge-license", "License: MPL-2.0", 'height="30"')}
         />
       </Section>
 

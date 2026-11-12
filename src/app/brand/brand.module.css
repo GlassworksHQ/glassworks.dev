@@ -331,6 +331,14 @@
   max-width: 100%;
 }
 
+.infoRow {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  padding: 24px 12px;
+}
+
 /* part badges */
 .parts {
   display: grid;
