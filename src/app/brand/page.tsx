@@ -112,6 +112,12 @@ const parts = [
     alt: "Glassworks Kiln",
     use: "Kiln itself, and frames that install through it. The only ember badge.",
   },
+  {
+    id: "library",
+    name: "Library",
+    alt: "Glassworks Library",
+    use: "A library, where its own banner doesn't fit: a list or a table of libraries. The core's pale glass.",
+  },
 ];
 
 const banners = [
@@ -128,6 +134,7 @@ const banners = [
     what: "Library: one block lifted out of the core",
   },
   { base: "banner-kiln", alt: "Glassworks Kiln", what: "Kiln" },
+  { base: "banner-principles", alt: "Glassworks Principles", what: "Principles: the rules every part follows" },
 ];
 
 const downloads = [
@@ -155,6 +162,7 @@ const downloads = [
   { file: "banner-core-on-dark.svg", what: "Core banner, dark" },
   { file: "banner-pane-on-dark.svg", what: "Pane banner, dark" },
   { file: "banner-kiln-on-dark.svg", what: "Kiln banner, dark" },
+  { file: "banner-principles-on-dark.svg", what: "Principles banner, dark (light too)" },
   ...libraries.map((l) => ({
     file: `banner-library-${l.name}-on-dark.svg`,
     what: `${l.name} banner, dark (light too)`,
@@ -457,7 +465,7 @@ export default function BrandPage() {
       <Section
         id="parts"
         label="Part badges"
-        title="Core, pane, Kiln."
+        title="Core, pane, Kiln, library."
         lede="For the parts people build with. The mark sits in a drawing cell, because these are things under construction; the name sits on a sweep of the part's light, and the edge catches it. Finished products and frames use Built on Glassworks instead, which is plain."
       >
         <div className={s.parts}>

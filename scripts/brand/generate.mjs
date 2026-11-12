@@ -3,10 +3,11 @@
  *
  *   pnpm brand
  *
- * Badges (30 px, for a row of shields): core, pane, kiln.
+ * Badges (30 px, for a row of shields): core, pane, kiln, library.
  * Banners (640 × 180, for the top of a README): glassworks (the whole stack,
- * for the org profile and the main README), core, kiln, and one per library in
- * src/lib/libraries.json. Each in -on-dark and -on-light.
+ * for the org profile and the main README), principles (the page of rules every
+ * part follows), core, pane, kiln, and one per library in src/lib/libraries.json.
+ * Each in -on-dark and -on-light.
  *
  * Info badges (30 px, in place of shields.io): licence (MPL-2.0 for the core,
  * MIT for libraries), status (under development, α alpha, β beta, stable) and
@@ -101,6 +102,13 @@ const PART = {
     strength: 1,
     rim: { dark: ["#fed7aa", "#fda4af"], light: ["#fb923c", "#e11d48"] },
     lit: "url(#ember)",
+  },
+  // libraries are pieces of the core: its pale glass, under their own name
+  library: {
+    name: "Library",
+    sweep: ["#e2e8f0", "#7dd3fc"],
+    strength: 0.55,
+    rim: { dark: ["#e2e8f0", "#bae6fd"], light: ["#94a3b8", "#0ea5e9"] },
   },
 };
 
@@ -322,7 +330,8 @@ const BANNER_LIGHT = {
   core: PART.core,
   pane: PART.pane,
   kiln: PART.kiln,
-  library: PART.core, // libraries are pieces of the core: its pale glass
+  library: PART.library,
+  principles: PART.core, // the rules: the stack drawn before the light comes on
 };
 
 function cellGuides(t, ox, s, ys, color) {
@@ -475,6 +484,35 @@ function libraryBanner(t, lib) {
   );
 }
 
+/**
+ * The principles: the whole stack as a plan, with the pane sockets on top. The
+ * shape every part has to fit, drawn before anything is lit. No ember: Kiln's
+ * colour stays Kiln's.
+ */
+function principlesBanner(t) {
+  const s = 0.5;
+  const ox = 70 + backCorner(s);
+  const y = 26;
+  const gap = 22;
+  return partBanner(
+    t,
+    "principles",
+    "Glassworks Principles",
+    cellGuides(t, ox, s, [y, y + gap * 3, y + gap * 3 + plateHeight(s)]) +
+      plate(t, ox, y + gap * 3, s, "ghost", { op: 0.3 }) +
+      plate(t, ox, y + gap * 2, s, "ghost", { op: 0.4, cells: true }) +
+      plate(t, ox, y + gap, s, "core", { thick: 14 }) +
+      plate(t, ox, y, s, "sockets", { thick: 10 }),
+    {
+      kicker: "GLASSWORKS · PRINCIPLES",
+      nameA: "Glassworks",
+      nameB: "Principles",
+      code: "docs/principles.md",
+      desc: "Home Assistant is the brain. The panel is the hardware.",
+    },
+  );
+}
+
 function kilnBanner(t) {
   const s = 0.55;
   const ox = 56 + backCorner(s);
@@ -515,6 +553,7 @@ for (const t of Object.values(THEMES)) {
   write(`banner-core-${on}.svg`, coreBanner(t));
   write(`banner-pane-${on}.svg`, paneBanner(t));
   write(`banner-kiln-${on}.svg`, kilnBanner(t));
+  write(`banner-principles-${on}.svg`, principlesBanner(t));
   for (const lib of libraries) write(`banner-library-${lib.name}-${on}.svg`, libraryBanner(t, lib));
 }
 
