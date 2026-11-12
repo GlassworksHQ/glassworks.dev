@@ -175,8 +175,42 @@
   animation: breathe 2s ease-in-out infinite;
 }
 
-.extIcon {
-  color: var(--fg);
+/* ---------- Kiln, the floor ---------- */
+.kilnTop {
+  fill: color-mix(in srgb, var(--ember-b) 5%, var(--bg));
+  stroke: color-mix(in srgb, var(--ember-b) 80%, transparent);
+  stroke-width: 0.9;
+}
+
+.kilnEdge {
+  fill: color-mix(in srgb, var(--ember-b) 16%, var(--bg));
+  stroke: color-mix(in srgb, var(--ember-b) 35%, transparent);
+  stroke-width: 0.6;
+}
+
+.kilnStep {
+  font: 600 7px var(--f-sans);
+  fill: #1a0a0a;
+  pointer-events: none;
+}
+
+.kilnLabel {
+  font: 500 5.6px var(--f-sans);
+  letter-spacing: 0.16em;
+  fill: color-mix(in srgb, var(--ember-b) 80%, var(--fg));
+  pointer-events: none;
+}
+
+.kilnGlow {
+  fill: var(--ember-b);
+  opacity: 0.3;
+  filter: blur(14px);
+}
+
+.emberRail {
+  stroke: color-mix(in srgb, var(--ember-b) 25%, transparent);
+  stroke-width: 0.8;
+  fill: none;
 }
 
 .dotSky {

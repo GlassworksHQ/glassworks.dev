@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { KilnGlyph } from "./Glyphs";
 import styles from "./Stack.module.css";
 
 /*
@@ -236,24 +235,33 @@ function Beam({
   z0,
   z1,
   delay,
+  tone = "sky",
 }: {
   x: number;
   y: number;
   z0: number;
   z1: number;
   delay: number;
+  tone?: "sky" | "ember";
 }) {
   const [ax, ay] = iso(x, y, z0);
   const [bx, by] = iso(x, y, z1);
+  const ember = tone === "ember";
   return (
     <g>
-      <line x1={ax} y1={ay} x2={bx} y2={by} className={styles.beamRail} />
       <line
         x1={ax}
         y1={ay}
         x2={bx}
         y2={by}
-        className={styles.beam}
+        className={ember ? styles.emberRail : styles.beamRail}
+      />
+      <line
+        x1={ax}
+        y1={ay}
+        x2={bx}
+        y2={by}
+        className={ember ? styles.wireEmber : styles.beam}
         style={{ animationDelay: `${delay}s` }}
       />
     </g>
@@ -267,7 +275,6 @@ function External({
   h,
   title,
   sub,
-  tone = "sky",
 }: {
   x: number;
   y: number;
@@ -275,7 +282,6 @@ function External({
   h: number;
   title: string;
   sub: string;
-  tone?: "sky" | "ember";
 }) {
   return (
     <g className={styles.ext}>
@@ -287,22 +293,8 @@ function External({
         rx="10"
         className={styles.extBox}
       />
-      {tone === "ember" ? (
-        <KilnGlyph
-          x={x + 9}
-          y={y + 8}
-          width={15}
-          height={15}
-          className={styles.extIcon}
-        />
-      ) : (
-        <circle cx={x + 14} cy={y + 17} r="3" className={styles.dotSky} />
-      )}
-      <text
-        x={x + (tone === "ember" ? 29 : 24)}
-        y={y + 20}
-        className={styles.extTitle}
-      >
+      <circle cx={x + 14} cy={y + 17} r="3" className={styles.dotSky} />
+      <text x={x + 24} y={y + 20} className={styles.extTitle}>
         {title}
       </text>
       <text x={x + 14} y={y + 35} className={styles.extSub}>
@@ -312,23 +304,68 @@ function External({
   );
 }
 
-function Wire({
-  d,
-  tone = "sky",
-  delay = 0,
-}: {
-  d: string;
-  tone?: "sky" | "ember";
-  delay?: number;
-}) {
+function Wire({ d, delay = 0 }: { d: string; delay?: number }) {
   return (
     <g>
       <path d={d} className={styles.wireRail} />
       <path
         d={d}
-        className={tone === "ember" ? styles.wireEmber : styles.wire}
+        className={styles.wire}
         style={{ animationDelay: `${delay}s` }}
       />
+    </g>
+  );
+}
+
+/*
+ * Kiln is the floor the stack is fired on: an ember plate under the hardware,
+ * its four steps as cells, getting hotter left to right. Heat rises up the same
+ * columns the light uses. It isn't a layer of the panel, so it never dims.
+ */
+const KILN_Z = -96;
+const KILN_THICK = 6;
+const KILN_STEPS = ["USB", "Root", "Flash", "Provision"];
+
+function KilnPlate() {
+  const sw = 42.5;
+  const gap = (W - 20 - sw * KILN_STEPS.length) / (KILN_STEPS.length - 1);
+  const [gx, gy] = iso(W / 2, D / 2, KILN_Z);
+  return (
+    <g>
+      <ellipse cx={gx} cy={gy} rx="120" ry="50" className={styles.kilnGlow} />
+      <g transform={plane(KILN_Z - KILN_THICK)}>
+        <rect width={W} height={D} rx="9" className={styles.kilnEdge} />
+      </g>
+      <g transform={plane(KILN_Z)}>
+        <rect width={W} height={D} rx="9" className={styles.kilnTop} />
+        {KILN_STEPS.map((step, i) => {
+          const x = 10 + i * (sw + gap);
+          return (
+            <g key={step}>
+              <rect
+                x={x}
+                y={10}
+                width={sw}
+                height={86}
+                rx="5"
+                fill="url(#gw-ember)"
+                opacity={0.32 + i * 0.16}
+              />
+              <text
+                x={x + sw / 2}
+                y={56}
+                textAnchor="middle"
+                className={styles.kilnStep}
+              >
+                {step}
+              </text>
+            </g>
+          );
+        })}
+        <text x="10" y="110" className={styles.kilnLabel}>
+          KILN · INSTALLS OVER USB, FROM THE BROWSER
+        </text>
+      </g>
     </g>
   );
 }
@@ -344,15 +381,13 @@ export function Stack() {
   const [coreRx, coreRy] = iso(W, 0, 140);
   const [radioX, radioY] = iso(COL_X[2] + CW, ROW_Y[0] + CH / 2, 280);
   const [sendX, sendY] = iso(COL_X[2] + CW, ROW_Y[1] + CH / 2, 280);
-  // Kiln plugs into the hardware plate's front-left edge. Not its corner: plates
-  // have rounded corners (rx 9), so the mathematical corner is off the plate.
-  const [hwLx, hwLy] = iso(30, D, -6);
+  const hardware = ordered[0];
 
   return (
     <div className={styles.wrap}>
       <div className={styles.figure} onMouseLeave={() => setHover(null)}>
         <svg
-          viewBox="-178 -305 610 480"
+          viewBox="-140 -305 572 590"
           role="img"
           aria-labelledby="stack-title stack-desc"
           className={styles.svg}
@@ -362,8 +397,22 @@ export function Stack() {
             Five layers, bottom to top: the hardware, the frame, the Glassworks
             core, the pane API and the panes. The core talks to Home Assistant;
             the radio pane serves ZHA, Zigbee2MQTT and OTBR; Sendspin plays from
-            Music Assistant. Kiln installs it all over USB.
+            Music Assistant. Under it all is Kiln, which installs it over USB.
           </desc>
+
+          {/* Kiln, and its heat rising into the hardware */}
+          <KilnPlate />
+          {COLUMNS.map(([x, y], c) => (
+            <Beam
+              key={c}
+              x={x}
+              y={y}
+              z0={KILN_Z}
+              z1={hardware.z - hardware.thick}
+              delay={c * 0.4}
+              tone="ember"
+            />
+          ))}
 
           {ordered.map((layer, i) => {
             const next = ordered[i + 1];
@@ -425,18 +474,6 @@ export function Stack() {
             h={64}
             title="Home Assistant"
             sub="ESPHome device · dashboard · updates"
-          />
-
-          {/* Kiln, feeding the hardware from below */}
-          <Wire d={`M${hwLx} 114 L ${hwLx} ${hwLy - 0.5}`} tone="ember" />
-          <External
-            x={-176}
-            y={114}
-            w={150}
-            h={50}
-            title="Kiln"
-            sub="USB · root · flash · provision"
-            tone="ember"
           />
         </svg>
       </div>
