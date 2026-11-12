@@ -11,6 +11,7 @@ pnpm install
 pnpm dev        # http://localhost:3000
 pnpm build      # every route is static
 pnpm lint
+pnpm brand      # regenerate the part badges and banners in public/brand/
 ```
 
 Opening `pnpm dev` from another machine (a tailnet name, a LAN IP)? Next.js blocks its dev scripts
@@ -42,6 +43,8 @@ src/components/
   deviceGeometry.ts    form factors (SPECS), projection, side faces, centring
 src/lib/site.ts        links and panes
 src/lib/devices.ts     the device catalog: specs, pane support, install ratings
+src/lib/libraries.json the standalone libraries, one banner each
+scripts/brand/         `pnpm brand`: draws the core/pane/Kiln badges and the banners
 public/brand/          downloadable SVGs
 ```
 

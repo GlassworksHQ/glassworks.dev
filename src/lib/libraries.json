@@ -1,0 +1,6 @@
+[
+  { "name": "esphome-api", "description": "ESPHome native API client." },
+  { "name": "improv", "description": "Improv Wi-Fi provisioning." },
+  { "name": "ha-auth", "description": "Home Assistant sign-in and tokens." },
+  { "name": "sendspin-protocol", "description": "The Sendspin synced-audio protocol." }
+]

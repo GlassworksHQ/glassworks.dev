@@ -326,6 +326,60 @@
   color: var(--ink-sky);
 }
 
+.badgeImg {
+  width: auto;
+  max-width: 100%;
+}
+
+/* part badges */
+.parts {
+  display: grid;
+  gap: 20px;
+}
+
+.part {
+  display: grid;
+  gap: 10px;
+}
+
+.partHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 12px;
+}
+
+.partName {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.partHead p {
+  margin: 0;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+/* banners */
+.banners {
+  display: grid;
+  gap: 16px;
+}
+
+.bannerFig {
+  margin: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.bannerImg {
+  display: block;
+  width: 100%;
+  max-width: 640px;
+  height: auto;
+}
+
 @media (max-width: 560px) {
   .badges {
     grid-template-columns: minmax(0, 1fr);
