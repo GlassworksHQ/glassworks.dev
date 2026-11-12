@@ -39,7 +39,7 @@ export default function TrademarksPage() {
             Glassworks, when it&rsquo;s true.
           </li>
           <li>
-            Using the badge on a product that ships the Glassworks core. See the{" "}
+            Using the badge on a product that ships the Glassworks Core. See the{" "}
             <Link href="/brand#badge">badge rules</Link>.
           </li>
           <li>Writing, talking or making videos about Glassworks.</li>

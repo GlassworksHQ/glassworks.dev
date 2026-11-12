@@ -63,3 +63,24 @@ export function markPlates(cut: MarkCut = "full"): MarkPlate[] {
   }
   return out;
 }
+
+/*
+ * Kiln's mark: the same plates, but the fired one is the bottom plate, the
+ * floor everything is fired on (as in the stack on the home page). The plates
+ * above it are outlined, the top one strongest.
+ */
+export function kilnPlates(cut: MarkCut = "full"): MarkPlate[] {
+  const m = MARK_SPEC[cut];
+  const above = cut === "full" ? [0.7, 0.45] : [0.7]; // top first
+  const out: MarkPlate[] = [];
+  for (let i = m.plates - 1; i >= 0; i--) {
+    const bottom = i === m.plates - 1;
+    out.push({
+      d: platePath(60, m.top + i * m.step, m.side, m.r),
+      lit: bottom,
+      opacity: bottom ? 1 : above[i],
+      strokeWidth: m.stroke,
+    });
+  }
+  return out;
+}

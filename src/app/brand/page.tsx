@@ -97,13 +97,13 @@ const parts = [
   {
     id: "core",
     name: "Core",
-    alt: "Glassworks core",
+    alt: "Glassworks Core",
     use: "The core and anything shipped as part of it. Pale glass: the core before the light comes on.",
   },
   {
     id: "pane",
     name: "Pane",
-    alt: "Glassworks pane",
+    alt: "Glassworks Pane",
     use: "A pane's README. Sky to violet, the light of the panes.",
   },
   {
@@ -120,7 +120,8 @@ const banners = [
     alt: "Glassworks: the open core for Home Assistant wall panels",
     what: "Glassworks: the whole stack, for the org profile and main README",
   },
-  { base: "banner-core", alt: "Glassworks core", what: "Core" },
+  { base: "banner-core", alt: "Glassworks Core", what: "Core" },
+  { base: "banner-pane", alt: "Glassworks Pane", what: "Pane" },
   {
     base: `banner-library-${libraries[0].name}`,
     alt: `${libraries[0].name}, a Glassworks library`,
@@ -137,7 +138,7 @@ const downloads = [
   { file: "mark-on-dark.svg", what: "Mark for dark backgrounds" },
   { file: "mark-on-light.svg", what: "Mark for light backgrounds" },
   { file: "mark-mono.svg", what: "One colour, follows currentColor" },
-  { file: "kiln-on-dark.svg", what: "Kiln mark, ember plate" },
+  { file: "kiln-on-dark.svg", what: "Kiln mark, ember floor" },
   { file: "app-icon.svg", what: "App icon, 512 × 512" },
   { file: "badge-on-dark.svg", what: "Built on Glassworks, dark" },
   { file: "badge-on-light.svg", what: "Built on Glassworks, light" },
@@ -151,6 +152,7 @@ const downloads = [
   })),
   { file: "banner-glassworks-on-dark.svg", what: "Glassworks banner, dark" },
   { file: "banner-core-on-dark.svg", what: "Core banner, dark" },
+  { file: "banner-pane-on-dark.svg", what: "Pane banner, dark" },
   { file: "banner-kiln-on-dark.svg", what: "Kiln banner, dark" },
   ...libraries.map((l) => ({
     file: `banner-library-${l.name}-on-dark.svg`,
@@ -383,7 +385,7 @@ export default function BrandPage() {
               </span>
             </div>
             <p className={s.note}>
-              The lit plate turns ember. Only Kiln uses it.
+              Kiln fires the bottom plate: the floor everything is fired on. Only Kiln uses ember.
             </p>
           </div>
           <div className={`glass ${s.lockup}`}>
@@ -406,7 +408,7 @@ export default function BrandPage() {
         id="badge"
         label="Badge"
         title="Built on Glassworks."
-        lede="For any product, frame or app that ships the Glassworks core: something finished, so it's plain, with no construction. It's required for a listing on this site and in Kiln."
+        lede="For any product, frame or app that ships the Glassworks Core: something finished, so it's plain, with no construction. It's required for a listing on this site and in Kiln."
       >
         <div className={s.badges}>
           <div className={`${s.badgeGround} ${s.gNight}`}>
@@ -488,7 +490,7 @@ export default function BrandPage() {
         </div>
         <CopySnippet
           label="README · swap core for pane or kiln"
-          code={readmeSnippet("badge-core", "Glassworks core", 'height="30"')}
+          code={readmeSnippet("badge-core", "Glassworks Core", 'height="30"')}
         />
       </Section>
 
@@ -539,7 +541,7 @@ export default function BrandPage() {
         id="banners"
         label="Banners"
         title="The top of a README."
-        lede="Glassworks, core and Kiln each have their own banner. Every library shares one drawing, a block lifted out of the core, so only its name and line change."
+        lede="Glassworks' own banner is finished: the stack and the lockup, no construction. Core, Pane and Kiln each have a banner with the drawing in a cell and the words in the part's light. Every library shares one drawing, a block lifted out of the core, so only its name and line change."
       >
         <div className={s.banners}>
           {banners.map((b) => (
