@@ -1,0 +1,38 @@
+# Rebuilds glassworks.dev on Vercel only when something the site serves changes.
+#
+# Vercel's own Git builds are off (vercel.json: git.deploymentEnabled false), because every push to
+# every branch counted against the Hobby team's deployment limit, which the S1 installer shares.
+# An Ignored Build Step would not help: Vercel counts the builds it cancels too.
+#
+# Production deploys come from the VERCEL_DEPLOY_HOOK secret (deploy hook "site-on-change", branch
+# main), called on a push to main that changes the site, or by hand from the Actions tab.
+# Markdown (README, AGENTS.md, docs/) is not part of the site, so it doesn't trigger a build.
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '**'
+      - '!**/*.md'
+      - '!docs/**'
+      - '!.gitignore'
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: deploy
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Ask Vercel to rebuild the site
+        env:
+          VERCEL_DEPLOY_HOOK: ${{ secrets.VERCEL_DEPLOY_HOOK }}
+        run: |
+          if [ -z "$VERCEL_DEPLOY_HOOK" ]; then echo "::error::VERCEL_DEPLOY_HOOK not set"; exit 1; fi
+          curl -fsS -X POST "$VERCEL_DEPLOY_HOOK" > /dev/null && echo "site rebuild requested"

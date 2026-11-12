@@ -63,3 +63,8 @@ with the tokens, rather than a styled kit.
 ## Deploy
 
 Static output on Vercel, with `glassworks.dev` pointed at it from Cloudflare DNS.
+
+Vercel does not build on pushes (`git.deploymentEnabled: false` in `vercel.json`), so branches and
+PRs get no preview. [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml) calls a Vercel
+deploy hook (the `VERCEL_DEPLOY_HOOK` secret) on a push to `main` that changes the site, not just
+Markdown. To redeploy by hand, run that workflow from the Actions tab.
