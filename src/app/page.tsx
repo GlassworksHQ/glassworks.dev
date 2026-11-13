@@ -2,6 +2,7 @@ import { PaneGrid } from "@/components/PaneGrid";
 import { StackStory } from "@/components/StackStory";
 import Link from "next/link";
 import { FrameCard } from "@/components/FrameCard";
+import { ClarityCardLine } from "@/components/clarity/Clarity";
 import { frames } from "@/lib/frames";
 import styles from "./page.module.css";
 
@@ -34,7 +35,9 @@ export default function Home() {
         <ul className={styles.frames}>
           {frames.map((f) => (
             <li key={f.id}>
-              <FrameCard f={f} />
+              <FrameCard f={f}>
+              <ClarityCardLine frameId={f.id} />
+            </FrameCard>
             </li>
           ))}
         </ul>

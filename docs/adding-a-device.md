@@ -21,6 +21,9 @@ Say where each fact comes from: your own device, the vendor's spec sheet, or a w
 A listing requires the **Built on Glassworks** badge in your frame's README and on its About screen;
 see [glassworks.dev/brand#badge](https://www.glassworks.dev/brand#badge).
 
+Its Clarity grade comes from `frames/<id>/design/clarity.json` once the frame has been measured
+(the main repo's docs/perf.md, "The summary"). Until then the site says "Not measured yet".
+
 ## 2. Move the site's pin
 
 Once that merges, point the submodule at the main repo's new commit, in a pull request here:

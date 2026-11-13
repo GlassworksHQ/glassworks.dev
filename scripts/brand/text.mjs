@@ -6,13 +6,16 @@
  * Inter's contextual tables, and these labels don't need ligatures anyway.
  */
 import { readFileSync } from "node:fs";
-import { createRequire } from "node:module";
-import opentype from "opentype.js";
+import { join } from "node:path";
+import * as ot from "opentype.js";
 
-const require = createRequire(import.meta.url);
+// Node loads opentype.js's CommonJS build (a default export); a bundler, such as the site's build for
+// the Clarity badges (scripts/brand/clarity.mjs), its ES module (named exports). Either works.
+const opentype = ot.default ?? ot;
 
+// From the repo root, where `pnpm brand` and `next build` both run, so a bundler can read them too
 function load(pkg, file) {
-  const buf = readFileSync(require.resolve(`${pkg}/files/${file}`));
+  const buf = readFileSync(join(process.cwd(), "node_modules", pkg, "files", file));
   return opentype.parse(buf.buffer.slice(buf.byteOffset, buf.byteOffset + buf.length));
 }
 

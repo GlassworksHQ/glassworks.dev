@@ -45,6 +45,10 @@ src/components/
 src/lib/site.ts        links and panes
 src/lib/frames.ts      the frame catalog: every frames/<id>/design/frame.json in vendor/s1-unleashed
 src/lib/frameText.ts   the site's words for that data: install ratings, pane support
+src/lib/clarity.ts     each frame's Clarity grade, worked out from its clarity.json at build time
+src/components/clarity/  the Clarity seal, the frame page's panel, the catalog line
+scripts/brand/clarity.mjs the Clarity README badge, served per frame at /frames/<id>/clarity-on-*.svg
+tests/clarity/         made-up Clarity summaries for working on the site (CLARITY_FIXTURES)
 vendor/s1-unleashed/   the main repo, a submodule pinned to a commit (don't install inside it)
 src/lib/libraries.json the standalone libraries, one banner each
 scripts/brand/         `pnpm brand` and `pnpm brand:raster`: every brand file, from src/lib/markGeometry.ts
@@ -56,6 +60,19 @@ public/brand/          downloadable SVGs
 Frames live in the main repo, [GlassworksHQ/aqara-s1-unleashed](https://github.com/GlassworksHQ/aqara-s1-unleashed):
 add its `frames/<id>/design/frame.json` there, then move this repo's submodule pin. See
 [docs/adding-a-device.md](docs/adding-a-device.md).
+
+## Clarity
+
+Clarity is the Glassworks wall-panel performance grade, A+ to E (docs/perf.md in the main repo). A
+frame stores its measurements only, in `frames/<id>/design/clarity.json`; the site works the letter
+out at build time with the main repo's `tools/perf/grade.ts` and `rubric.json`, from the same pinned
+submodule. No summary reads "Not measured yet"; a summary from another measuring protocol reads
+"Re-measure". Each frame also gets a README badge at `/frames/<id>/clarity-on-dark.svg` and
+`-on-light.svg`, worked out the same way, so a README never stores the letter either. The frame page
+has the snippet to copy.
+
+To see the graded states before a frame has a summary: `CLARITY_FIXTURES=tests/clarity/sample pnpm dev`
+(see [tests/clarity/README.md](tests/clarity/README.md)). The samples are ignored on Vercel.
 
 ## Design system
 

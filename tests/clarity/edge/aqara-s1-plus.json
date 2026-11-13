@@ -1,0 +1,286 @@
+{
+ "schema": "glassworks.perf-summary/2",
+ "protocol_version": 3,
+ "report_schema": "glassworks.perf/4",
+ "measured_on": "2026-11-13",
+ "frame": {
+  "id": "aqara-s1-plus",
+  "name": "Aqara S1 Plus"
+ },
+ "app_version": "0.4.3",
+ "viewport": {
+  "css": [
+   960,
+   480
+  ],
+  "dpr": 1.5,
+  "default_dpr": 1.5
+ },
+ "runs": {
+  "attempted": 3,
+  "graded": 2
+ },
+ "pages": {
+  "light": {
+   "inp_ms": 88,
+   "open_ms": 1181,
+   "scroll": {
+    "fps": 56.0,
+    "p95_ms": 33.33,
+    "scrolled_px": 2600,
+    "sf_valid": [
+     true,
+     true,
+     true
+    ],
+    "during_updates": [
+     6,
+     6,
+     6
+    ],
+    "swipes_moved": 6,
+    "swipes_at_edge": 0,
+    "runs": [
+     {
+      "p95_ms": 33.33,
+      "jank_pct": 9,
+      "frozen_pct": 0,
+      "fps": 55.7,
+      "n": 600
+     },
+     {
+      "p95_ms": 33.33,
+      "jank_pct": 9,
+      "frozen_pct": 0,
+      "fps": 56.0,
+      "n": 600
+     },
+     {
+      "p95_ms": 33.33,
+      "jank_pct": 9,
+      "frozen_pct": 0,
+      "fps": 56.2,
+      "n": 600
+     }
+    ]
+   },
+   "updates": {
+    "latency_p95_ms": 76.5,
+    "latency_median_ms": 40.2,
+    "pacing_p95_ms": 33.3,
+    "runs": [
+     {
+      "latency_n": 40,
+      "latency_median_ms": 40.2,
+      "latency_p95_ms": 74.5,
+      "frames": {
+       "p95_ms": 33.3,
+       "jank_pct": 12,
+       "frozen_pct": 0,
+       "fps": 55,
+       "n": 200
+      }
+     },
+     {
+      "latency_n": 40,
+      "latency_median_ms": 40.2,
+      "latency_p95_ms": 76.5,
+      "frames": {
+       "p95_ms": 33.3,
+       "jank_pct": 12,
+       "frozen_pct": 0,
+       "fps": 55,
+       "n": 200
+      }
+     },
+     {
+      "latency_n": 40,
+      "latency_median_ms": 40.2,
+      "latency_p95_ms": 80.5,
+      "frames": {
+       "p95_ms": 33.3,
+       "jank_pct": 12,
+       "frozen_pct": 0,
+       "fps": 55,
+       "n": 200
+      }
+     }
+    ]
+   },
+   "runs": {
+    "tap": 3,
+    "scroll": 3,
+    "updates": 3,
+    "open": 3
+   }
+  },
+  "typical": {
+   "inp_ms": 64,
+   "open_ms": 1382,
+   "scroll": {
+    "fps": 53.8,
+    "p95_ms": 33.33,
+    "scrolled_px": 2600,
+    "sf_valid": [
+     true,
+     true,
+     true
+    ],
+    "during_updates": [
+     6,
+     6,
+     6
+    ],
+    "swipes_moved": 6,
+    "swipes_at_edge": 0,
+    "runs": [
+     {
+      "p95_ms": 33.33,
+      "jank_pct": 11,
+      "frozen_pct": 0,
+      "fps": 53.5,
+      "n": 600
+     },
+     {
+      "p95_ms": 33.33,
+      "jank_pct": 11,
+      "frozen_pct": 0,
+      "fps": 53.8,
+      "n": 600
+     },
+     {
+      "p95_ms": 33.33,
+      "jank_pct": 11,
+      "frozen_pct": 0,
+      "fps": 54.0,
+      "n": 600
+     }
+    ]
+   },
+   "updates": {
+    "latency_p95_ms": 64.0,
+    "latency_median_ms": 38.0,
+    "pacing_p95_ms": 33.3,
+    "runs": [
+     {
+      "latency_n": 40,
+      "latency_median_ms": 38.0,
+      "latency_p95_ms": 62.0,
+      "frames": {
+       "p95_ms": 33.3,
+       "jank_pct": 12,
+       "frozen_pct": 0,
+       "fps": 55,
+       "n": 200
+      }
+     },
+     {
+      "latency_n": 40,
+      "latency_median_ms": 38.0,
+      "latency_p95_ms": 64.0,
+      "frames": {
+       "p95_ms": 33.3,
+       "jank_pct": 12,
+       "frozen_pct": 0,
+       "fps": 55,
+       "n": 200
+      }
+     },
+     {
+      "latency_n": 40,
+      "latency_median_ms": 38.0,
+      "latency_p95_ms": 68.0,
+      "frames": {
+       "p95_ms": 33.3,
+       "jank_pct": 12,
+       "frozen_pct": 0,
+       "fps": 55,
+       "n": 200
+      }
+     }
+    ]
+   },
+   "runs": {
+    "tap": 3,
+    "scroll": 3,
+    "updates": 3,
+    "open": 3
+   }
+  },
+  "heavy": {
+   "inp_ms": 120,
+   "open_ms": 1985,
+   "scroll": {
+    "fps": 54.4,
+    "p95_ms": 33.33,
+    "scrolled_px": 2600,
+    "sf_valid": [
+     true,
+     true,
+     true
+    ],
+    "during_updates": [
+     6,
+     6,
+     6
+    ],
+    "swipes_moved": 6,
+    "swipes_at_edge": 0,
+    "runs": [
+     {
+      "p95_ms": 33.33,
+      "jank_pct": 10,
+      "frozen_pct": 0,
+      "fps": 54.1,
+      "n": 600
+     },
+     {
+      "p95_ms": 33.33,
+      "jank_pct": 10,
+      "frozen_pct": 0,
+      "fps": 54.4,
+      "n": 600
+     },
+     {
+      "p95_ms": 33.33,
+      "jank_pct": 10,
+      "frozen_pct": 0,
+      "fps": 54.6,
+      "n": 600
+     }
+    ]
+   },
+   "runs": {
+    "tap": 3,
+    "scroll": 3,
+    "updates": 3,
+    "open": 3
+   }
+  }
+ },
+ "restart_ms": 5400,
+ "gaps": [
+  "1 of 3 graded runs failed or are missing"
+ ],
+ "not_comparable": null,
+ "report": "report.json",
+ "complete": false,
+ "ram": {
+  "idle_app_pss_kb": 402112,
+  "idle_by_process_pss_kb": {},
+  "peak_app_pss_kb": 486400,
+  "peak_by_process_pss_kb": {},
+  "panes": [],
+  "panes_waiting": [],
+  "budget_ok": true
+ },
+ "apk": [
+  {
+   "file": "s1kiosk-arm64-v8a.apk",
+   "abis": [
+    "arm64-v8a"
+   ],
+   "bytes": 71303168
+  }
+ ]
+}

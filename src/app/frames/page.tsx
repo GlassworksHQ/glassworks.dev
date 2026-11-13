@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { FrameCard } from "@/components/FrameCard";
+import { ClarityCardLine } from "@/components/clarity/Clarity";
 import {
   RatingLabel,
   RatingValue,
@@ -32,7 +33,9 @@ export default function DevicesPage() {
       <ul className={s.grid}>
         {frames.map((f) => (
           <li key={f.id}>
-            <FrameCard f={f} />
+            <FrameCard f={f}>
+              <ClarityCardLine frameId={f.id} />
+            </FrameCard>
           </li>
         ))}
         <li>
