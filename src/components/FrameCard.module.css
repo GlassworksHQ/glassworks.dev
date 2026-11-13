@@ -1,0 +1,4 @@
+/* The site's card is a link; the package's card class is written for Kiln's button. */
+.link {
+  text-decoration: none;
+}

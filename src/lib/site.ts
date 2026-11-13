@@ -1,10 +1,12 @@
+import type { PANE_IDS } from "@glassworks/frame-card";
+
 export const links = {
   org: "https://github.com/GlassworksHQ",
-  s1: "https://github.com/aguilaair/aqara-s1-unleashed",
-  s1Install: "https://s1.edm.sh",
+  s1: "https://github.com/GlassworksHQ/aqara-s1-unleashed",
 } as const;
 
-export type PaneId = "assist" | "timers" | "sendspin" | "radio" | "sensors" | "base";
+/** The panes a frame.json rates, from the shared package, so a new pane can't be missed here. */
+export type PaneId = (typeof PANE_IDS)[number];
 
 /**
  * Panes. `frame` marks a frame pane: one that belongs to a single device (its
@@ -24,7 +26,7 @@ export const panes: Pane[] = [
     requires: "Silicon Labs radio",
   },
   { id: "sensors", name: "Android sensors", does: "Presence and light as HA sensors.", requires: "Proximity or light sensor" },
-  { id: "base", name: "Wall base", does: "The S1's wired wall base.", requires: "S1 wall base", frame: "aqara-s1" },
+  { id: "base", name: "Wall base", does: "The S1's wired wall base.", requires: "S1 wall base", frame: "aqara-s1-plus" },
 ];
 
 export const generalPanes = panes.filter((p) => !p.frame);

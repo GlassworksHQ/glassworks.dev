@@ -1,12 +1,5 @@
-import type { DeviceStatus, RatingKey, Ratings, Support } from "@/lib/devices";
-import { statusText } from "@/lib/devices";
-import {
-  cardTags,
-  ratingFields,
-  ratingText,
-  severity,
-  supportText,
-} from "@/lib/devices";
+import type { RatingKey, Support } from "@/lib/frameText";
+import { ratingFields, ratingText, severity, supportText } from "@/lib/frameText";
 import type { PaneId } from "@/lib/site";
 import {
   AppsGlyph,
@@ -123,45 +116,6 @@ export function SpecLabel({ label }: { label: string }) {
   );
 }
 
-export function StatusPill({ status }: { status: DeviceStatus }) {
-  return (
-    <span className={`${styles.pill} ${styles[status]}`}>
-      <StageMark stage={status} />
-      {statusText[status]}
-    </span>
-  );
-}
-
-/** Difficulty, reversibility and whether Android is modified, as card tags. */
-export function RatingTags({
-  ratings,
-  expected,
-}: {
-  ratings: Ratings;
-  expected?: boolean;
-}) {
-  return (
-    <ul
-      className={styles.tags}
-      aria-label={expected ? "Install, expected" : "Install"}
-    >
-      {cardTags(ratings).map((t) => (
-        <li
-          key={t.text}
-          className={t.severity ? styles[t.severity] : undefined}
-        >
-          <RatingIcon
-            field={t.key}
-            value={t.value}
-            className={styles.tagIcon}
-          />
-          {t.text}
-        </li>
-      ))}
-    </ul>
-  );
-}
-
 /** One rated answer, e.g. "Medium", with its detail underneath. */
 export function RatingValue({
   field,
@@ -199,7 +153,7 @@ export function RatingValue({
  * development, an amber α or β for alpha and beta, a green dot for stable, a
  * hollow ring for planned. Depends, not checked and no keep their own marks.
  */
-export function StageMark({ stage }: { stage: DeviceStatus | Support }) {
+export function StageMark({ stage }: { stage: Support }) {
   return <span className={`${styles.mark} ${styles[`m_${stage}`]}`} aria-hidden="true" />;
 }
 

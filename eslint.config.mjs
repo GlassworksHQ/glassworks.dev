@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // The main repo, a submodule: linted there, not here.
+    "vendor/**",
   ]),
 ]);
 

@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { PaneGrid } from "@/components/PaneGrid";
 import { SupportTag, paneIcon } from "@/components/DeviceBits";
-import { deviceBySlug, type Support } from "@/lib/devices";
+import { frameById } from "@/lib/frames";
+import type { Support } from "@/lib/frameText";
 import { framePanes } from "@/lib/site";
 import s from "./panes.module.css";
 
@@ -47,7 +48,8 @@ export default function PanesPage() {
           <ul className={s.frameList}>
             {framePanes.map((p) => {
               const Icon = paneIcon[p.id];
-              const d = p.frame ? deviceBySlug(p.frame) : undefined;
+              const d = p.frame ? frameById(p.frame) : undefined;
+              if (p.frame && !d) throw new Error(`src/lib/site.ts: pane "${p.id}" names frame "${p.frame}", which no frame.json has`);
               return (
                 <li key={p.id}>
                   <Link href={`/panes/${p.id}`} className={s.frameRow}>
