@@ -102,6 +102,7 @@ export function ClarityChip({ frameId }: { frameId: string }) {
       <Seal letter={letter} size={30} id="chip" />
       <span className={s.word}>{CLARITY}</span>
       {!letter && <span className={s.chipDim}>{noGrade(c).toLowerCase()}</span>}
+      {letter && c.state === "graded" && c.grade.provisional && <span className={s.chipProv}>provisional</span>}
     </ClarityChipLink>
   );
 }

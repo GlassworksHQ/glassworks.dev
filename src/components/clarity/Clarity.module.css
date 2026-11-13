@@ -176,6 +176,11 @@
   color: var(--faint);
 }
 
+.chipProv {
+  font-size: 13px;
+  color: var(--work-ink);
+}
+
 /* ---------- the catalog card's line ---------- */
 
 .card {
