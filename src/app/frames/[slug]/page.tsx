@@ -13,7 +13,7 @@ import {
 } from "@/components/DeviceBits";
 import { KilnGlyph } from "@/components/Glyphs";
 import { Mark } from "@/components/Mark";
-import { frameById, frames, kilnHref } from "@/lib/frames";
+import { frameById, frames, installHref } from "@/lib/frames";
 import { ratingKeys, ships } from "@/lib/frameText";
 import { panes } from "@/lib/site";
 import s from "./device.module.css";
@@ -65,7 +65,7 @@ async function Device({ params }: { params: Params }) {
   const { slug } = await params;
   const d = frameById(slug);
   if (!d) notFound();
-  const install = kilnHref(d);
+  const install = installHref(d);
 
   return (
     <article className={`wrap ${s.page}`}>

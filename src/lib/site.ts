@@ -1,6 +1,6 @@
 export const links = {
   org: "https://github.com/GlassworksHQ",
-  s1: "https://github.com/aguilaair/aqara-s1-unleashed",
+  s1: "https://github.com/GlassworksHQ/aqara-s1-unleashed",
   s1Install: "https://s1.edm.sh",
 } as const;
 
