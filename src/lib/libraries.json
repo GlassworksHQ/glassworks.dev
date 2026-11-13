@@ -4,5 +4,7 @@
   { "name": "improv", "description": "Improv Wi-Fi for Android, over BLE, serial or adb." },
   { "name": "improv-serial", "description": "Improv Wi-Fi Serial for the browser, and over adb." },
   { "name": "ha-auth", "description": "Home Assistant sign-in and tokens." },
-  { "name": "sendspin-protocol", "description": "The Sendspin synced-audio protocol." }
+  { "name": "sendspin-protocol", "description": "The Sendspin synced-audio protocol." },
+  { "name": "fastboot", "description": "Fastboot over WebUSB, for every frame Kiln installs." },
+  { "name": "frame-card", "description": "The frame card and 3D renderer, for Kiln and the site." }
 ]
