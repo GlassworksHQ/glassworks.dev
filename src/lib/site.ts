@@ -24,7 +24,7 @@ export const panes: Pane[] = [
     requires: "Silicon Labs radio",
   },
   { id: "sensors", name: "Android sensors", does: "Presence and light as HA sensors.", requires: "Proximity or light sensor" },
-  { id: "base", name: "Wall base", does: "The S1's wired wall base.", requires: "S1 wall base", frame: "aqara-s1" },
+  { id: "base", name: "Wall base", does: "The S1's wired wall base.", requires: "S1 wall base", frame: "aqara-s1-plus" },
 ];
 
 export const generalPanes = panes.filter((p) => !p.frame);

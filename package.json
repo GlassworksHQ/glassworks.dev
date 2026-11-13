@@ -12,6 +12,7 @@
     "brand:raster": "node scripts/brand/raster.mjs"
   },
   "dependencies": {
+    "@glassworks/frame-card": "link:vendor/s1-unleashed/packages/frame-card",
     "next": "16.4.6",
     "react": "19.3.0",
     "react-dom": "19.3.0"

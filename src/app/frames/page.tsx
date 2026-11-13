@@ -1,13 +1,14 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { DeviceCard } from "@/components/DeviceCard";
+import { FrameCard } from "@/components/FrameCard";
 import {
   RatingLabel,
   RatingValue,
   SupportTag,
   paneIcon,
 } from "@/components/DeviceBits";
-import { devices, difficultyHelp, ratingKeys, ships } from "@/lib/devices";
+import { frames } from "@/lib/frames";
+import { difficultyHelp, ratingKeys, ships } from "@/lib/frameText";
 import { links, panes } from "@/lib/site";
 import s from "./frames.module.css";
 
@@ -29,9 +30,9 @@ export default function DevicesPage() {
       </header>
 
       <ul className={s.grid}>
-        {devices.map((d) => (
-          <li key={d.slug}>
-            <DeviceCard d={d} heading="h2" />
+        {frames.map((f) => (
+          <li key={f.id}>
+            <FrameCard f={f} />
           </li>
         ))}
         <li>
@@ -59,9 +60,9 @@ export default function DevicesPage() {
                 <th scope="col">
                   <span className="visually-hidden">Change</span>
                 </th>
-                {devices.map((d) => (
-                  <th key={d.slug} scope="col">
-                    <Link href={`/frames/${d.slug}`}>{d.name}</Link>
+                {frames.map((d) => (
+                  <th key={d.id} scope="col">
+                    <Link href={`/frames/${d.id}`}>{d.name}</Link>
                     {!ships(d.status) && (
                       <span className={s.expected}>expected</span>
                     )}
@@ -75,8 +76,8 @@ export default function DevicesPage() {
                   <th scope="row">
                     <RatingLabel field={k} />
                   </th>
-                  {devices.map((d) => (
-                    <td key={d.slug}>
+                  {frames.map((d) => (
+                    <td key={d.id}>
                       <RatingValue field={k} rating={d.ratings[k]} />
                     </td>
                   ))}
@@ -108,9 +109,9 @@ export default function DevicesPage() {
             <thead>
               <tr>
                 <th scope="col">Pane</th>
-                {devices.map((d) => (
-                  <th key={d.slug} scope="col">
-                    <Link href={`/frames/${d.slug}`}>{d.name}</Link>
+                {frames.map((d) => (
+                  <th key={d.id} scope="col">
+                    <Link href={`/frames/${d.id}`}>{d.name}</Link>
                   </th>
                 ))}
               </tr>
@@ -126,8 +127,8 @@ export default function DevicesPage() {
                         {p.name}
                       </span>
                     </th>
-                    {devices.map((d) => (
-                      <td key={d.slug} title={d.panes[p.id].note}>
+                    {frames.map((d) => (
+                      <td key={d.id} title={d.panes[p.id].note}>
                         <SupportTag support={d.panes[p.id].support} />
                       </td>
                     ))}

@@ -1,7 +1,8 @@
 import { PaneLift } from "./PaneLift";
 import { TiltCard } from "./TiltCard";
 import { StageMark, paneIcon } from "./DeviceBits";
-import { devices, supportText } from "@/lib/devices";
+import { frames } from "@/lib/frames";
+import { supportText } from "@/lib/frameText";
 import { generalPanes, links } from "@/lib/site";
 import s from "./PaneGrid.module.css";
 
@@ -37,10 +38,10 @@ export function PaneGrid() {
                   <dd>{p.requires}</dd>
                 </dl>
                 <ul className={s.runs} aria-label={`Where ${p.name} runs`}>
-                  {devices.map((d) => {
+                  {frames.map((d) => {
                     const support = d.panes[p.id].support;
                     return (
-                      <li key={d.slug} className={`${s.run} ${s[`r_${support}`]}`} title={supportText[support]}>
+                      <li key={d.id} className={`${s.run} ${s[`r_${support}`]}`} title={supportText[support]}>
                         <StageMark stage={support} />
                         {d.name}
                         <span className="visually-hidden">: {supportText[support]}</span>

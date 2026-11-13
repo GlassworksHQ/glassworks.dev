@@ -7,6 +7,7 @@ where.
 ## Develop
 
 ```sh
+git submodule update --init   # vendor/s1-unleashed: the frames' data and the frame card
 pnpm install
 pnpm dev        # http://localhost:3000
 pnpm build      # every route is static
@@ -40,10 +41,11 @@ src/components/
   Mark.tsx             the mark (three plates, the top one lit): variant lit | ember | mono, cut full | small
   Glyphs.tsx           Frame, Pane, Kiln and pane icons on a 24 grid
   GlassTile.tsx        the 2:1 night tile with the light sweep
-  DeviceModel.tsx      3D device mockup: CSS front glass + computed SVG sides
-  deviceGeometry.ts    form factors (SPECS), projection, side faces, centring
+  FrameCard.tsx        the catalog card and a frame page's 3D model, from @glassworks/frame-card
 src/lib/site.ts        links and panes
-src/lib/devices.ts     the device catalog: specs, pane support, install ratings
+src/lib/frames.ts      the frame catalog: every frames/<id>/design/frame.json in vendor/s1-unleashed
+src/lib/frameText.ts   the site's words for that data: install ratings, pane support
+vendor/s1-unleashed/   the main repo, a submodule pinned to a commit (don't install inside it)
 src/lib/libraries.json the standalone libraries, one banner each
 scripts/brand/         `pnpm brand` and `pnpm brand:raster`: every brand file, from src/lib/markGeometry.ts
 public/brand/          downloadable SVGs
@@ -51,8 +53,9 @@ public/brand/          downloadable SVGs
 
 ## Adding a device
 
-See [docs/adding-a-device.md](docs/adding-a-device.md): one entry in `src/lib/devices.ts`, and one in
-`SPECS` (`src/components/deviceGeometry.ts`) for a new form factor.
+Frames live in the main repo, [GlassworksHQ/aqara-s1-unleashed](https://github.com/GlassworksHQ/aqara-s1-unleashed):
+add its `frames/<id>/design/frame.json` there, then move this repo's submodule pin. See
+[docs/adding-a-device.md](docs/adding-a-device.md).
 
 ## Design system
 

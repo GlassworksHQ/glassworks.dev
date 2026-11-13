@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { DeviceModel } from "@/components/DeviceModel";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
+import { StatusPill } from "@glassworks/frame-card";
+import { HeroModel } from "@/components/FrameCard";
 import {
-  StatusPill,
   RatingLabel,
   RatingValue,
   SpecLabel,
@@ -13,19 +13,20 @@ import {
 } from "@/components/DeviceBits";
 import { KilnGlyph } from "@/components/Glyphs";
 import { Mark } from "@/components/Mark";
-import { deviceBySlug, devices, ratingKeys, ships } from "@/lib/devices";
+import { frameById, frames, kilnHref } from "@/lib/frames";
+import { ratingKeys, ships } from "@/lib/frameText";
 import { panes } from "@/lib/site";
 import s from "./device.module.css";
 
 export function generateStaticParams() {
-  return devices.map((d) => ({ slug: d.slug }));
+  return frames.map((f) => ({ slug: f.id }));
 }
 
 export async function generateMetadata(
   props: PageProps<"/frames/[slug]">,
 ): Promise<Metadata> {
   const { slug } = await props.params;
-  const d = deviceBySlug(slug);
+  const d = frameById(slug);
   if (!d) return {};
   return { title: d.name, description: d.summary };
 }
@@ -62,8 +63,9 @@ function DeviceFallback() {
 
 async function Device({ params }: { params: Params }) {
   const { slug } = await params;
-  const d = deviceBySlug(slug);
+  const d = frameById(slug);
   if (!d) notFound();
+  const install = kilnHref(d);
 
   return (
     <article className={`wrap ${s.page}`}>
@@ -75,7 +77,7 @@ async function Device({ params }: { params: Params }) {
 
       <header className={s.hero}>
         <div className={s.heroText}>
-          <StatusPill status={d.status} />
+          <StatusPill stage={d.status} />
           <h1 className={s.h1}>{d.name}</h1>
           {d.aka && <p className={s.aka}>{d.aka}</p>}
           <p className={s.lede}>{d.summary}</p>
@@ -85,29 +87,24 @@ async function Device({ params }: { params: Params }) {
             </p>
           )}
         </div>
-        <DeviceModel
-          shape={d.shape}
-          label={`${d.name} running Glassworks, an illustration`}
-          interactive
-          size="hero"
-        />
+        <HeroModel f={d} />
       </header>
 
       {d.notice && <p className={s.notice}>{d.notice}</p>}
 
       <section
-        className={`glass ${s.kiln} ${d.install.href ? "" : s.kilnOff}`}
+        className={`glass ${s.kiln} ${install ? "" : s.kilnOff}`}
         aria-labelledby="install"
       >
         <Mark variant="ember" className={s.kilnMark} title="Kiln" />
         <div className={s.kilnText}>
           <h2 id="install" className={s.kilnTitle}>
-            {d.install.href ? "Install with Kiln" : "Not in Kiln yet"}
+            {install ? "Install with Kiln" : "Not in Kiln yet"}
           </h2>
           <p>{d.install.how}</p>
         </div>
-        {d.install.href && (
-          <a href={d.install.href} className={s.kilnBtn}>
+        {install && (
+          <a href={install} className={s.kilnBtn}>
             <KilnGlyph className={s.kilnBtnIcon} />
             Open Kiln
           </a>

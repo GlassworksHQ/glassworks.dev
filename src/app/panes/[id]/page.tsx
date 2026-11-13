@@ -5,7 +5,8 @@ import { Suspense } from "react";
 import { SupportTag, paneIcon } from "@/components/DeviceBits";
 import { PaneLift } from "@/components/PaneLift";
 import { TiltCard } from "@/components/TiltCard";
-import { deviceBySlug, devices, ships } from "@/lib/devices";
+import { frameById, frames } from "@/lib/frames";
+import { ships } from "@/lib/frameText";
 import { panes } from "@/lib/site";
 import s from "./pane.module.css";
 
@@ -39,9 +40,9 @@ async function Pane({ params }: { params: Params }) {
   const p = paneById(id);
   if (!p) notFound();
   const Icon = paneIcon[p.id];
-  const frame = p.frame ? deviceBySlug(p.frame) : undefined;
+  const frame = p.frame ? frameById(p.frame) : undefined;
   // a frame pane only means something on its own device
-  const rows = frame ? devices.filter((d) => d.slug === frame.slug) : devices;
+  const rows = frame ? [frame] : frames;
   const runsOn = rows.filter((d) => ships(d.panes[p.id].support)).length;
 
   return (
@@ -89,8 +90,8 @@ async function Pane({ params }: { params: Params }) {
           {rows.map((d) => {
             const support = d.panes[p.id];
             return (
-              <li key={d.slug}>
-                <Link href={`/frames/${d.slug}`} className={s.device}>
+              <li key={d.id}>
+                <Link href={`/frames/${d.id}`} className={s.device}>
                   <span className={s.deviceName}>{d.name}</span>
                   <SupportTag support={support.support} />
                   {support.note && <span className={s.note}>{support.note}</span>}

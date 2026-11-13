@@ -1,8 +1,8 @@
 import { PaneGrid } from "@/components/PaneGrid";
 import { StackStory } from "@/components/StackStory";
 import Link from "next/link";
-import { DeviceCard } from "@/components/DeviceCard";
-import { devices } from "@/lib/devices";
+import { FrameCard } from "@/components/FrameCard";
+import { frames } from "@/lib/frames";
 import styles from "./page.module.css";
 
 export default function Home() {
@@ -32,9 +32,9 @@ export default function Home() {
           </Link>
         </div>
         <ul className={styles.frames}>
-          {devices.map((d) => (
-            <li key={d.slug}>
-              <DeviceCard d={d} />
+          {frames.map((f) => (
+            <li key={f.id}>
+              <FrameCard f={f} />
             </li>
           ))}
         </ul>
