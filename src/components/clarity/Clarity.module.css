@@ -1,0 +1,564 @@
+/*
+ * Clarity. The seal's ring and glint are the room's light (sky to violet), as the lit plate is in the
+ * Glassworks mark; the letter is the page's ink. Levels and bands are status: green, amber, rose.
+ */
+.ok {
+  --t: var(--green);
+  --ti: var(--ok-ink);
+}
+
+.mid {
+  --t: var(--amber);
+  --ti: var(--work-ink);
+}
+
+.bad {
+  --t: var(--rose);
+  --ti: color-mix(in srgb, var(--rose) 75%, var(--fg));
+}
+
+.none {
+  --t: var(--faint);
+  --ti: var(--faint);
+}
+
+/* ---------- the seal ---------- */
+
+.seal {
+  flex: none;
+  overflow: visible;
+}
+
+.ring {
+  fill: none;
+  stroke-width: 4.5;
+  stroke-linecap: round;
+}
+
+.sealOff .ring {
+  stroke: color-mix(in srgb, var(--fg) 28%, transparent);
+  stroke-width: 2.5;
+}
+
+.glint {
+  fill: none;
+  stroke-width: 3.5;
+  stroke-linecap: round;
+}
+
+.letter {
+  fill: var(--fg);
+  font: 300 40px/1 var(--f-sans);
+  letter-spacing: -0.04em;
+}
+
+.letterLong {
+  font-size: 34px;
+}
+
+.sealOff .letter {
+  fill: var(--faint);
+  font-size: 30px;
+}
+
+.sweep {
+  fill: color-mix(in srgb, var(--fg) 9%, transparent);
+  transform: skewX(-18deg) translateX(-40px);
+}
+
+.live .ring {
+  animation: ring 1.1s cubic-bezier(0.2, 0.8, 0.2, 1) 0.1s both;
+}
+
+.live .glint {
+  transform-origin: 50px 50px;
+  animation: glint 0.6s ease-out 0.9s both;
+}
+
+.live .sweep {
+  animation: sweep 1.4s cubic-bezier(0.45, 0.05, 0.25, 1) 0.7s both;
+}
+
+.live .letter {
+  animation: focus 0.6s ease-out 0.45s both;
+}
+
+@keyframes ring {
+  from {
+    stroke-dashoffset: var(--c);
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes glint {
+  from {
+    opacity: 0;
+    transform: rotate(-30deg);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes sweep {
+  from {
+    transform: skewX(-18deg) translateX(-40px);
+  }
+  to {
+    transform: skewX(-18deg) translateX(170px);
+  }
+}
+
+@keyframes focus {
+  from {
+    opacity: 0;
+    filter: blur(6px);
+  }
+  to {
+    opacity: 1;
+    filter: none;
+  }
+}
+
+.word {
+  display: block;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.sub {
+  color: var(--faint);
+  font-size: 13px;
+}
+
+.prov {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: 999px;
+  color: var(--work-ink);
+  background: color-mix(in srgb, var(--amber) 16%, transparent);
+}
+
+/* ---------- the chip near the top ---------- */
+
+.chip {
+  display: inline-flex;
+  gap: 9px;
+  align-items: center;
+  padding: 3px 14px 3px 3px;
+  border-radius: 999px;
+  border: 1px solid var(--edge);
+  background: var(--glass);
+  color: var(--fg);
+  text-decoration: none;
+}
+
+.chip:hover {
+  border-color: color-mix(in srgb, var(--sky) 40%, var(--edge));
+}
+
+.chip .word {
+  font-size: 11px;
+  color: var(--fg);
+}
+
+.chipDim {
+  font-size: 13px;
+  color: var(--faint);
+}
+
+.chipProv {
+  font-size: 13px;
+  color: var(--work-ink);
+}
+
+/* ---------- the catalog card's line ---------- */
+
+.card {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding-top: 14px;
+  border-top: 1px solid var(--edge);
+}
+
+.cardText {
+  display: grid;
+  gap: 1px;
+}
+
+.cardText .word {
+  font-size: 11px;
+}
+
+.cardSub {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+/* ---------- the panel ---------- */
+
+.section {
+  min-width: 0;
+  scroll-margin-top: 24px;
+}
+
+.panel {
+  border-radius: var(--r-tile);
+  overflow: hidden;
+}
+
+.summary {
+  list-style: none;
+  cursor: pointer;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 16px;
+  align-items: start;
+  padding: 22px 24px;
+}
+
+.summary::-webkit-details-marker {
+  display: none;
+}
+
+.summary:focus-visible {
+  outline: 2px solid var(--sky);
+  outline-offset: -2px;
+  border-radius: var(--r-tile);
+}
+
+.head {
+  display: flex;
+  gap: 26px;
+  align-items: center;
+  min-width: 0;
+}
+
+.headText {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+}
+
+.meaning {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  font-size: 22px;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+}
+
+.emptyText {
+  font-size: 17px;
+  color: var(--muted);
+}
+
+.levels {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 18px;
+  margin-top: 4px;
+}
+
+.level {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+  font-size: 14px;
+}
+
+.level::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--t);
+}
+
+.levelName {
+  color: var(--muted);
+}
+
+.levelValue {
+  color: var(--ti);
+  font-weight: 500;
+}
+
+.more {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+  font-size: 13.5px;
+  color: var(--muted);
+}
+
+.summary:hover .more {
+  color: var(--fg);
+}
+
+.chev {
+  width: 16px;
+  height: 16px;
+  transition: transform 0.3s ease;
+}
+
+.panel[open] .chev {
+  transform: rotate(180deg);
+}
+
+.close,
+.panel[open] .open {
+  display: none;
+}
+
+.panel[open] .close {
+  display: inline;
+}
+
+.body {
+  display: grid;
+  gap: 22px;
+  padding: 20px 24px 24px;
+  border-top: 1px solid var(--edge);
+}
+
+.about {
+  color: var(--muted);
+  max-width: 62ch;
+}
+
+/* the details table; a list per dashboard on phones */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.table th,
+.table td {
+  text-align: left;
+  vertical-align: top;
+  padding: 11px 6px;
+  border-top: 1px solid var(--edge);
+  font-weight: 400;
+}
+
+.table thead th {
+  border-top: 0;
+  font-weight: 500;
+}
+
+.table tbody th {
+  color: var(--faint);
+  width: 22%;
+}
+
+.dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--t);
+  margin-right: 8px;
+  vertical-align: 1px;
+}
+
+/* a task that keeps the grade from the next letter */
+.held {
+  position: relative;
+}
+
+.table td.held {
+  padding-left: 14px;
+}
+
+.held::after {
+  content: "";
+  position: absolute;
+  inset: 4px 6px 4px 0;
+  border-radius: 10px;
+  border: 1.5px dashed color-mix(in srgb, var(--fg) 20%, transparent);
+  pointer-events: none;
+}
+
+.note {
+  display: block;
+  margin-top: 4px;
+  font-size: 12.5px;
+  line-height: 1.4;
+  color: var(--muted);
+  max-width: 34ch;
+}
+
+.note b {
+  font-weight: 500;
+  color: var(--fg);
+}
+
+.now {
+  color: var(--faint);
+}
+
+.list {
+  display: none;
+}
+
+.listPage {
+  margin: 0;
+  display: grid;
+}
+
+.listHead {
+  font-weight: 500;
+  padding: 6px 0;
+}
+
+.listRow {
+  margin: 0;
+  display: grid;
+  grid-template-columns: 110px minmax(0, 1fr);
+  gap: 2px 12px;
+  padding: 10px 0;
+  border-top: 1px solid var(--edge);
+  font-size: 14px;
+}
+
+.listRow.held {
+  padding: 12px;
+  margin: 4px 0;
+}
+
+.listRow.held::after {
+  inset: 0;
+}
+
+.listRow .note {
+  grid-column: 1 / -1;
+  max-width: none;
+}
+
+.listTask {
+  color: var(--faint);
+}
+
+.facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 28px;
+  margin: 0;
+  font-size: 14.5px;
+}
+
+.facts dt {
+  color: var(--faint);
+  font-size: 12.5px;
+}
+
+.facts dd {
+  margin: 0;
+}
+
+.meta {
+  display: grid;
+  gap: 8px;
+  font-size: 12.5px;
+  color: var(--faint);
+}
+
+.meta a {
+  color: var(--ink-sky);
+}
+
+.provNote {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  color: var(--muted);
+}
+
+/* the README badge: the theme's own file, as GitHub picks it */
+.badge {
+  display: grid;
+  gap: 12px;
+  justify-items: start;
+  padding-top: 18px;
+  border-top: 1px solid var(--edge);
+}
+
+.badge > div {
+  width: 100%;
+}
+
+.badgeDark {
+  display: none;
+}
+
+@media (prefers-color-scheme: dark) {
+  .badgeLight {
+    display: none;
+  }
+
+  .badgeDark {
+    display: block;
+  }
+}
+
+@media (max-width: 760px) {
+  .summary {
+    padding: 18px 16px;
+  }
+
+  .body {
+    padding: 16px;
+  }
+
+  .head {
+    gap: 16px;
+    align-items: flex-start;
+  }
+
+  .head .seal {
+    width: 76px;
+    height: 76px;
+  }
+
+  .meaning {
+    font-size: 17px;
+  }
+
+  .levels {
+    display: grid;
+    gap: 4px;
+  }
+
+  .table {
+    display: none;
+  }
+
+  .list {
+    display: grid;
+    gap: 18px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .live .ring,
+  .live .glint,
+  .live .sweep,
+  .live .letter {
+    animation: none;
+  }
+}

@@ -5,14 +5,22 @@
  * Glyphs are placed one by one with kerning. opentype.js's shaper chokes on
  * Inter's contextual tables, and these labels don't need ligatures anyway.
  */
-import { readFileSync } from "node:fs";
-import { createRequire } from "node:module";
-import opentype from "opentype.js";
+import { existsSync, readFileSync } from "node:fs";
+import { dirname, join } from "node:path";
+import * as ot from "opentype.js";
 
-const require = createRequire(import.meta.url);
+// Node loads opentype.js's CommonJS build (a default export); a bundler, such as the site's build for
+// the Clarity badges (scripts/brand/clarity.mjs), its ES module (named exports). Either works.
+const opentype = ot.default ?? ot;
 
+// The repo root's node_modules: from the working directory (`pnpm brand`, `next build`, where a
+// bundler can't resolve modules at run time), or else from the script node was given
+// (`node scripts/brand/generate.mjs` from anywhere).
+const ROOTS = [process.cwd(), join(dirname(process.argv[1] ?? ""), "../..")];
 function load(pkg, file) {
-  const buf = readFileSync(require.resolve(`${pkg}/files/${file}`));
+  const at = ROOTS.map((r) => join(r, "node_modules", pkg, "files", file)).find((f) => existsSync(f));
+  if (!at) throw new Error(`${pkg}/files/${file} not found under ${ROOTS.join(" or ")}: run pnpm install`);
+  const buf = readFileSync(at);
   return opentype.parse(buf.buffer.slice(buf.byteOffset, buf.byteOffset + buf.length));
 }
 

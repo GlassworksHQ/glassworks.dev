@@ -6,15 +6,17 @@ import { DeviceModel, FrameCardBody, frameCardClass, useTilt, type FrameDesign }
 import s from "./FrameCard.module.css";
 
 /**
- * A frame in the catalog, drawn by @glassworks/frame-card: the same card as Kiln's picker. The card's
+ * A frame in the catalog, drawn by @glassworks/frame-card: the same card as Kiln's picker, with the
+ * site's own line under it (`children`: the Clarity grade). The card's
  * outer element is the caller's; here it is a link to the frame's page. The home page and /frames
  * both use it.
  */
-export function FrameCard({ f }: { f: FrameDesign }) {
+export function FrameCard({ f, children }: { f: FrameDesign; children?: React.ReactNode }) {
   const tilt = useTilt<HTMLAnchorElement>();
   return (
     <Link {...tilt} href={`/frames/${f.id}`} className={`glass ${frameCardClass} ${s.link}`}>
       <FrameCardBody f={f} />
+      {children}
     </Link>
   );
 }

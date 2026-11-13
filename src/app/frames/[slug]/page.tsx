@@ -17,6 +17,7 @@ import { frameById, frames, installLink } from "@/lib/frames";
 import { ratingKeys, ships } from "@/lib/frameText";
 import { panes } from "@/lib/site";
 import s from "./device.module.css";
+import { ClarityChip, ClarityPanel } from "@/components/clarity/Clarity";
 
 export function generateStaticParams() {
   return frames.map((f) => ({ slug: f.id }));
@@ -78,6 +79,7 @@ async function Device({ params }: { params: Params }) {
       <header className={s.hero}>
         <div className={s.heroText}>
           <StatusPill stage={d.status} />
+          <ClarityChip frameId={d.id} />
           <h1 className={s.h1}>{d.name}</h1>
           {d.aka && <p className={s.aka}>{d.aka}</p>}
           <p className={s.lede}>{d.summary}</p>
@@ -120,6 +122,8 @@ async function Device({ params }: { params: Params }) {
           </a>
         )}
       </section>
+
+      <ClarityPanel frameId={d.id} />
 
       {d.unverified && (
         <p className={s.caveat}>
