@@ -28,7 +28,10 @@ function check(file: string, f: FrameDesign, id: string) {
   if (!(f.status in ORDER)) bad(`status "${f.status}" isn't one of ${Object.keys(ORDER).join(", ")}`);
   for (const p of PANE_IDS) if (!f.panes?.[p]?.support) bad(`panes.${p} is missing`);
   for (const r of RATING_KEYS) if (!f.ratings?.[r]?.value) bad(`ratings.${r} is missing`);
-  if (f.kiln && !f.kiln.startsWith("/")) bad(`kiln "${f.kiln}" should be a route, starting with /`);
+  // a route on Kiln: resolved against it, it must stay there ("//host/x" or "/\\host" would leave)
+  if (f.kiln && (!f.kiln.startsWith("/") || new URL(f.kiln, KILN).origin !== new URL(KILN).origin)) {
+    bad(`kiln "${f.kiln}" should be a route on ${KILN}, starting with a single /`);
+  }
   if (f.install?.href && !/^https?:\/\//.test(f.install.href)) bad(`install.href "${f.install.href}" should be a full URL`);
 }
 
