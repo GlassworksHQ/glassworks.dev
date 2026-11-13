@@ -786,7 +786,7 @@ export default function BrandPage() {
             <span className={s.termW}>Frame</span>
             <p>
               One device definition: hardware, capabilities and the panes it
-              ships. <code>frames/aqara-s1/</code>
+              ships. <code>frames/aqara-s1-plus/</code>
             </p>
           </div>
           <div className={`glass ${s.term}`}>

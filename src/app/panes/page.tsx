@@ -49,6 +49,7 @@ export default function PanesPage() {
             {framePanes.map((p) => {
               const Icon = paneIcon[p.id];
               const d = p.frame ? frameById(p.frame) : undefined;
+              if (p.frame && !d) throw new Error(`src/lib/site.ts: pane "${p.id}" names frame "${p.frame}", which no frame.json has`);
               return (
                 <li key={p.id}>
                   <Link href={`/panes/${p.id}`} className={s.frameRow}>

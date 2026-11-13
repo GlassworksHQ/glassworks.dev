@@ -1,4 +1,4 @@
-import { RATING_KEYS, ships as stageShips, type RatingKey, type Support } from "@glassworks/frame-card";
+import { RATING_KEYS, type RatingKey, type Support } from "@glassworks/frame-card";
 
 /*
  * The site's words for a frame's data. The data itself is each frame's `frame.json` in the main repo
@@ -10,7 +10,7 @@ import { RATING_KEYS, ships as stageShips, type RatingKey, type Support } from "
 export type { RatingKey, Support };
 
 /** Installable, or runs, now: a frame's stage or a pane's support that is alpha, beta or stable. */
-export const ships = (s: Support) => s !== "depends" && s !== "unknown" && s !== "no" && stageShips(s);
+export const ships = (s: Support): s is "alpha" | "beta" | "stable" => s === "alpha" || s === "beta" || s === "stable";
 
 /*
  * What installing does to a device, rated on fixed scales so devices compare at a

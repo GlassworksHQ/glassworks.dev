@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRef } from "react";
 import { DeviceModel, FrameCardBody, frameCardClass, useTilt, type FrameDesign } from "@glassworks/frame-card";
 import s from "./FrameCard.module.css";
 
@@ -23,13 +24,24 @@ export function FrameCard({ f }: { f: FrameDesign }) {
  * light moves, glass doesn't.
  */
 export function HeroModel({ f }: { f: FrameDesign }) {
+  const frame = useRef(0);
+  // a mouse only, and one style write per frame at most, like the card's tilt
   const sheen = (e: React.PointerEvent<HTMLDivElement>) => {
-    if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const r = e.currentTarget.getBoundingClientRect();
-    e.currentTarget.style.setProperty("--sheen", `${50 + ((e.clientX - r.left) / r.width - 0.5) * 70}%`);
+    if (e.pointerType !== "mouse" || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const el = e.currentTarget;
+    const x = e.clientX;
+    cancelAnimationFrame(frame.current);
+    frame.current = requestAnimationFrame(() => {
+      const r = el.getBoundingClientRect();
+      el.style.setProperty("--sheen", `${50 + ((x - r.left) / r.width - 0.5) * 70}%`);
+    });
+  };
+  const leave = (e: React.PointerEvent<HTMLDivElement>) => {
+    cancelAnimationFrame(frame.current);
+    e.currentTarget.style.removeProperty("--sheen");
   };
   return (
-    <div onPointerMove={sheen} onPointerLeave={(e) => e.currentTarget.style.removeProperty("--sheen")}>
+    <div onPointerMove={sheen} onPointerLeave={leave}>
       <DeviceModel id={`${f.id}-hero`} model={f.model} label={`${f.name} running Glassworks, an illustration`} />
     </div>
   );

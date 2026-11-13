@@ -1,10 +1,12 @@
+import type { PANE_IDS } from "@glassworks/frame-card";
+
 export const links = {
   org: "https://github.com/GlassworksHQ",
   s1: "https://github.com/GlassworksHQ/aqara-s1-unleashed",
-  s1Install: "https://s1.edm.sh",
 } as const;
 
-export type PaneId = "assist" | "timers" | "sendspin" | "radio" | "sensors" | "base";
+/** The panes a frame.json rates, from the shared package, so a new pane can't be missed here. */
+export type PaneId = (typeof PANE_IDS)[number];
 
 /**
  * Panes. `frame` marks a frame pane: one that belongs to a single device (its

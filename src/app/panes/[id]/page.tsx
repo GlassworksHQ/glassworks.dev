@@ -41,6 +41,7 @@ async function Pane({ params }: { params: Params }) {
   if (!p) notFound();
   const Icon = paneIcon[p.id];
   const frame = p.frame ? frameById(p.frame) : undefined;
+  if (p.frame && !frame) throw new Error(`src/lib/site.ts: pane "${p.id}" names frame "${p.frame}", which no frame.json has`);
   // a frame pane only means something on its own device
   const rows = frame ? [frame] : frames;
   const runsOn = rows.filter((d) => ships(d.panes[p.id].support)).length;

@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
-import type { FrameDesign, Stage } from "@glassworks/frame-card";
+import { PANE_IDS, RATING_KEYS, type FrameDesign, type Stage } from "@glassworks/frame-card";
 
 /*
  * The frame catalog: every `frames/<id>/design/frame.json` in the main repo, read at build time from
@@ -16,10 +16,26 @@ export const KILN = "https://kiln.glassworks.dev";
 /* shipping stages first, then the planned ones; by name within a stage */
 const ORDER: Record<Stage, number> = { stable: 0, beta: 1, alpha: 2, development: 3, planned: 4 };
 
+/*
+ * frame.json comes from another repo, so the fields every page relies on are checked when it is read:
+ * a bad file fails the build here, naming the file, instead of crashing a page later.
+ */
+function check(file: string, f: FrameDesign, id: string) {
+  const bad = (why: string) => {
+    throw new Error(`${file}: ${why} (format: vendor/s1-unleashed/frames/README.md)`);
+  };
+  if (f.id !== id) bad(`id "${f.id}" isn't its folder's name "${id}"`);
+  if (!(f.status in ORDER)) bad(`status "${f.status}" isn't one of ${Object.keys(ORDER).join(", ")}`);
+  for (const p of PANE_IDS) if (!f.panes?.[p]?.support) bad(`panes.${p} is missing`);
+  for (const r of RATING_KEYS) if (!f.ratings?.[r]?.value) bad(`ratings.${r} is missing`);
+  if (f.kiln && !f.kiln.startsWith("/")) bad(`kiln "${f.kiln}" should be a route, starting with /`);
+  if (f.install?.href && !/^https?:\/\//.test(f.install.href)) bad(`install.href "${f.install.href}" should be a full URL`);
+}
+
 function read(id: string): FrameDesign {
   const file = path.join(FRAMES, id, "design", "frame.json");
   const f = JSON.parse(fs.readFileSync(file, "utf8")) as FrameDesign;
-  if (f.id !== id) throw new Error(`${file}: id "${f.id}" isn't its folder's name "${id}"`);
+  check(file, f, id);
   return f;
 }
 
@@ -43,6 +59,6 @@ export const frameById = (id: string) => frames.find((f) => f.id === id);
  * Kiln, else `install.href`, the frame's own installer.
  */
 export function installLink(f: FrameDesign): { href: string; kiln: boolean } | undefined {
-  if (f.kiln) return { href: KILN + f.kiln, kiln: true };
+  if (f.kiln) return { href: new URL(f.kiln, KILN).href, kiln: true };
   return f.install.href ? { href: f.install.href, kiln: false } : undefined;
 }
