@@ -53,7 +53,7 @@ const FIXTURES = process.env.VERCEL ? undefined : process.env.CLARITY_FIXTURES;
 
 function read(id: string): ClaritySummary | null {
   const real = path.join(FRAMES, id, "design", "clarity.json");
-  const file = fs.existsSync(real) ? real : FIXTURES ? path.join(process.cwd(), FIXTURES, `${id}.json`) : null;
+  const file = fs.existsSync(real) ? real : FIXTURES ? path.resolve(process.cwd(), FIXTURES, `${id}.json`) : null;
   if (!file || !fs.existsSync(file)) return null;
   const s = JSON.parse(fs.readFileSync(file, "utf8")) as ClaritySummary;
   if (!String(s.schema ?? "").startsWith("glassworks.perf-summary/")) {
@@ -79,19 +79,28 @@ export function clarityFor(id: string): Clarity {
 
 /* ---------- words ---------- */
 
+export const cap = (t: string) => t.charAt(0).toUpperCase() + t.slice(1);
+
 export const PAGES = rubric.grade.pages; // light, typical, heavy
 export const PAGE_NAME: Record<string, string> = { light: "Light", typical: "Typical", heavy: "Heavy" };
 export const TASKS = Object.keys(rubric.grade.tasks); // tap, scroll, updates, load
 export const TASK_NAME: Record<string, string> = { tap: "Tap", scroll: "Scroll", updates: "Live updates", load: "Open the view" };
-const LEVEL_NAME: Record<string, string> = { premium: "Premium", good: "Good", fluid: "Fluid", "needs-improvement": "Needs improvement", poor: "Poor" };
-export const levelName = (v: string | null) => (v ? (v === rubric.grade.below ? "Below fluid" : LEVEL_NAME[v] ?? v) : "Not measured");
+const words = (key: string) => cap(key.replace(/-/g, " "));
+export const levelName = (v: string | null) => (v ? (v === rubric.grade.below ? "Below fluid" : words(v)) : "Not measured");
 
-/** A level or band as a status: ok (premium, good), mid (fluid, needs improvement), bad, or none */
+/*
+ * A level or band as a status, ranked from rubric.json rather than by name: the levels in
+ * grade.levels order (premium, good, fluid today), the last one only just passing; then `below`.
+ * Bands are grade.ts's fixed good / needs-improvement / poor.
+ */
+const LEVELS = rubric.grade.levels.map((l) => l.level);
 export function tone(v: string | null | undefined): "ok" | "mid" | "bad" | "none" {
   if (!v) return "none";
-  if (v === "premium" || v === "good") return "ok";
-  if (v === "fluid" || v === "needs-improvement") return "mid";
-  return "bad";
+  if (v === "good") return "ok";
+  if (v === "needs-improvement") return "mid";
+  if (v === "poor" || v === rubric.grade.below) return "bad";
+  const i = LEVELS.indexOf(v);
+  return i === -1 ? "none" : i === LEVELS.length - 1 ? "mid" : "ok";
 }
 
 /** A page's level; a page measured in full but below every level is `below` (rubric's "slow") */
@@ -102,7 +111,8 @@ export function pageLevel(g: Grade, page: string): string | null {
   return bands.length && bands.every((b) => b !== null) ? rubric.grade.below : null;
 }
 
-export const cap = (t: string) => t.charAt(0).toUpperCase() + t.slice(1);
+const fps = (v: number) => `${+v.toFixed(1)} fps`;
+const pct = (v: number) => `${+v.toFixed(1)}%`;
 export const ms = (v: number) => (v >= 1000 ? `${+(v / 1000).toFixed(1)} s` : `${Math.round(v)} ms`);
 
 /** A task's measured value on a page, for the table */
@@ -110,7 +120,7 @@ export function measured(page: Page | undefined, task: string): string | null {
   if (!page) return null;
   if (task === "tap") return page.inp_ms == null ? null : ms(page.inp_ms);
   if (task === "load") return page.open_ms == null ? null : ms(page.open_ms);
-  if (task === "scroll") return page.scroll?.fps == null ? null : `${page.scroll.fps} fps`;
+  if (task === "scroll") return page.scroll?.fps == null ? null : fps(page.scroll.fps);
   return page.updates?.latency_p95_ms == null ? null : ms(page.updates.latency_p95_ms);
 }
 
@@ -119,10 +129,37 @@ const median = (xs: number[]) => {
   return s.length ? s[Math.floor(s.length / 2)] : null;
 };
 
+const medianOf = (xs: (number | null | undefined)[]) => median(xs.filter((v): v is number => v != null));
+
+/**
+ * The 60 fps rule (a "frames band" of good) in plain words, and which of its three measures fails
+ * now: p95 frame time, late (jank) frames, frozen frames. `runs` are per-run frame stats; the
+ * medians stand for the page, as each run is judged and the page takes the middle one.
+ */
+function steadyGoal(runs: FrameRun[]): { want: string; now: string } {
+  const M = rubric.metrics;
+  const steady = `a steady ${Math.round(1000 / rubric.one_frame_ms)} fps`;
+  const within = `every frame within ${Math.round(M.frame_p95_ms.good_max)} ms`;
+  const p95 = medianOf(runs.map((r) => r.p95_ms));
+  const jank = medianOf(runs.map((r) => r.jank_pct));
+  const frozen = medianOf(runs.map((r) => r.frozen_pct));
+  if (p95 == null && jank == null && frozen == null) return { want: `${steady}, ${within}`, now: "not measured" };
+  const want: string[] = [];
+  const now: string[] = [];
+  if (p95 != null && p95 > M.frame_p95_ms.good_max) { want.push(within); now.push(`1 in 20 frames takes ${Math.round(p95)} ms or more`); }
+  if (jank != null && jank > M.frame_jank_pct.good_max) { want.push(`no more than ${pct(M.frame_jank_pct.good_max)} of frames late`); now.push(`${pct(jank)} late`); }
+  if (frozen != null && frozen > M.frame_frozen_pct.good_max) {
+    want.push(M.frame_frozen_pct.good_max === 0 ? "no frozen frames" : `no more than ${pct(M.frame_frozen_pct.good_max)} frozen`);
+    now.push(`${pct(frozen)} frozen`);
+  }
+  return want.length ? { want: `${steady}: ${want.join(", ")}`, now: now.join(", ") } : { want: `${steady}, ${within}, in most runs`, now: "not in every run" };
+}
+
 /**
  * What a task that holds the grade back has to do, in plain words, and where it is now. From
  * rubric.json: the task's lowest accepted value at the page level the next letter needs, and that
- * value's thresholds. Only the condition that fails is named.
+ * value's thresholds. Values are the median of the runs, as grade.ts judges each run and takes the
+ * middle level; only the condition that fails is named.
  */
 export function goal(task: string, need: string, page: Page | undefined): { want: string; now: string } | null {
   const R = rubric.grade;
@@ -130,9 +167,6 @@ export function goal(task: string, need: string, page: Page | undefined): { want
   const accepts = R.levels.find((l) => l.level === need)?.accepts[task];
   if (!accepts?.length || !page) return null;
   const min = accepts[accepts.length - 1];
-  const fps60 = Math.round(1000 / rubric.one_frame_ms);
-  const steady = `a steady ${fps60} fps, every frame within ${Math.round(M.frame_p95_ms.good_max)} ms`;
-  const oneIn20 = (v: number) => `1 in 20 frames takes ${Math.round(v)} ms or more`;
 
   if (task === "tap") return { want: `taps answered within ${ms(M.inp_ms.good_max)}`, now: page.inp_ms == null ? "not measured" : ms(page.inp_ms) };
   if (task === "load") {
@@ -140,26 +174,34 @@ export function goal(task: string, need: string, page: Page | undefined): { want
     return { want: `opens within ${ms(limit)}`, now: page.open_ms == null ? "not measured" : ms(page.open_ms) };
   }
   if (task === "scroll") {
-    const sc = page.scroll ?? {};
     const lv = R.scroll_levels.find((l) => l.level === min);
     if (!lv) return null;
-    if (sc.fps == null || sc.p95_ms == null) return { want: lv.frames_band ? steady : `${lv.fps_min} fps or more`, now: "not measured" };
-    if (lv.frames_band) return { want: steady, now: oneIn20(sc.p95_ms) };
+    const runs = page.scroll?.runs ?? [];
+    if (lv.frames_band) return steadyGoal(runs);
+    const f = runs.length ? medianOf(runs.map((r) => r.fps)) : (page.scroll?.fps ?? null);
+    const p95 = runs.length ? medianOf(runs.map((r) => r.p95_ms)) : (page.scroll?.p95_ms ?? null);
+    const fpsWant = `${lv.fps_min} fps or more`;
+    const p95Want = `frames within ${Math.round(lv.p95_max_ms!)} ms`;
+    if (f == null || p95 == null) return { want: fpsWant, now: "not measured" };
     const want: string[] = [];
     const now: string[] = [];
-    if (sc.fps < (lv.fps_min ?? 0)) { want.push(`${lv.fps_min} fps or more`); now.push(`${Math.round(sc.fps)} fps`); }
-    if (sc.p95_ms > (lv.p95_max_ms ?? Infinity)) { want.push(`frames within ${Math.round(lv.p95_max_ms!)} ms`); now.push(oneIn20(sc.p95_ms)); }
-    return want.length ? { want: want.join(", "), now: now.join(", ") } : null;
+    if (f < (lv.fps_min ?? 0)) { want.push(fpsWant); now.push(fps(f)); }
+    if (p95 > (lv.p95_max_ms ?? Infinity)) { want.push(p95Want); now.push(`1 in 20 frames takes ${Math.round(p95)} ms or more`); }
+    // the middle run can pass while the middle level doesn't (runs either side of a line): say both
+    return want.length ? { want: want.join(", "), now: now.join(", ") } : { want: `${fpsWant}, ${p95Want}, in most runs`, now: `${fps(f)}, ${Math.round(p95)} ms` };
   }
-  const up = page.updates ?? {};
   const lv = R.update_levels.find((l) => l.level === min);
   if (!lv) return null;
-  if (up.latency_p95_ms == null) return { want: `changes on screen within ${ms(lv.latency_p95_max_ms)}`, now: "not measured" };
-  if (up.latency_p95_ms > lv.latency_p95_max_ms) {
-    return { want: `changes on screen within ${ms(lv.latency_p95_max_ms)}${lv.frames_band ? `, at ${steady}` : ""}`, now: `95% within ${ms(up.latency_p95_ms)}` };
+  const runs = page.updates?.runs ?? [];
+  const late = runs.length ? medianOf(runs.map((r) => r.latency_p95_ms)) : (page.updates?.latency_p95_ms ?? null);
+  const onScreen = `changes on screen within ${ms(lv.latency_p95_max_ms)}`;
+  if (late == null) return { want: onScreen, now: "not measured" };
+  if (late > lv.latency_p95_max_ms) return { want: onScreen, now: `95% within ${ms(late)}` };
+  if (lv.frames_band) {
+    const s = steadyGoal(runs.map((r) => r.frames).filter((x): x is FrameRun => !!x));
+    return { want: `changes drawn at ${s.want}`, now: s.now };
   }
-  const frames = median((up.runs ?? []).map((r) => r.frames?.p95_ms).filter((v): v is number => v != null));
-  return lv.frames_band ? { want: `changes drawn at ${steady}`, now: frames == null ? "not measured" : oneIn20(frames) } : null;
+  return { want: `${onScreen}, in most runs`, now: `95% within ${ms(late)}` };
 }
 
 /** The letter one up from this one, for "For A+: …" */

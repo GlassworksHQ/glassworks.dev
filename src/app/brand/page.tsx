@@ -1,3 +1,4 @@
+import { SITE, readmeImage } from "@/lib/site";
 import type { Metadata } from "next";
 import type { CSSProperties, ReactNode } from "react";
 import { GlassTile } from "@/components/GlassTile";
@@ -83,12 +84,8 @@ const swatches: {
 ];
 
 /** A README image that follows GitHub's theme: `base` is the file name without -on-dark.svg / -on-light.svg. */
-const readmeSnippet = (base: string, alt: string, size: string) => `<a href="https://www.glassworks.dev">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://www.glassworks.dev/brand/${base}-on-dark.svg">
-    <img alt="${alt}" src="https://www.glassworks.dev/brand/${base}-on-light.svg" ${size}>
-  </picture>
-</a>`;
+const readmeSnippet = (base: string, alt: string, size: string) =>
+  readmeImage({ href: SITE, src: `${SITE}/brand/${base}`, alt, size });
 
 const BADGE_SNIPPET = readmeSnippet("badge", "Built on Glassworks", 'height="30"');
 

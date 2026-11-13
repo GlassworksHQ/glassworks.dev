@@ -1,3 +1,4 @@
+import { SITE } from "@/lib/site";
 import type { Metadata, Viewport } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import { MarkDefs } from "@/components/Mark";
@@ -9,7 +10,7 @@ const inter = Inter({ variable: "--font-inter", subsets: ["latin", "greek"] });
 const mono = JetBrains_Mono({ variable: "--font-mono", subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://www.glassworks.dev"),
+  metadataBase: new URL(SITE),
   title: { default: "Glassworks", template: "%s · Glassworks" },
   description:
     "Open-source core for Home Assistant wall panels: dashboard, ESPHome device, setup and updates, with plugins for everything else.",

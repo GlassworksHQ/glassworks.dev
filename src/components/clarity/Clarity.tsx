@@ -19,6 +19,7 @@ import {
   type Graded,
 } from "@/lib/clarity";
 import { CopySnippet } from "@/components/CopySnippet";
+import { SITE, readmeImage } from "@/lib/site";
 import { ClarityChipLink } from "./ClarityChipLink";
 import s from "./Clarity.module.css";
 
@@ -78,6 +79,12 @@ export function Seal({ letter, size, live = false, id }: { letter: string | null
     </svg>
   );
 }
+
+/** grade.ts's "heavy.updates" as "heavy live updates" */
+const missingName = (m: string) => {
+  const [page, task] = m.split(".");
+  return task ? `${page} ${TASK_NAME[task]?.toLowerCase() ?? task}` : m === "start" ? "restart" : m;
+};
 
 /** Why there's no letter, in a few words */
 function noGrade(c: Clarity): string {
@@ -263,7 +270,10 @@ function Meta({ c }: { c: Graded }) {
       {c.grade.provisional && (
         <p className={s.provNote}>
           <span className={s.prov}>Provisional</span>
-          {(sum.gaps ?? []).length ? sum.gaps!.join("; ") : `Not measured: ${(c.grade.missing ?? []).join(", ")}`}
+          {[
+            ...(sum.gaps ?? []),
+            ...((c.grade.missing ?? []).length ? [`not measured: ${c.grade.missing!.map(missingName).join(", ")}`] : []),
+          ].join("; ")}
         </p>
       )}
       <p>
@@ -279,17 +289,10 @@ function Meta({ c }: { c: Graded }) {
   );
 }
 
-const SITE = "https://www.glassworks.dev";
-
 /** The README badge for the frame's repo folder: the site works the letter out, the README only links it */
 function BadgeSnippet({ frameId }: { frameId: string }) {
   const base = `${SITE}/frames/${frameId}`;
-  const code = `<a href="${base}#clarity">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="${base}/clarity-on-dark.svg">
-    <img alt="${CLARITY} grade" src="${base}/clarity-on-light.svg" height="30">
-  </picture>
-</a>`;
+  const code = readmeImage({ href: `${base}#clarity`, src: `${base}/clarity`, alt: `${CLARITY} grade`, size: 'height="30"' });
   return (
     <div className={s.badge}>
       {/* eslint-disable-next-line @next/next/no-img-element -- the badge itself, as a README shows it */}
@@ -309,7 +312,7 @@ export function ClarityPanel({ frameId }: { frameId: string }) {
       c.state === "none"
         ? "Not measured yet"
         : c.state === "re-measure"
-          ? `Re-measure: measured with protocol ${c.summary.protocol_version ?? "unknown"}, and the rules are for protocol ${rubric.protocol_version}`
+          ? `Re-measure: ${c.grade.why ?? "measured with another protocol"}`
           : (c.grade.why ?? "Not comparable");
     return (
       <section className={s.section} aria-labelledby="clarity">
