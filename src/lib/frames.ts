@@ -39,7 +39,10 @@ export const frames: FrameDesign[] = load();
 export const frameById = (id: string) => frames.find((f) => f.id === id);
 
 /**
- * Where to install it: `install.href` while that is somewhere other than Kiln (the S1's is
- * s1.edm.sh for now), else Kiln's page for the frame, once it installs from Kiln.
+ * Where to install it, and whether that is Kiln: `install.href` while it installs from somewhere
+ * else (the S1's is s1.edm.sh for now), else Kiln's page for the frame, once it installs from Kiln.
  */
-export const installHref = (f: FrameDesign) => f.install.href ?? (f.kiln ? KILN + f.kiln : undefined);
+export function installLink(f: FrameDesign): { href: string; kiln: boolean } | undefined {
+  if (f.install.href) return { href: f.install.href, kiln: false };
+  return f.kiln ? { href: KILN + f.kiln, kiln: true } : undefined;
+}

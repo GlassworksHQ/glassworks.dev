@@ -244,6 +244,25 @@
   height: 18px;
 }
 
+/* a frame's own installer, while it doesn't install from Kiln: plain glass, never ember */
+.installBtn {
+  display: inline-flex;
+  align-items: center;
+  font-size: 14.5px;
+  font-weight: 500;
+  text-decoration: none;
+  padding: 11px 20px;
+  border-radius: 999px;
+  color: var(--fg);
+  background: var(--glass);
+  border: 1px solid var(--edge);
+  white-space: nowrap;
+}
+
+.installBtn:hover {
+  border-color: color-mix(in srgb, var(--sky) 40%, var(--edge));
+}
+
 /* the glyph's ember fire would vanish on the ember button; draw it dark */
 .kilnBtnIcon path:nth-child(2) {
   fill: currentColor;
@@ -264,7 +283,8 @@
     margin-top: 2px;
   }
 
-  .kilnBtn {
+  .kilnBtn,
+  .installBtn {
     grid-column: 1 / -1;
     justify-self: start;
   }

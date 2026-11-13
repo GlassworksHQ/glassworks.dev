@@ -13,7 +13,7 @@ import {
 } from "@/components/DeviceBits";
 import { KilnGlyph } from "@/components/Glyphs";
 import { Mark } from "@/components/Mark";
-import { frameById, frames, installHref } from "@/lib/frames";
+import { frameById, frames, installLink } from "@/lib/frames";
 import { ratingKeys, ships } from "@/lib/frameText";
 import { panes } from "@/lib/site";
 import s from "./device.module.css";
@@ -65,7 +65,7 @@ async function Device({ params }: { params: Params }) {
   const { slug } = await params;
   const d = frameById(slug);
   if (!d) notFound();
-  const install = installHref(d);
+  const install = installLink(d);
 
   return (
     <article className={`wrap ${s.page}`}>
@@ -96,17 +96,27 @@ async function Device({ params }: { params: Params }) {
         className={`glass ${s.kiln} ${install ? "" : s.kilnOff}`}
         aria-labelledby="install"
       >
-        <Mark variant="ember" className={s.kilnMark} title="Kiln" />
+        {install && !install.kiln ? (
+          <Mark className={s.kilnMark} title="Glassworks" />
+        ) : (
+          <Mark variant="ember" className={s.kilnMark} title="Kiln" />
+        )}
         <div className={s.kilnText}>
           <h2 id="install" className={s.kilnTitle}>
-            {install ? "Install with Kiln" : "Not in Kiln yet"}
+            {!install ? "Not in Kiln yet" : install.kiln ? "Install with Kiln" : "Install"}
           </h2>
           <p>{d.install.how}</p>
         </div>
-        {install && (
-          <a href={install} className={s.kilnBtn}>
+        {install?.kiln && (
+          <a href={install.href} className={s.kilnBtn}>
             <KilnGlyph className={s.kilnBtnIcon} />
             Open Kiln
+          </a>
+        )}
+        {install && !install.kiln && (
+          /* not Kiln, so not ember: a plain glass button to the frame's own installer */
+          <a href={install.href} className={s.installBtn}>
+            Open {new URL(install.href).host}
           </a>
         )}
       </section>
