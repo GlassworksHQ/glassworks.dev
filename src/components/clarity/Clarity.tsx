@@ -80,6 +80,9 @@ export function Seal({ letter, size, live = false, id }: { letter: string | null
   );
 }
 
+/** The full report's link, when the summary gives one as a URL (a relative path can't be followed from here) */
+const reportUrl = (sum: { report?: string | null }) => (sum.report && /^https?:\/\//.test(sum.report) ? sum.report : null);
+
 /** grade.ts's "heavy.updates" as "heavy live updates" */
 const missingName = (m: string) => {
   const [page, task] = m.split(".");
@@ -259,7 +262,7 @@ function Facts({ c }: { c: Graded }) {
 
 function Meta({ c }: { c: Graded }) {
   const sum = c.summary;
-  const report = sum.report && /^https?:\/\//.test(sum.report) ? sum.report : null;
+  const report = reportUrl(sum);
   const bits = [
     sum.measured_on && `Measured ${sum.measured_on}`,
     sum.app_version && `app ${sum.app_version}`,
@@ -335,6 +338,11 @@ export function ClarityPanel({ frameId }: { frameId: string }) {
               {CLARITY} grades a frame as a wall panel, from A+ to E: how fast taps answer, how smoothly it scrolls, how quickly
               changes reach the screen and how long a view takes to open, on a light, a typical and a heavy dashboard.
             </p>
+            {c.state !== "none" && reportUrl(c.summary) && (
+              <p className={s.meta}>
+                <a href={reportUrl(c.summary)!}>Full report</a>
+              </p>
+            )}
             <BadgeSnippet frameId={frameId} />
           </div>
         </details>
