@@ -11,8 +11,8 @@
  * and -on-light.
  *
  * Info badges (30 px, in place of shields.io): licence (MPL-2.0 for the core,
- * MIT for libraries), status (under development, α alpha, β beta, stable) and
- * roadmap, from src/lib/info-badges.json.
+ * MIT for libraries), status (planned, under development, α alpha, β beta,
+ * stable) and roadmap, from src/lib/info-badges.json.
  *
  * Part icons (34 × 33, transparent, for tables and lists): frame, core, pane,
  * kiln. A tiny stack whose solid plate says where the part sits.
@@ -209,6 +209,8 @@ function statusMarker(t, stage, x) {
   const at = `cx="${(x + 3).toFixed(2)}" cy="15.5"`;
   if (stage === "development")
     return { svg: `<circle ${at} r="2.6" fill="none" stroke="${t.mu}" stroke-width="1.1" stroke-dasharray="1.4 1.2"/>`, w: 11 };
+  // planned: the same ring, unbroken, as the site's and the card's planned mark (a hollow ring)
+  if (stage === "planned") return { svg: `<circle ${at} r="2.6" fill="none" stroke="${t.mu}" stroke-width="1.1"/>`, w: 11 };
   if (stage === "stable") return { svg: `<circle ${at} r="3" fill="${ink.ready}"/>`, w: 11 };
   const ch = GREEK[stage];
   if (!ch) throw new Error(`unknown status stage: ${stage}`);
