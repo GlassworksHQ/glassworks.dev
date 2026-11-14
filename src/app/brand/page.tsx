@@ -18,6 +18,7 @@ import {
 } from "@/components/Glyphs";
 import infoBadges from "@/lib/info-badges.json";
 import libraries from "@/lib/libraries.json";
+import { frameBanners } from "@/lib/frameBanners";
 import s from "./brand.module.css";
 
 export const metadata: Metadata = {
@@ -131,6 +132,11 @@ const banners = [
     what: "Library: one block lifted out of the core",
   },
   { base: "banner-kiln", alt: "Glassworks Kiln", what: "Kiln" },
+  ...frameBanners.slice(0, 1).map((f) => ({
+    base: `banner-frame-${f.id}`,
+    alt: `${f.name}, a Glassworks frame`,
+    what: "Frame: the device itself, from its frame.json",
+  })),
   { base: "banner-principles", alt: "Glassworks Principles", what: "Principles: the rules every part follows" },
 ];
 
@@ -163,6 +169,10 @@ const downloads = [
   ...libraries.map((l) => ({
     file: `banner-library-${l.name}-on-dark.svg`,
     what: `${l.name} banner, dark (light too)`,
+  })),
+  ...frameBanners.map((f) => ({
+    file: `banner-frame-${f.id}-on-dark.svg`,
+    what: `${f.name} frame banner, dark (light too)`,
   })),
   { file: "favicon.svg", what: "Small cut, follows the OS theme" },
   { file: "favicon-kiln.svg", what: "Kiln favicon: small cut, ember floor, follows the OS theme" },
@@ -548,7 +558,7 @@ export default function BrandPage() {
         id="banners"
         label="Banners"
         title="The top of a README."
-        lede="Glassworks' own banner is finished: the stack and the lockup, no construction. Core, Pane and Kiln each have a banner with the drawing in a cell and the words in the part's light. Every library shares one drawing, a block lifted out of the core, so only its name and line change."
+        lede="Glassworks' own banner is finished: the stack and the lockup, no construction. Core, Pane and Kiln each have a banner with the drawing in a cell and the words in the part's light. Every library shares one drawing, a block lifted out of the core, so only its name and line change. Each frame's banner draws its own device from its frame.json, in neutral glass: a frame is hardware, the bottom plate."
       >
         <div className={s.banners}>
           {banners.map((b) => (
@@ -575,8 +585,14 @@ export default function BrandPage() {
           entry in <code>src/lib/libraries.json</code> and a run of{" "}
           <code>pnpm brand</code>.
         </p>
+        <p className={s.note}>
+          Frames: {frameBanners.map((f) => f.name).join(", ")}. A frame&apos;s
+          banner comes from the <code>brand</code>, <code>tagline</code> and{" "}
+          <code>model</code> in its <code>frame.json</code>: move the submodule
+          pin, then run <code>pnpm brand</code>.
+        </p>
         <CopySnippet
-          label="README · banner-core, banner-kiln or banner-library-<name>"
+          label="README · banner-core, banner-kiln, banner-library-<name> or banner-frame-<id>"
           code={readmeSnippet(
             `banner-library-${libraries[0].name}`,
             `${libraries[0].name}, a Glassworks library`,

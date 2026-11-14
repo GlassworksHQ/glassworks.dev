@@ -47,6 +47,9 @@ src/lib/frames.ts      the frame catalog: every frames/<id>/design/frame.json in
 src/lib/frameText.ts   the site's words for that data: install ratings, pane support
 src/lib/clarity.ts     each frame's Clarity grade, worked out from its clarity.json at build time
 src/components/clarity/  the Clarity seal, the frame page's panel, the catalog line
+scripts/brand/banner.mjs  the part banner every banner shares, the mark, each part's light
+scripts/brand/frame.mjs   a frame's README banner, banner-frame-<id>, drawn from its frame.json
+src/lib/frameBanners.ts   checks at build time that public/brand/ has each frame's current banner
 scripts/brand/clarity.mjs the Clarity README badge, served per frame at /frames/<id>/clarity-on-*.svg
 tests/clarity/         made-up Clarity summaries for working on the site (CLARITY_FIXTURES)
 vendor/s1-unleashed/   the main repo, a submodule pinned to a commit (don't install inside it)

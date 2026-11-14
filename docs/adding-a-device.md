@@ -21,6 +21,10 @@ Say where each fact comes from: your own device, the vendor's spec sheet, or a w
 A listing requires the **Built on Glassworks** badge in your frame's README and on its About screen;
 see [glassworks.dev/brand#badge](https://www.glassworks.dev/brand#badge).
 
+Give it a `tagline` (one line, at most 50 characters) and, if its name starts with the maker's,
+a `brand` (`Aqara` in `Aqara S1 Plus`). They draw the frame's README banner, `banner-frame-<id>`
+(step 2). A frame without a tagline gets no banner.
+
 Its Clarity grade comes from `frames/<id>/design/clarity.json` once the frame has been measured
 (the main repo's docs/perf.md, "The summary"). Until then the site says "Not measured yet".
 
@@ -35,6 +39,16 @@ git -C vendor/s1-unleashed checkout <commit>
 git add vendor/s1-unleashed
 ```
 
+Then redraw the brand files: every frame with a tagline gets `public/brand/banner-frame-<id>-on-*.svg`,
+its device drawn from `model` (`scripts/brand/frame.mjs`). Commit them in the same pull request; the
+build fails if a frame's banner isn't the one its `frame.json` draws, or if its name or tagline
+doesn't fit.
+
+```sh
+pnpm brand
+git add public/brand
+```
+
 Don't run `npm install` or `pnpm install` inside `vendor/s1-unleashed`: the card's imports and React
 resolve from this repo's `node_modules`, and a second React would break it.
 
@@ -43,7 +57,7 @@ resolve from this repo's `node_modules`, and a second React would break it.
 ```sh
 pnpm dev     # then open /frames and /frames/<id>
 pnpm lint
-pnpm build   # the new frame's page must be listed as static
+pnpm build   # the new frame's page must be listed as static, and its banner must match
 ```
 
 Look at the frame's page in light and dark mode and at phone width (about 375 px). Nothing should
