@@ -33,8 +33,12 @@ export function defs(t) {
 </defs>`;
 }
 
+/** Text for an attribute or an element: a frame's name comes from another repo and may hold & or quotes. */
+export const escapeXml = (s) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+
 export function svg(w, h, label, body, t) {
   const r = (n) => +n.toFixed(2);
+  label = escapeXml(label);
   return `<svg xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${label}" viewBox="0 0 ${r(w)} ${r(h)}" width="${Math.round(w)}" height="${Math.round(h)}"><title>${label}</title>${defs(t)}${body}</svg>\n`;
 }
 

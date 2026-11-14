@@ -8,7 +8,7 @@ import { PANE_IDS, RATING_KEYS, type FrameDesign, type Stage } from "@glassworks
  * is the same package, so the site, Kiln and the data can't drift. A new frame there appears here
  * when the submodule's pin moves; nothing is written by hand in this repo.
  */
-const FRAMES = path.join(process.cwd(), "vendor/s1-unleashed/frames");
+export const FRAMES = path.join(process.cwd(), "vendor/s1-unleashed/frames");
 
 /** Kiln's site: a frame's `kiln` route is relative to it. */
 export const KILN = "https://kiln.glassworks.dev";
@@ -33,6 +33,10 @@ function check(file: string, f: FrameDesign, id: string) {
     bad(`kiln "${f.kiln}" should be a route on ${KILN}, starting with a single /`);
   }
   if (f.install?.href && !/^https?:\/\//.test(f.install.href)) bad(`install.href "${f.install.href}" should be a full URL`);
+  // the render is served from /frames/<id>/render.webp: a .webp next to frame.json, nothing else
+  if (f.render && (!/^[\w-]+\.webp$/.test(f.render) || !fs.existsSync(path.join(path.dirname(file), f.render)))) {
+    bad(`render "${f.render}" should be a .webp file next to frame.json`);
+  }
 }
 
 function read(id: string): FrameDesign {
