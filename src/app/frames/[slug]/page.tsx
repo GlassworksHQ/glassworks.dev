@@ -195,7 +195,9 @@ async function Device({ params }: { params: Params }) {
           ))}
         </dl>
         {d.ratingsNote && <p className={s.note}>{d.ratingsNote}</p>}
-        {d.unverified && (
+        {/* A frame that doesn't ship yet, or one whose data comes from writeups: these ratings are the
+            plan, not something run on the device. The card reads its tags as "expected" by the same rule. */}
+        {(!ships(d.status) || d.unverified) && (
           <p className={s.note}>
             Expected, from the plan. Nothing has been run on this device yet.
           </p>
