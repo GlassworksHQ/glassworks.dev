@@ -5,6 +5,10 @@ import { useRef } from "react";
 import { DeviceModel, FrameCardBody, frameCardClass, useTilt, type FrameDesign } from "@glassworks/frame-card";
 import s from "./FrameCard.module.css";
 
+/** The frame's render on the model's screen, served from the main repo by src/app/frames/[slug]/render.webp
+ *  (the same image as Kiln's picker); a frame without one keeps the card's example dashboard. */
+const renderUrl = (f: FrameDesign) => (f.render ? `/frames/${f.id}/render.webp` : undefined);
+
 /**
  * A frame in the catalog, drawn by @glassworks/frame-card: the same card as Kiln's picker, with the
  * site's own line under it (`children`: the Clarity grade). The card's
@@ -15,7 +19,7 @@ export function FrameCard({ f, children }: { f: FrameDesign; children?: React.Re
   const tilt = useTilt<HTMLAnchorElement>();
   return (
     <Link {...tilt} href={`/frames/${f.id}`} className={`glass ${frameCardClass} ${s.link}`}>
-      <FrameCardBody f={f} />
+      <FrameCardBody f={f} screen={renderUrl(f)} />
       {children}
     </Link>
   );
@@ -44,7 +48,7 @@ export function HeroModel({ f }: { f: FrameDesign }) {
   };
   return (
     <div onPointerMove={sheen} onPointerLeave={leave}>
-      <DeviceModel id={`${f.id}-hero`} model={f.model} label={`${f.name} running Glassworks, an illustration`} />
+      <DeviceModel id={`${f.id}-hero`} model={f.model} label={`${f.name} running Glassworks, an illustration`} screen={renderUrl(f)} />
     </div>
   );
 }
