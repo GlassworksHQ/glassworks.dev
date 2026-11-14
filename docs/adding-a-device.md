@@ -1,7 +1,7 @@
 # Adding a device to the catalog
 
 Each panel on [glassworks.dev/frames](https://www.glassworks.dev/frames) is a **frame** in the main
-repo, [GlassworksHQ/aqara-s1-unleashed](https://github.com/GlassworksHQ/aqara-s1-unleashed). This
+repo, [GlassworksHQ/glassworks](https://github.com/GlassworksHQ/glassworks). This
 site has no device list of its own: the landing page, the catalog, both comparison tables, the pane
 pages and each frame's page (`/frames/<id>`) are built from the frames' `design/frame.json` files,
 and the cards and 3D models are drawn by the main repo's `@glassworks/frame-card`, the same card as
@@ -13,7 +13,7 @@ Both come in through one git submodule, `vendor/s1-unleashed`, pinned to a commi
 
 Add `frames/<id>/design/frame.json` there. Its fields (name, status, specs, panes, the nine install
 ratings, the 3D model in millimetres) are in that repo's
-[`frames/README.md`](https://github.com/GlassworksHQ/aqara-s1-unleashed/blob/main/frames/README.md).
+[`frames/README.md`](https://github.com/GlassworksHQ/glassworks/blob/main/frames/README.md).
 Use `unknown` for anything nobody has checked on real hardware: the site shows it as "Not checked".
 Set `unverified` when any of it comes from writeups rather than a real device.
 

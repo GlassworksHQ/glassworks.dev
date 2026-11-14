@@ -60,7 +60,7 @@ public/brand/          downloadable SVGs
 
 ## Adding a device
 
-Frames live in the main repo, [GlassworksHQ/aqara-s1-unleashed](https://github.com/GlassworksHQ/aqara-s1-unleashed):
+Frames live in the main repo, [GlassworksHQ/glassworks](https://github.com/GlassworksHQ/glassworks):
 add its `frames/<id>/design/frame.json` there, then move this repo's submodule pin. See
 [docs/adding-a-device.md](docs/adding-a-device.md).
 

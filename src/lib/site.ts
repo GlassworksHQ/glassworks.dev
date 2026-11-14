@@ -16,7 +16,7 @@ export const readmeImage = ({ href, src, alt, size }: { href: string; src: strin
 
 export const links = {
   org: "https://github.com/GlassworksHQ",
-  s1: "https://github.com/GlassworksHQ/aqara-s1-unleashed",
+  s1: "https://github.com/GlassworksHQ/glassworks",
 } as const;
 
 /** The panes a frame.json rates, from the shared package, so a new pane can't be missed here. */
