@@ -17,6 +17,8 @@ export const readmeImage = ({ href, src, alt, size }: { href: string; src: strin
 export const links = {
   org: "https://github.com/GlassworksHQ",
   s1: "https://github.com/GlassworksHQ/glassworks",
+  /** the project's public email (maintainer, 2026-11-13) */
+  contact: "mailto:hi@glassworks.dev",
 } as const;
 
 /** The panes a frame.json rates, from the shared package, so a new pane can't be missed here. */

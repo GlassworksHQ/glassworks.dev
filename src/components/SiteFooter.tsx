@@ -17,7 +17,8 @@ export function SiteFooter() {
           <Link href="/brand">Brand</Link>
           <Link href="/trademarks">Trademarks</Link>
           <a href={links.org}>GitHub</a>
-          <a href={links.s1}>S1 Unleashed</a>
+          <a href={links.s1}>Source</a>
+          <a href={links.contact}>Contact</a>
         </nav>
       </div>
       <p className={styles.legal}>
