@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { links } from "@/lib/site";
 import s from "./trademarks.module.css";
 
 export const metadata: Metadata = {
@@ -87,8 +88,9 @@ export default function TrademarksPage() {
       <section className={s.section}>
         <h2>Asking</h2>
         <p>
-          <a href={ASK}>Open an issue</a> describing what you want to do. Most
-          requests get a yes.
+          <a href={ASK}>Open an issue</a> describing what you want to do, or
+          email <a href={links.contact}>hi@glassworks.dev</a>. Most requests get
+          a yes.
         </p>
         <p className={s.small}>
           Home Assistant is a trademark of the Open Home Foundation. Glassworks
