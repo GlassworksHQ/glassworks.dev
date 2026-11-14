@@ -50,6 +50,7 @@ src/components/clarity/  the Clarity seal, the frame page's panel, the catalog l
 scripts/brand/banner.mjs  the part banner every banner shares, the mark, each part's light
 scripts/brand/frame.mjs   a frame's README banner, banner-frame-<id>, drawn from its frame.json
 src/lib/frameBanners.ts   checks at build time that public/brand/ has each frame's current banner
+src/app/frames/[slug]/render.webp/route.ts  each frame's render (frame.json `render`), served from the submodule for the card and page
 scripts/brand/clarity.mjs the Clarity README badge, served per frame at /frames/<id>/clarity-on-*.svg
 tests/clarity/         made-up Clarity summaries for working on the site (CLARITY_FIXTURES)
 vendor/s1-unleashed/   the main repo, a submodule pinned to a commit (don't install inside it)

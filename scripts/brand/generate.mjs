@@ -29,7 +29,7 @@ import { fileURLToPath } from "node:url";
 import { measure, text } from "./text.mjs";
 import { BH, BW, PART, cellGuides, markBody, markIcon, partBanner } from "./banner.mjs";
 import { frameBanner } from "./frame.mjs";
-import { existsSync, readdirSync } from "node:fs";
+import { existsSync, readdirSync, unlinkSync } from "node:fs";
 import {
   C,
   THEMES,
@@ -458,6 +458,12 @@ for (const t of Object.values(THEMES)) {
   write(`banner-principles-${on}.svg`, principlesBanner(t));
   for (const lib of libraries) write(`banner-library-${lib.name}-${on}.svg`, libraryBanner(t, lib));
   for (const f of frames) write(`banner-frame-${f.id}-${on}.svg`, frameBanner(t, f));
+}
+
+// a frame that was removed, or lost its tagline, has no banner any more: drop its old files
+for (const file of readdirSync(out).filter((n) => /^banner-frame-.+-on-(dark|light)\.svg$/.test(n) && !written.includes(n))) {
+  unlinkSync(join(out, file));
+  console.log(`Removed public/brand/${file}: no frame with a tagline draws it`);
 }
 
 // the mark's own files
