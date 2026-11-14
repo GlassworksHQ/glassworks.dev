@@ -41,7 +41,7 @@ export function splitName(f) {
 export function screenBox(m) {
   const W = m.body.width;
   const H = m.body.height;
-  if (m.screen.width) return { x: (W - m.screen.width) / 2, y: m.screen.top, w: m.screen.width, h: m.screen.height, r: m.screen.radius };
+  if (m.screen.width && m.screen.width < W && m.screen.height < H) return { x: (W - m.screen.width) / 2, y: m.screen.top, w: m.screen.width, h: m.screen.height, r: m.screen.radius };
   return { x: m.bezel, y: m.bezel, w: W - 2 * m.bezel, h: H - 2 * m.bezel, r: m.screen.radius };
 }
 
