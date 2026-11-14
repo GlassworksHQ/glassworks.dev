@@ -1,5 +1,6 @@
 "use client";
 
+import { PANES } from "@glassworks/frame-card";
 import { useState } from "react";
 import styles from "./Stack.module.css";
 
@@ -38,18 +39,12 @@ export const LAYERS: Layer[] = [
     z: 280,
     thick: 5,
     label: "PANES",
-    cells: ["Assist", "Timers", "Radio", "Sensors", "Device pane", "Sendspin"],
+    cells: ["Assist", "Timers", "Radio", "Diagnostics", "Device pane", "Sendspin"],
     lit: [0, 2, 3, 5],
     dashed: [4],
     desc: "Plugins. Each declares what hardware it needs.",
-    items: [
-      "Assist",
-      "Timers",
-      "Zigbee / Thread radio",
-      "Android sensors",
-      "Sendspin",
-      "Frame-specific panes, like the S1 wall base",
-    ],
+    // the general panes in the main repo's pane catalog, then the frame panes in a word
+    items: [...PANES.filter((p) => !p.frame).map((p) => p.name), "Frame-specific panes, like the S1 wall base"],
   },
   {
     id: "api",

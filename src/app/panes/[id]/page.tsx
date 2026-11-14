@@ -7,7 +7,8 @@ import { PaneLift } from "@/components/PaneLift";
 import { TiltCard } from "@/components/TiltCard";
 import { frameById, frames } from "@/lib/frames";
 import { ships } from "@/lib/frameText";
-import { panes, support } from "@/lib/site";
+import { panes } from "@/lib/site";
+import { support } from "@/lib/paneSupport";
 import s from "./pane.module.css";
 
 const paneById = (id: string) => panes.find((p) => p.id === id);

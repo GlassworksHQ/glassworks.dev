@@ -1,4 +1,4 @@
-import { PANES, capabilityText, paneById, paneSupport, type FrameDesign, type Support } from "@glassworks/frame-card";
+import { PANES, capabilityText } from "@glassworks/frame-card";
 
 /** The site's own origin, for anything that leaves it: README snippets, metadata. */
 export const SITE = "https://www.glassworks.dev";
@@ -45,14 +45,3 @@ export const panes: Pane[] = PANES.map((p) => ({
 
 export const generalPanes = panes.filter((p) => !p.frame);
 export const framePanes = panes.filter((p) => p.frame);
-
-/**
- * How a frame runs a pane: its own rating in frame.json, or one worked out from the pane's `requires`
- * and the frame's `provides` (frame-card `paneSupport`), whose reason stands in for the note.
- */
-export function support(d: FrameDesign, id: PaneId): { support: Support; note?: string; derived: boolean } {
-  const pane = paneById(id);
-  if (!pane) throw new Error(`no pane "${id}" in the pane catalog`);
-  const s = paneSupport(d, pane);
-  return { support: s.support, note: s.note ?? s.reason, derived: s.derived };
-}

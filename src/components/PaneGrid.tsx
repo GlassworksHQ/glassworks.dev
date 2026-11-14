@@ -3,7 +3,8 @@ import { TiltCard } from "./TiltCard";
 import { StageMark, paneIcon } from "./DeviceBits";
 import { frames } from "@/lib/frames";
 import { supportText } from "@/lib/frameText";
-import { generalPanes, links, support } from "@/lib/site";
+import { generalPanes, links } from "@/lib/site";
+import { support } from "@/lib/paneSupport";
 import s from "./PaneGrid.module.css";
 
 /** A small mark for the empty "your pane" card: a plus, nothing lit. */

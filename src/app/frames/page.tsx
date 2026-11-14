@@ -10,7 +10,8 @@ import {
 } from "@/components/DeviceBits";
 import { frames } from "@/lib/frames";
 import { difficultyHelp, ratingKeys, ships } from "@/lib/frameText";
-import { links, panes, support } from "@/lib/site";
+import { links, panes } from "@/lib/site";
+import { support } from "@/lib/paneSupport";
 import s from "./frames.module.css";
 
 export const metadata: Metadata = {
