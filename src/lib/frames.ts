@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
-import { PANE_IDS, RATING_KEYS, type FrameDesign, type Stage } from "@glassworks/frame-card";
+import { CAPABILITIES, PANE_ALIASES, PANE_IDS, RATING_KEYS, type FrameDesign, type Stage } from "@glassworks/frame-card";
 
 /*
  * The frame catalog: every `frames/<id>/design/frame.json` in the main repo, read at build time from
@@ -26,7 +26,12 @@ function check(file: string, f: FrameDesign, id: string) {
   };
   if (f.id !== id) bad(`id "${f.id}" isn't its folder's name "${id}"`);
   if (!(f.status in ORDER)) bad(`status "${f.status}" isn't one of ${Object.keys(ORDER).join(", ")}`);
-  for (const p of PANE_IDS) if (!f.panes?.[p]?.support) bad(`panes.${p} is missing`);
+  // it rates only panes that exist (a pane it doesn't rate is worked out from `provides`; issue 231)
+  for (const [p, r] of Object.entries(f.panes ?? {})) {
+    if (!PANE_IDS.includes(p) && !(p in PANE_ALIASES)) bad(`panes.${p}: no pane has that id`);
+    if (!r?.support) bad(`panes.${p}.support is missing`);
+  }
+  for (const c of f.provides ?? []) if (!(c in CAPABILITIES)) bad(`provides: "${c}" isn't a capability word`);
   for (const r of RATING_KEYS) if (!f.ratings?.[r]?.value) bad(`ratings.${r} is missing`);
   // a route on Kiln: resolved against it, it must stay there ("//host/x" or "/\\host" would leave)
   if (f.kiln && (!f.kiln.startsWith("/") || new URL(f.kiln, KILN).origin !== new URL(KILN).origin)) {

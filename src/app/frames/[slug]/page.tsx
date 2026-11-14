@@ -15,7 +15,7 @@ import { KilnGlyph } from "@/components/Glyphs";
 import { Mark } from "@/components/Mark";
 import { frameById, frames, installLink } from "@/lib/frames";
 import { ratingKeys, ships } from "@/lib/frameText";
-import { panes } from "@/lib/site";
+import { panes, support } from "@/lib/site";
 import s from "./device.module.css";
 import { ClarityChip, ClarityPanel } from "@/components/clarity/Clarity";
 
@@ -156,7 +156,7 @@ async function Device({ params }: { params: Params }) {
           <ul className={`glass ${s.panes}`}>
             {panes.map((p) => {
               const Icon = paneIcon[p.id];
-              const sup = d.panes[p.id];
+              const sup = support(d, p.id);
               return (
                 <li key={p.id}>
                   <Link href={`/panes/${p.id}`} className={s.pane}>

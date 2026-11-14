@@ -1,6 +1,7 @@
 import type { RatingKey, Support } from "@/lib/frameText";
 import { ratingFields, ratingText, severity, supportText } from "@/lib/frameText";
-import type { PaneId } from "@/lib/site";
+import type { ComponentType, SVGProps } from "react";
+import { panes, type PaneId } from "@/lib/site";
 import {
   AppsGlyph,
   BackupGlyph,
@@ -14,30 +15,35 @@ import {
   FrameGlyph,
   GaugeGlyph,
   KeyGlyph,
-  MicGlyph,
-  MusicGlyph,
   RadioGlyph,
   RefreshGlyph,
   RulerGlyph,
   ScrewdriverGlyph,
   SensorGlyph,
   SpeakerGlyph,
-  TimerGlyph,
   UndoGlyph,
 } from "./Glyphs";
 import styles from "./DeviceBits.module.css";
 
-export const paneIcon: Record<PaneId, typeof MicGlyph> = {
-  assist: MicGlyph,
-  timers: TimerGlyph,
-  sendspin: MusicGlyph,
-  radio: RadioGlyph,
-  sensors: SensorGlyph,
-  base: BaseGlyph,
+/**
+ * Each pane's icon, from its icon.svg in the main repo (the pane catalog): 24 × 24, stroked with
+ * currentColor, no fills or colours, so it draws like the site's glyphs. Its PaneCatalogTest keeps the
+ * markup to those shapes (no script, no external references), so it can go in as markup.
+ */
+const svgInner = (svg: string) => svg.replace(/^<svg[^>]*>/, "").replace(/<\/svg>\s*$/, "");
+const catalogIcon = (svg: string) => {
+  const inner = { __html: svgInner(svg) };
+  const Icon = (props: SVGProps<SVGSVGElement>) => (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.6} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props} dangerouslySetInnerHTML={inner} />
+  );
+  return Icon;
 };
+export const paneIcon: Record<PaneId, ComponentType<SVGProps<SVGSVGElement>>> = Object.fromEntries(
+  panes.map((p) => [p.id, catalogIcon(p.icon)]),
+);
 
 /* one glyph per install field; difficulty draws a meter instead */
-const ratingIcon: Record<Exclude<RatingKey, "difficulty">, typeof MicGlyph> = {
+const ratingIcon: Record<Exclude<RatingKey, "difficulty">, typeof UndoGlyph> = {
   reversible: UndoGlyph,
   modifiesAndroid: EditGlyph,
   root: KeyGlyph,
@@ -93,7 +99,7 @@ export function RatingLabel({ field }: { field: RatingKey }) {
 }
 
 /* hardware spec labels */
-const specIcon: Record<string, typeof MicGlyph> = {
+const specIcon: Record<string, typeof UndoGlyph> = {
   SoC: ChipGlyph,
   Android: DeviceGlyph,
   Size: RulerGlyph,
