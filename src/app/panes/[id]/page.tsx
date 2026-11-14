@@ -8,6 +8,7 @@ import { TiltCard } from "@/components/TiltCard";
 import { frameById, frames } from "@/lib/frames";
 import { ships } from "@/lib/frameText";
 import { panes } from "@/lib/site";
+import { support } from "@/lib/paneSupport";
 import s from "./pane.module.css";
 
 const paneById = (id: string) => panes.find((p) => p.id === id);
@@ -44,7 +45,7 @@ async function Pane({ params }: { params: Params }) {
   if (p.frame && !frame) throw new Error(`src/lib/site.ts: pane "${p.id}" names frame "${p.frame}", which no frame.json has`);
   // a frame pane only means something on its own device
   const rows = frame ? [frame] : frames;
-  const runsOn = rows.filter((d) => ships(d.panes[p.id].support)).length;
+  const runsOn = rows.filter((d) => ships(support(d, p.id).support)).length;
 
   return (
     <div className={`wrap ${s.page}`}>
@@ -89,13 +90,13 @@ async function Pane({ params }: { params: Params }) {
         </h2>
         <ul className={`glass ${s.devices}`}>
           {rows.map((d) => {
-            const support = d.panes[p.id];
+            const sup = support(d, p.id);
             return (
               <li key={d.id}>
                 <Link href={`/frames/${d.id}`} className={s.device}>
                   <span className={s.deviceName}>{d.name}</span>
-                  <SupportTag support={support.support} />
-                  {support.note && <span className={s.note}>{support.note}</span>}
+                  <SupportTag support={sup.support} />
+                  {sup.note && <span className={s.note}>{sup.note}</span>}
                 </Link>
               </li>
             );

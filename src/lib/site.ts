@@ -1,4 +1,4 @@
-import type { PANE_IDS } from "@glassworks/frame-card";
+import { PANES, capabilityText } from "@glassworks/frame-card";
 
 /** The site's own origin, for anything that leaves it: README snippets, metadata. */
 export const SITE = "https://www.glassworks.dev";
@@ -21,29 +21,27 @@ export const links = {
   contact: "mailto:hi@glassworks.dev",
 } as const;
 
-/** The panes a frame.json rates, from the shared package, so a new pane can't be missed here. */
-export type PaneId = (typeof PANE_IDS)[number];
+/** A pane's id: the app's (the main repo's pane.json files). */
+export type PaneId = string;
 
 /**
- * Panes. `frame` marks a frame pane: one that belongs to a single device (its
- * folder lives in that frame), like the S1's wall base. The rest run anywhere
- * their hardware is, and make up the pane catalog.
+ * Panes, from the main repo's pane catalog (@glassworks/frame-card `PANES`: each pane's pane.json and
+ * icon.svg, issue 231), so a new pane appears here when the submodule's pin moves. `frame` marks a frame
+ * pane: one that belongs to a single device, like the S1's wall base. The rest run anywhere their
+ * hardware is. `requires` is said in words; `icon` is the pane's SVG.
  */
-export type Pane = { id: PaneId; name: string; does: string; requires: string; frame?: string };
+export type Pane = { id: PaneId; name: string; does: string; requires: string; frame?: string; icon: string };
 
-export const panes: Pane[] = [
-  { id: "assist", name: "Assist", does: "Wake word and voice overlay.", requires: "Microphone and speaker" },
-  { id: "timers", name: "Timers", does: "Voice timers on screen.", requires: "Assist" },
-  { id: "sendspin", name: "Sendspin", does: "Synced Music Assistant player.", requires: "Speaker" },
-  {
-    id: "radio",
-    name: "Zigbee / Thread radio",
-    does: "Zigbee coordinator or router, Thread border router.",
-    requires: "Silicon Labs radio",
-  },
-  { id: "sensors", name: "Android sensors", does: "Presence and light as HA sensors.", requires: "Proximity or light sensor" },
-  { id: "base", name: "Wall base", does: "The S1's wired wall base.", requires: "S1 wall base", frame: "aqara-s1-plus" },
-];
+const sentence = (t: string) => t.charAt(0).toUpperCase() + t.slice(1);
+
+export const panes: Pane[] = PANES.map((p) => ({
+  id: p.id,
+  name: p.name,
+  does: p.does,
+  requires: p.requires.length ? sentence(capabilityText(p.requires)) : "Nothing special",
+  frame: p.frame,
+  icon: p.icon,
+}));
 
 export const generalPanes = panes.filter((p) => !p.frame);
 export const framePanes = panes.filter((p) => p.frame);

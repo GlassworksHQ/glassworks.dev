@@ -11,6 +11,7 @@ import {
 import { frames } from "@/lib/frames";
 import { difficultyHelp, ratingKeys, ships } from "@/lib/frameText";
 import { links, panes } from "@/lib/site";
+import { support } from "@/lib/paneSupport";
 import s from "./frames.module.css";
 
 export const metadata: Metadata = {
@@ -131,8 +132,8 @@ export default function DevicesPage() {
                       </span>
                     </th>
                     {frames.map((d) => (
-                      <td key={d.id} title={d.panes[p.id].note}>
-                        <SupportTag support={d.panes[p.id].support} />
+                      <td key={d.id} title={support(d, p.id).note}>
+                        <SupportTag support={support(d, p.id).support} />
                       </td>
                     ))}
                   </tr>

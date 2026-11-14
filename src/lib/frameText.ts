@@ -9,8 +9,8 @@ import { RATING_KEYS, type RatingKey, type Support } from "@glassworks/frame-car
 
 export type { RatingKey, Support };
 
-/** Installable, or runs, now: a frame's stage or a pane's support that is alpha, beta or stable. */
-export const ships = (s: Support): s is "alpha" | "beta" | "stable" => s === "alpha" || s === "beta" || s === "stable";
+/** Installable, or runs, now: a frame's stage or a pane's support that is alpha, beta or stable (frame-card's, one copy). */
+export { ships } from "@glassworks/frame-card";
 
 /*
  * What installing does to a device, rated on fixed scales so devices compare at a

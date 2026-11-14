@@ -4,6 +4,7 @@ import { StageMark, paneIcon } from "./DeviceBits";
 import { frames } from "@/lib/frames";
 import { supportText } from "@/lib/frameText";
 import { generalPanes, links } from "@/lib/site";
+import { support } from "@/lib/paneSupport";
 import s from "./PaneGrid.module.css";
 
 /** A small mark for the empty "your pane" card: a plus, nothing lit. */
@@ -39,12 +40,12 @@ export function PaneGrid() {
                 </dl>
                 <ul className={s.runs} aria-label={`Where ${p.name} runs`}>
                   {frames.map((d) => {
-                    const support = d.panes[p.id].support;
+                    const { support: sup } = support(d, p.id);
                     return (
-                      <li key={d.id} className={`${s.run} ${s[`r_${support}`]}`} title={supportText[support]}>
-                        <StageMark stage={support} />
+                      <li key={d.id} className={`${s.run} ${s[`r_${sup}`]}`} title={supportText[sup]}>
+                        <StageMark stage={sup} />
                         {d.name}
-                        <span className="visually-hidden">: {supportText[support]}</span>
+                        <span className="visually-hidden">: {supportText[sup]}</span>
                       </li>
                     );
                   })}

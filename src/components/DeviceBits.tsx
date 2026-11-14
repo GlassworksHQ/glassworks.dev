@@ -1,6 +1,7 @@
 import type { RatingKey, Support } from "@/lib/frameText";
 import { ratingFields, ratingText, severity, supportText } from "@/lib/frameText";
-import type { PaneId } from "@/lib/site";
+import type { ComponentType, SVGProps } from "react";
+import { panes, type PaneId } from "@/lib/site";
 import {
   AppsGlyph,
   BackupGlyph,
@@ -14,30 +15,44 @@ import {
   FrameGlyph,
   GaugeGlyph,
   KeyGlyph,
-  MicGlyph,
-  MusicGlyph,
   RadioGlyph,
   RefreshGlyph,
   RulerGlyph,
   ScrewdriverGlyph,
   SensorGlyph,
   SpeakerGlyph,
-  TimerGlyph,
   UndoGlyph,
 } from "./Glyphs";
 import styles from "./DeviceBits.module.css";
 
-export const paneIcon: Record<PaneId, typeof MicGlyph> = {
-  assist: MicGlyph,
-  timers: TimerGlyph,
-  sendspin: MusicGlyph,
-  radio: RadioGlyph,
-  sensors: SensorGlyph,
-  base: BaseGlyph,
+/**
+ * Each pane's icon, from its icon.svg in the main repo (the pane catalog): 24 × 24, stroked with
+ * currentColor, no fills or colours, so it draws like the site's glyphs. The markup goes in as HTML.
+ * It is checked twice: in the main repo, PaneCatalogTest refuses an icon with a script, an external
+ * reference, CSS or a colour; and here, at build time, `safeIcon` refuses the same, so a bad icon
+ * fails the build instead of reaching a page.
+ */
+const UNSAFE = /<script|<foreignobject|<image|<style|\bon\w+\s*=|href|url\(|style=/i;
+const safeIcon = (id: string, svg: string) => {
+  if (!/^<svg\b[^>]*\bviewBox="0 0 24 24"/.test(svg) || UNSAFE.test(svg)) {
+    throw new Error(`pane "${id}": its icon.svg isn't a plain 24 × 24 stroke icon (main repo: PaneCatalogTest)`);
+  }
+  return svg;
 };
+const svgInner = (svg: string) => svg.replace(/^<svg[^>]*>/, "").replace(/<\/svg>\s*$/, "");
+const catalogIcon = (svg: string) => {
+  const inner = { __html: svgInner(svg) };
+  const Icon = (props: SVGProps<SVGSVGElement>) => (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.6} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props} dangerouslySetInnerHTML={inner} />
+  );
+  return Icon;
+};
+export const paneIcon: Record<PaneId, ComponentType<SVGProps<SVGSVGElement>>> = Object.fromEntries(
+  panes.map((p) => [p.id, catalogIcon(safeIcon(p.id, p.icon))]),
+);
 
 /* one glyph per install field; difficulty draws a meter instead */
-const ratingIcon: Record<Exclude<RatingKey, "difficulty">, typeof MicGlyph> = {
+const ratingIcon: Record<Exclude<RatingKey, "difficulty">, typeof UndoGlyph> = {
   reversible: UndoGlyph,
   modifiesAndroid: EditGlyph,
   root: KeyGlyph,
@@ -93,7 +108,7 @@ export function RatingLabel({ field }: { field: RatingKey }) {
 }
 
 /* hardware spec labels */
-const specIcon: Record<string, typeof MicGlyph> = {
+const specIcon: Record<string, typeof UndoGlyph> = {
   SoC: ChipGlyph,
   Android: DeviceGlyph,
   Size: RulerGlyph,
