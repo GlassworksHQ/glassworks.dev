@@ -18,7 +18,7 @@ export const rubric = rubricJson as unknown as Rubric & { name?: string; one_fra
 export const CLARITY = rubric.name ?? "Clarity";
 
 type FrameRun = { p95_ms?: number | null; jank_pct?: number | null; frozen_pct?: number | null; fps?: number | null; n?: number | null };
-type CameraRun = { first_frame_ms?: number | null; shown_pct?: number | null; max_gap_ms?: number | null; stall_total_ms?: number | null };
+type CameraRun = { timed_out?: boolean; first_frame_ms?: number | null; shown_pct?: number | null; max_gap_ms?: number | null; stall_total_ms?: number | null };
 /** A page's medians. Since /3 the graded ones (inp_ms, open_ms, blocking_ms) are unrounded: never round before banding. */
 export type Page = {
   inp_ms?: number | null;
@@ -157,9 +157,13 @@ export const ms = (v: number) => (v >= 1000 ? `${+(v / 1000).toFixed(1)} s` : `$
  * grade.ts bands the unrounded value; this only keeps the words true to that.
  */
 export function msAt(v: number, limits: (number | undefined)[]): string {
-  const short = ms(v);
-  if (!limits.some((l) => l != null && l !== v && ms(l) === short)) return short;
-  return v >= 1000 ? `${+(v / 1000).toFixed(3)} s` : `${+v.toFixed(1)} ms`;
+  const near = limits.filter((l): l is number => l != null && l !== v);
+  let text = ms(v);
+  // one more digit until it no longer reads as a limit (600.04 ms, not 600 ms); the value differs, so it ends
+  for (let d = 1; d <= 6 && near.some((l) => ms(l) === text || `${l} ms` === text || `${l / 1000} s` === text); d++) {
+    text = v >= 1000 ? `${+(v / 1000).toFixed(d + 2)} s` : `${+v.toFixed(d)} ms`;
+  }
+  return text;
 }
 const edges = (r: { good_max: number; poor_above?: number; poor_at?: number }) => [r.good_max, r.poor_above, r.poor_at];
 
@@ -170,10 +174,18 @@ const median = (xs: number[]) => {
 
 const medianOf = (xs: (number | null | undefined)[]) => median(xs.filter((v): v is number => v != null));
 
-/** The cameras' middle run: its first frame and its share of frames shown (grade.ts judges each run, then the middle level) */
-function cameraNow(page: Page): { first: number | null; shown: number | null } {
-  const runs = page.camera?.runs ?? [];
-  return { first: medianOf(runs.map((r) => r.first_frame_ms)), shown: medianOf(runs.map((r) => r.shown_pct)) };
+/**
+ * The cameras' middle run, by first frame, a run that showed no frame or didn't finish counting as the
+ * slowest (grade.ts judges each run, then takes the middle level, the worse one for an even count):
+ * its first frame and share of frames shown, in words. Null when no camera run was recorded.
+ */
+function cameraNow(page: Page): string | null {
+  const runs = [...(page.camera?.runs ?? [])].sort((a, b) => (a.first_frame_ms ?? Infinity) - (b.first_frame_ms ?? Infinity));
+  if (!runs.length) return null;
+  const r = runs[Math.floor(runs.length / 2)];
+  if (r.timed_out) return "didn't finish";
+  if (r.first_frame_ms == null) return "no frame shown";
+  return `first frame in ${ms(r.first_frame_ms)}${r.shown_pct == null ? "" : `, ${pct(r.shown_pct)} shown`}`;
 }
 
 /** A task's measured value on a page, for the table. The open and the blocking read as one sentence. */
@@ -185,8 +197,7 @@ export function measured(page: Page | undefined, task: string): string | null {
   if (task === "blocking") return page.blocking_ms == null ? null : `then blocked for ${msAt(page.blocking_ms, edges(M.blocking_ms))}`;
   if (task === "scroll") return page.scroll?.fps == null ? null : fps(page.scroll.fps);
   if (task === "camera") {
-    const { first, shown } = cameraNow(page);
-    return first == null ? null : `first frame in ${ms(first)}${shown == null ? "" : `, ${pct(shown)} shown`}`;
+    return cameraNow(page);
   }
   return page.updates?.latency_p95_ms == null ? null : ms(page.updates.latency_p95_ms);
 }
@@ -247,8 +258,7 @@ export function goal(task: string, need: string, page: Page | undefined): { want
     const want = [`a camera's first frame within ${ms(lv.first_frame_max_ms)}`, `${lv.shown_min_pct}% of its frames shown`];
     if (lv.max_gap_max_ms != null) want.push(`no gap over ${ms(lv.max_gap_max_ms)}`);
     if (lv.stall_total_max_ms != null) want.push(`stalls under ${ms(lv.stall_total_max_ms)} in all`);
-    const { first, shown } = cameraNow(page);
-    return { want: want.join(", "), now: first == null ? "not measured" : `${ms(first)}${shown == null ? "" : `, ${pct(shown)} shown`}` };
+    return { want: want.join(", "), now: cameraNow(page) ?? "not measured" };
   }
   if (task === "scroll") {
     const lv = R.scroll_levels.find((l) => l.level === min);
