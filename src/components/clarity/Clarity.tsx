@@ -10,11 +10,11 @@ import {
   goal,
   levelName,
   measured,
-  ms,
   nextLetter,
   notesFor,
   pageLevel,
   pageName,
+  restartText,
   rubric,
   tone,
   type Clarity,
@@ -243,7 +243,7 @@ function Facts({ c }: { c: Graded }) {
       <div>
         <dt>Restart</dt>
         <dd>
-          {sum.restart_ms == null ? "Not measured" : ms(sum.restart_ms)}
+          {sum.restart_ms == null ? "Not measured" : restartText(sum.restart_ms)}
           {g.capped_by_start && <span className={s.sub}> caps the grade at {rubric.grade.start_cap.letter}</span>}
         </dd>
       </div>
@@ -332,7 +332,7 @@ export function ClarityPanel({ frameId }: { frameId: string }) {
       c.state === "none"
         ? "Not measured yet"
         : c.state === "re-measure"
-          ? `Re-measure: ${c.grade.why ?? "measured with another protocol"}`
+          ? `Re-measure: ${(c.grade.why ?? "measured with another protocol").replace(/:\s*re-measure\.?$/i, "")}`
           : (c.grade.why ?? "Not comparable");
     return (
       <section className={s.section} aria-labelledby="clarity">

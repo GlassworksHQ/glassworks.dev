@@ -166,6 +166,11 @@ export function msAt(v: number, limits: (number | undefined)[]): string {
   return text;
 }
 const edges = (r: { good_max: number; poor_above?: number; poor_at?: number }) => [r.good_max, r.poor_above, r.poor_at];
+/** The bars a live change's p95 and a camera's first frame are held to, per level (rubric.json) */
+const UPDATE_EDGES = rubric.grade.update_levels.map((l) => l.latency_p95_max_ms);
+const FIRST_FRAME_EDGES = rubric.grade.camera_levels.map((l) => l.first_frame_max_ms);
+/** The restart, against its bands */
+export const restartText = (v: number) => msAt(v, edges(rubric.metrics.start_ms));
 
 const median = (xs: number[]) => {
   const s = [...xs].sort((a, b) => a - b);
@@ -185,7 +190,7 @@ function cameraNow(page: Page): string | null {
   const r = runs[Math.floor(runs.length / 2)];
   if (r.timed_out) return "didn't finish";
   if (r.first_frame_ms == null) return "no frame shown";
-  return `first frame in ${ms(r.first_frame_ms)}${r.shown_pct == null ? "" : `, ${pct(r.shown_pct)} shown`}`;
+  return `first frame in ${msAt(r.first_frame_ms, FIRST_FRAME_EDGES)}${r.shown_pct == null ? "" : `, ${pct(r.shown_pct)} shown`}`;
 }
 
 /** A task's measured value on a page, for the table. The open and the blocking read as one sentence. */
@@ -199,7 +204,7 @@ export function measured(page: Page | undefined, task: string): string | null {
   if (task === "camera") {
     return cameraNow(page);
   }
-  return page.updates?.latency_p95_ms == null ? null : ms(page.updates.latency_p95_ms);
+  return page.updates?.latency_p95_ms == null ? null : msAt(page.updates.latency_p95_ms, UPDATE_EDGES);
 }
 
 /**
@@ -284,12 +289,12 @@ export function goal(task: string, need: string, page: Page | undefined): { want
   const late = runs.length ? medianOf(runs.map((r) => r.latency_p95_ms)) : (page.updates?.latency_p95_ms ?? null);
   const onScreen = `changes on screen within ${ms(lv.latency_p95_max_ms)}`;
   if (late == null) return { want: onScreen, now: "not measured" };
-  if (late > lv.latency_p95_max_ms) return { want: onScreen, now: `95% within ${ms(late)}` };
+  if (late > lv.latency_p95_max_ms) return { want: onScreen, now: `95% within ${msAt(late, UPDATE_EDGES)}` };
   if (lv.frames_band) {
     const s = steadyGoal(runs.map((r) => r.frames).filter((x): x is FrameRun => !!x));
     return { want: `changes drawn at ${s.want}`, now: s.now };
   }
-  return { want: `${onScreen}, in most runs`, now: `95% within ${ms(late)}` };
+  return { want: `${onScreen}, in most runs`, now: `95% within ${msAt(late, UPDATE_EDGES)}` };
 }
 
 /** The letter one up from this one, for "For A+: …" */

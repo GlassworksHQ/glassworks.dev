@@ -11,7 +11,7 @@ measurement; the others are its numbers with one or two values changed, and say 
 | `sample/aqara-s1-plus.json` | The S1's real summary, unchanged | D (the real one in the submodule wins) |
 | `sample/generic-android.json` | The S1's, with typical without a camera blocked for 413 ms | C |
 | `edge/generic-android.json` | The S1's, with a run missing, heavy's live updates not measured, cameras over adb, and typical without a camera blocked for 600.4 ms (poor: it must not read as 600) | D, provisional, the transport caveat |
-| `edge/lululemon-mirror.json` | The S1's Clarity v1 summary (s1rtc9, `glassworks.perf-summary/2`), kept as it was | Re-measure: "measured with Clarity v1; these rules are Clarity v2's" |
+| `edge/lululemon-mirror.json` | The S1's Clarity v1 numbers (s1rtc9, `glassworks.perf-summary/2`) under another frame's id, the Mirror's, so a frame without its own summary shows them. Only `frame` changed | Re-measure: "measured with Clarity v1; these rules are Clarity v2's" |
 
 ```sh
 CLARITY_FIXTURES=tests/clarity/sample pnpm dev   # Generic Android C, the Mirror has none

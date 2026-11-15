@@ -1,6 +1,6 @@
 // Rebuilds the Clarity samples from the S1's real summary in the pinned submodule (read-only there;
 // writes tests/clarity/{sample,edge}/*.json). Run from the repo root: node tests/clarity/regenerate.mjs
-// The re-measure case (edge/lululemon-mirror.json, the S1's Clarity v1 run s1rtc9) is kept as it is.
+// Not rebuilt: edge/lululemon-mirror.json, the re-measure case: the S1's Clarity v1 numbers (s1rtc9) under the Mirror's id.
 import fs from "node:fs";
 
 const real = JSON.parse(fs.readFileSync("vendor/s1-unleashed/frames/aqara-s1-plus/clarity/clarity.json", "utf8"));
