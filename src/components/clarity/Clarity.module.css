@@ -273,18 +273,19 @@
 }
 
 .level {
-  display: inline-flex;
-  gap: 8px;
-  align-items: center;
   font-size: 14px;
 }
 
+/* the dot and the words flow as one line of text, so a long page name ("Typical without a camera") wraps like a sentence on a phone */
 .level::before {
   content: "";
+  display: inline-block;
   width: 8px;
   height: 8px;
   border-radius: 50%;
   background: var(--t);
+  margin-right: 8px;
+  vertical-align: 1px;
 }
 
 .levelName {
@@ -292,6 +293,7 @@
 }
 
 .levelValue {
+  margin-left: 8px;
   color: var(--ti);
   font-weight: 500;
 }
@@ -409,6 +411,15 @@
 
 .now {
   color: var(--faint);
+}
+
+/* two numbers in one cell: the open, then the blocking after it, each with its own band */
+.line {
+  display: block;
+}
+
+.line + .line {
+  margin-top: 3px;
 }
 
 .list {

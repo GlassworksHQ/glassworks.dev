@@ -68,10 +68,11 @@ add its `frames/<id>/design/frame.json` there, then move this repo's submodule p
 ## Clarity
 
 Clarity is the Glassworks wall-panel performance grade, A+ to E (docs/perf.md in the main repo). A
-frame stores its measurements only, in `frames/<id>/design/clarity.json`; the site works the letter
-out at build time with the main repo's `tools/perf/grade.ts` and `rubric.json`, from the same pinned
-submodule. No summary reads "Not measured yet"; a summary from another measuring protocol reads
-"Re-measure". Each frame also gets a README badge at `/frames/<id>/clarity-on-dark.svg` and
+frame stores its measurements only, in `frames/<id>/clarity/clarity.json` (Clarity's summary,
+`glassworks.perf-summary/3`, published with its report); the site works the letter out at build time
+with the main repo's `tools/perf/grade.ts` and `rubric.json`, from the same pinned submodule. No
+summary reads "Not measured yet"; a summary from another Clarity version or measuring protocol reads
+"Re-measure". The report's notes show only when they judge by the pinned rules. Each frame also gets a README badge at `/frames/<id>/clarity-on-dark.svg` and
 `-on-light.svg`, worked out the same way, so a README never stores the letter either. The frame page
 has the snippet to copy.
 

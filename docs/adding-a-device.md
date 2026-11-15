@@ -29,7 +29,7 @@ Its `render`, a `.webp` of a dashboard next to `frame.json` (made in the main re
 `tools/showcase/render.mjs`), is what its card and page show on the device's screen; without one,
 they show an example dashboard. The site serves it at `/frames/<id>/render.webp`.
 
-Its Clarity grade comes from `frames/<id>/design/clarity.json` once the frame has been measured
+Its Clarity grade comes from `frames/<id>/clarity/clarity.json` once the frame has been measured
 (the main repo's docs/perf.md, "The summary"). Until then the site says "Not measured yet".
 
 ## 2. Move the site's pin

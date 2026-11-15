@@ -2,9 +2,9 @@ import type { CSSProperties } from "react";
 import {
   CLARITY,
   PAGES,
-  PAGE_NAME,
-  TASKS,
+  ROWS,
   TASK_NAME,
+  TRANSPORT_NAME,
   cap,
   clarityFor,
   goal,
@@ -12,7 +12,9 @@ import {
   measured,
   ms,
   nextLetter,
+  notesFor,
   pageLevel,
+  pageName,
   rubric,
   tone,
   type Clarity,
@@ -86,7 +88,7 @@ const reportUrl = (sum: { report?: string | null }) => (sum.report && /^https?:\
 /** grade.ts's "heavy.updates" as "heavy live updates" */
 const missingName = (m: string) => {
   const [page, task] = m.split(".");
-  return task ? `${page} ${TASK_NAME[task]?.toLowerCase() ?? task}` : m === "start" ? "restart" : m;
+  return task ? `${pageName(page).toLowerCase()} ${TASK_NAME[task]?.toLowerCase() ?? task}` : m === "start" ? "restart" : m;
 };
 
 /** Why there's no letter, in a few words */
@@ -134,7 +136,7 @@ function Levels({ c }: { c: Graded }) {
         const lv = pageLevel(c.grade, p);
         return (
           <span key={p} className={`${s.level} ${s[tone(lv)]}`}>
-            <span className={s.levelName}>{PAGE_NAME[p]}</span>
+            <span className={s.levelName}>{pageName(p)}</span>
             <span className={s.levelValue}>{levelName(lv)}</span>
           </span>
         );
@@ -148,25 +150,32 @@ function Detail({ c }: { c: Graded }) {
   const g = c.grade;
   const up = nextLetter(g.grade);
   const held = new Map((g.limits ?? []).flatMap((l) => l.tasks.map((t) => [`${l.page}.${t}`, l.needs] as const)));
-  const cell = (p: string, t: string) => {
+  /** One row's cell: each of its tasks with its own band (the open and the blocking share one), and what holds it back */
+  const cell = (p: string, tasks: string[]) => {
     const page = c.summary.pages?.[p];
-    const band = g.bands?.[p]?.[t] ?? null;
-    const need = held.get(`${p}.${t}`);
-    const gl = need && up ? goal(t, need, page) : null;
+    const parts = tasks.map((t) => {
+      const band = g.bands?.[p]?.[t] ?? null;
+      const need = held.get(`${p}.${t}`);
+      return { t, band, need, goal: need && up ? goal(t, need, page) : null };
+    });
     return {
-      value: (
-        <>
+      value: parts.map(({ t, band }, i) => (
+        <span key={t} className={parts.length > 1 ? s.line : undefined}>
           <span className={`${s.dot} ${s[tone(band)]}`} aria-hidden="true" />
-          {measured(page, t) ?? "Not measured"}
-          <span className="visually-hidden">, {levelName(band)}</span>
-        </>
-      ),
-      held: !!need,
-      note: gl && (
-        <span className={s.note}>
-          <b>For {up}:</b> {gl.want}
-          {gl.now !== "not measured" && <span className={s.now}> · now {gl.now}</span>}
+          {band === "none" ? levelName(band) : (measured(page, t) ?? (i ? `${TASK_NAME[t].toLowerCase()} not measured` : "Not measured"))}
+          {band !== "none" && <span className="visually-hidden">, {levelName(band)}</span>}
+          {i < parts.length - 1 && band !== "none" && ","}
         </span>
+      )),
+      held: parts.some((x) => x.need),
+      note: parts.map(
+        ({ t, goal: gl }) =>
+          gl && (
+            <span key={t} className={s.note}>
+              <b>For {up}:</b> {gl.want}
+              {gl.now !== "not measured" && <span className={s.now}> · now {gl.now}</span>}
+            </span>
+          ),
       ),
     };
   };
@@ -180,17 +189,17 @@ function Detail({ c }: { c: Graded }) {
             </th>
             {PAGES.map((p) => (
               <th key={p} scope="col">
-                {PAGE_NAME[p]}
+                {pageName(p)}
               </th>
             ))}
           </tr>
         </thead>
         <tbody>
-          {TASKS.map((t) => (
-            <tr key={t}>
-              <th scope="row">{TASK_NAME[t]}</th>
+          {ROWS.map((r) => (
+            <tr key={r[0]}>
+              <th scope="row">{TASK_NAME[r[0]]}</th>
               {PAGES.map((p) => {
-                const x = cell(p, t);
+                const x = cell(p, r);
                 return (
                   <td key={p} className={x.held ? s.held : undefined}>
                     {x.value}
@@ -205,12 +214,12 @@ function Detail({ c }: { c: Graded }) {
       <div className={s.list}>
         {PAGES.map((p) => (
           <dl key={p} className={s.listPage}>
-            <dt className={s.listHead}>{PAGE_NAME[p]} dashboard</dt>
-            {TASKS.map((t) => {
-              const x = cell(p, t);
+            <dt className={s.listHead}>{pageName(p)} dashboard</dt>
+            {ROWS.map((r) => {
+              const x = cell(p, r);
               return (
-                <dd key={t} className={`${s.listRow} ${x.held ? s.held : ""}`}>
-                  <span className={s.listTask}>{TASK_NAME[t]}</span>
+                <dd key={r[0]} className={`${s.listRow} ${x.held ? s.held : ""}`}>
+                  <span className={s.listTask}>{TASK_NAME[r[0]]}</span>
                   <span>{x.value}</span>
                   {x.note}
                 </dd>
@@ -263,11 +272,13 @@ function Facts({ c }: { c: Graded }) {
 function Meta({ c }: { c: Graded }) {
   const sum = c.summary;
   const report = reportUrl(sum);
+  const transport = c.grade.transport ? (TRANSPORT_NAME[c.grade.transport] ?? `camera video over ${c.grade.transport}`) : null;
   const bits = [
     sum.measured_on && `Measured ${sum.measured_on}`,
     sum.app_version && `app ${sum.app_version}`,
     sum.runs?.attempted != null && `${sum.runs.graded ?? 0} of ${sum.runs.attempted} runs`,
-    `protocol ${sum.protocol_version}, rules v${rubric.version}`,
+    transport,
+    `${CLARITY} v${sum.clarity}, protocol ${sum.protocol_version}, rules v${rubric.version}`,
   ].filter(Boolean);
   return (
     <div className={s.meta}>
@@ -278,6 +289,11 @@ function Meta({ c }: { c: Graded }) {
             ...(sum.gaps ?? []),
             ...((c.grade.missing ?? []).length ? [`not measured: ${c.grade.missing!.map(missingName).join(", ")}`] : []),
           ].join("; ")}
+        </p>
+      )}
+      {c.grade.transport_caveat && (
+        <p>
+          {cap(c.grade.transport_caveat)}. Letters measured over different camera paths aren&apos;t comparable.
         </p>
       )}
       <p>
@@ -336,7 +352,8 @@ export function ClarityPanel({ frameId }: { frameId: string }) {
           <div className={s.body}>
             <p className={s.about}>
               {CLARITY} grades a frame as a wall panel, from A+ to E: how fast taps answer, how smoothly it scrolls, how quickly
-              changes reach the screen and how long a view takes to open, on a light, a typical and a heavy dashboard.
+              changes reach the screen, how long a view takes to draw and how long it stays blocked after that, and how cameras
+              play, on a light dashboard, a typical one without and with a camera, and a heavy one.
             </p>
             {c.state !== "none" && reportUrl(c.summary) && (
               <p className={s.meta}>
@@ -370,6 +387,7 @@ export function ClarityPanel({ frameId }: { frameId: string }) {
           <More />
         </summary>
         <div className={s.body}>
+          {notesFor(c.summary) && <p className={s.about}>{notesFor(c.summary)}</p>}
           <Detail c={c} />
           <Facts c={c} />
           <Meta c={c} />
